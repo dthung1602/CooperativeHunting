@@ -1,0 +1,4 @@
+package CooperativeHunting;
+
+class Map {
+}
