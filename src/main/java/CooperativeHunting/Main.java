@@ -1,39 +1,27 @@
 package CooperativeHunting;
 
 public class Main {
-
-    private static Map map;
-    private static IOVariables ioVariables;
-
     public static void main(String args[]) {
-        createGUI();
-        loop();
-    }
+        Map map = new Map();
+        GUI gui = new GUI(map);
 
-    private static void createGUI() {
-
-    }
-
-    private static void loop() {
         while (true) {
             // only update map when running
-            if (!ioVariables.running) {
+            if (!gui.running) {
                 try {
-                    ioVariables.wait();
+                    gui.wait();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
 
-            // update
-            // ...
-
-            // paint
-            // ...
+            // update and repaint
+            map.update();
+            map.repaint();
 
             // sleep
             try {
-                Thread.sleep((long) (1000.0 / ioVariables.simulationSpeed));
+                Thread.sleep((long) (1000.0 / gui.simulationSpeed));
             } catch (InterruptedException ignore) {
             }
         }

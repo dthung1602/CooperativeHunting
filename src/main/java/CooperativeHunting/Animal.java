@@ -1,5 +1,5 @@
 package CooperativeHunting;
 
-abstract class Animal {
-
+abstract class Animal extends Entity {
+    boolean dead;
 }
