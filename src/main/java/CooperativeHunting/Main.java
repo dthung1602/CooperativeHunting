@@ -1,15 +1,21 @@
 package CooperativeHunting;
 
-public class Main {
-    public static void main(String args[]) {
+import javafx.application.Application;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+
+    private boolean running = false;
+    private float simulationSpeed;
+
+    public void start(Stage stage) throws Exception {
         Map map = new Map();
-        GUI gui = new GUI(map);
 
         while (true) {
             // only update map when running
-            if (!gui.running) {
+            if (!running) {
                 try {
-                    gui.wait();
+                    this.wait();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -21,9 +27,25 @@ public class Main {
 
             // sleep
             try {
-                Thread.sleep((long) (1000.0 / gui.simulationSpeed));
+                Thread.sleep((long) (1000.0 / simulationSpeed));
             } catch (InterruptedException ignore) {
             }
         }
+    }
+
+    public static void main(String... args) {
+        launch(args);
+    }
+
+    void runingToggle() {
+
+    }
+
+    void stopSimulation() {
+
+    }
+
+    void setSimulationSpeed(float speed) {
+
     }
 }
