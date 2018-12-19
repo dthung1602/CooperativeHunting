@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="573.0" prefWidth="782.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CooperativeHunting.GUI">
+    <children>
+        <MenuBar>
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Close" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Delete" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="About" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <HBox prefHeight="549.0" prefWidth="782.0">
+            <children>
+                <AnchorPane fx:id="mapContainer" prefHeight="600.0" prefWidth="600.0" />
+                <VBox prefHeight="549.0" prefWidth="244.0">
+                    <children>
+                        <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                            <tabs>
+                                <Tab fx:id="grid" text="Grid">
+                                    <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                            <children>
+                                                <Text layoutX="22.0" layoutY="49.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Width" />
+                                                <Text layoutX="21.0" layoutY="107.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Height" />
+                                                <TextField fx:id="width" layoutX="68.0" layoutY="32.0" />
+                                                <TextField fx:id="height" layoutX="68.0" layoutY="90.0" />
+                                            </children>
+                                        </AnchorPane>
+                                    </content>
+                                </Tab>
+                                <Tab text="Predator">
+                                    <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                            <children>
+                                                <Text layoutX="27.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Number" />
+                                                <Text layoutX="33.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Attack" textAlignment="CENTER" />
+                                                <Text layoutX="31.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Health" />
+                                                <TextField fx:id="health" layoutX="91.0" layoutY="79.0" prefHeight="25.0" prefWidth="89.0" />
+                                                <TextField fx:id="predatorSpeed" layoutX="91.0" layoutY="109.0" prefHeight="25.0" prefWidth="89.0" />
+                                                <TextField fx:id="groupRadius" layoutX="91.0" layoutY="138.0" prefHeight="25.0" prefWidth="89.0" />
+                                                <Text layoutX="31.0" layoutY="126.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" />
+                                                <Text layoutX="15.0" layoutY="155.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Group radius" />
+                                    <TextField fx:id="predatorAttack" layoutX="91.0" layoutY="46.0" prefHeight="25.0" prefWidth="89.0" />
+                                    <TextField fx:id="predatorNumber" layoutX="91.0" layoutY="12.0" prefHeight="25.0" prefWidth="89.0" />
+                                            </children>
+                                        </AnchorPane>
+                                    </content>
+                                </Tab>
+                                <Tab text="Prey">
+                                    <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                            <children>
+                                                <TextField fx:id="preyNumber" layoutX="94.0" layoutY="8.0" prefHeight="25.0" prefWidth="88.0" />
+                                                <Text layoutX="25.0" layoutY="26.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Number" />
+                                                <Text layoutX="23.0" layoutY="61.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nutrition" />
+                                                <TextField fx:id="nutrition" layoutX="94.0" layoutY="44.0" prefHeight="25.0" prefWidth="88.0" />
+                                                <TextField fx:id="preyAttack" layoutX="94.0" layoutY="79.0" prefHeight="25.0" prefWidth="88.0" />
+                                                <Text layoutX="30.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Attack" />
+                                                <TextField fx:id="preySpeed" layoutX="94.0" layoutY="113.0" prefHeight="25.0" prefWidth="88.0" />
+                                                <Text layoutX="30.0" layoutY="122.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" />
+                                            </children>
+                                        </AnchorPane>
+                                    </content>
+                                </Tab>
+                            </tabs>
+                        </TabPane>
+                        <AnchorPane prefHeight="78.0" prefWidth="230.0" style="-fx-border-color: lightgrey;">
+                            <children>
+                                <Button fx:id="save" layoutX="125.0" layoutY="39.0" mnemonicParsing="false" onAction="#save" text="Save" />
+                                <Button fx:id="clear" layoutX="173.0" layoutY="39.0" mnemonicParsing="false" onAction="#clear" text="Clear" />
+                            </children>
+                        </AnchorPane>
+                        <AnchorPane prefHeight="70.0" prefWidth="230.0">
+                            <children>
+                                <Slider fx:id="slider" layoutX="169.0" layoutY="32.0" onMouseDragged="#sliders" prefHeight="10.0" prefWidth="61.0" showTickLabels="true" showTickMarks="true" />
+                                <Text layoutX="129.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" />
+                                <Button fx:id="play" layoutY="27.0" mnemonicParsing="false" onAction="#play" prefHeight="26.0" prefWidth="78.0" text="Play/ Pause" />
+                                <Button fx:id="stop" layoutX="87.0" layoutY="27.0" mnemonicParsing="false" onAction="#stop" prefHeight="26.0" prefWidth="41.0" text="Stop" />
+                            </children>
+                        </AnchorPane>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: lightgrey;" />
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+    </children>
+</VBox>

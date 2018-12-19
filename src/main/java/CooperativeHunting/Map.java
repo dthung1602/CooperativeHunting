@@ -34,15 +34,15 @@ class Map extends JPanel {
             prey.paint(g);
     }
 
-    void inititalizePreys(int number, int speed, float nutrition, int attack, Color color) {
+    void initializePreys(int number, int speed, float nutrition, int attack) {
 
     }
 
-    void inititalizePredators(int number, int speed, float health, int attack, Color color, int groupRadius) {
+    void initializePredators(int number, int speed, float health, int attack, int groupRadius) {
 
     }
 
-    void inititalizeSize(int width, int height) {
+    void initializeSize(int width, int height) {
 
     }
 
