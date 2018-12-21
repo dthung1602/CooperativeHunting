@@ -33,12 +33,12 @@ has to be programmed in Java consisting of an animation window displaying the si
 a statistics window displaying information about the simulation (see 2.2),
 as well as at window containing the graphical user interface to operate the simulation and
 feed it the input parameters (see 2.1). The animation can be a simple 2D Cellular automaton
-l;3l. where the environment is represented by a grid and each object in it by a Coloured tile or
+l;3l. where the environment is represented by a grid and each object in it by a Coloured position or
 group of tiles (see Fig. 2.1). The application should be able to display the moving predator
 and prey individuals as well as the predator group radius (see Fig. 2.2). Changes in the
-environment are done by updating the respective tiles’ colour, e. g. if a predator moves from tile
-A to tile 8, then tile B will be changed to the predator's colour, whereas tile A will receive the
-colour representing an empty tile. You should implement the following rules regarding the hunt:
+environment are done by updating the respective tiles’ colour, e. g. if a predator moves from position
+A to position 8, then position B will be changed to the predator's colour, whereas position A will receive the
+colour representing an empty position. You should implement the following rules regarding the hunt:
 
 1. Each Predator individual must be able to make a decision regarding his hunting strategy
 based on the given circumstances (hunt small prey alone or notify group when help

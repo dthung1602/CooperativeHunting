@@ -37,15 +37,17 @@ public class Main extends Application {
         launch(args);
     }
 
-    void runingToggle() {
-
+    void runningToggle() {
+        running = !running;
+        if (running)
+            this.notify();
     }
 
     void stopSimulation() {
 
     }
 
-    void setSimulationSpeed(float speed) {
+    void setSimulationSpeed(double speed) {
 
     }
 }

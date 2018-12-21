@@ -3,8 +3,13 @@ package CooperativeHunting;
 import java.awt.*;
 
 abstract class Entity {
-    protected int x;
-    protected int y;
+    int x;
+    int y;
+
+    Entity(Position position) {
+        x = position.x;
+        y = position.y;
+    }
 
     abstract void update(Map map);
 
@@ -14,5 +19,9 @@ abstract class Entity {
         float dx = x - entity.x;
         float dy = y - entity.y;
         return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    Position getPosition() {
+        return new Position(x, y);
     }
 }
