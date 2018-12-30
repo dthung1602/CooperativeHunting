@@ -1,7 +1,8 @@
 package CooperativeHunting;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.Graphics;
+import javafx.scene.paint.Color;
 import java.util.ArrayList;
 
 class Map extends JPanel {
@@ -34,11 +35,11 @@ class Map extends JPanel {
             prey.paint(g);
     }
 
-    void initializePreys(int number, int speed, float nutrition, int attack) {
+    void initializePreys(int number, int speed, float nutrition, int attack, Color color) {
 
     }
 
-    void initializePredators(int number, int speed, float health, int attack, int groupRadius) {
+    void initializePredators(int number, int speed, float health, int attack, int groupRadius, Color color) {
 
     }
 

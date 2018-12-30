@@ -5,6 +5,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -37,6 +38,8 @@ public class GUI {
     TextField predatorSpeed;
     @FXML
     TextField groupRadius;
+    @FXML
+    ColorPicker predatorColor;
 
     //Prey
     @FXML
@@ -47,6 +50,8 @@ public class GUI {
     TextField nutrition;
     @FXML
     TextField preyAttack;
+    @FXML
+    ColorPicker preyColor;
 
     //Button
     @FXML
@@ -119,13 +124,13 @@ public class GUI {
                 Integer.parseInt(predatorSpeed.getText()),
                 Float.parseFloat(health.getText()),
                 Integer.parseInt(predatorAttack.getText()),
-                Integer.parseInt(groupRadius.getText())
+                Integer.parseInt(groupRadius.getText()), predatorColor.getValue()
         );
         map.initializePreys(
                 Integer.parseInt(preyNumber.getText()),
                 Integer.parseInt(preySpeed.getText()),
                 Float.parseFloat(nutrition.getText()),
-                Integer.parseInt(preyAttack.getText())
+                Integer.parseInt(preyAttack.getText()), preyColor.getValue()
         );
     }
 
