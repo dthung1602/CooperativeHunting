@@ -115,22 +115,24 @@ public class GUI {
     //Save button
     @FXML
     private void save() {
-        map.initializeSize(
+        map.setMapSize(
                 Integer.parseInt(width.getText()),
                 Integer.parseInt(height.getText())
         );
         map.initializePredators(
                 Integer.parseInt(predatorNumber.getText()),
                 Integer.parseInt(predatorSpeed.getText()),
-                Float.parseFloat(health.getText()),
+                Integer.parseInt(health.getText()),
                 Integer.parseInt(predatorAttack.getText()),
-                Integer.parseInt(groupRadius.getText()), predatorColor.getValue()
+                Integer.parseInt(groupRadius.getText()),
+                predatorColor.getValue()
         );
         map.initializePreys(
                 Integer.parseInt(preyNumber.getText()),
                 Integer.parseInt(preySpeed.getText()),
                 Float.parseFloat(nutrition.getText()),
-                Integer.parseInt(preyAttack.getText()), preyColor.getValue()
+                Integer.parseInt(preyAttack.getText()),
+                preyColor.getValue()
         );
     }
 

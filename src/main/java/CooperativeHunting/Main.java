@@ -8,10 +8,10 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    private boolean running = false;
+    private boolean running = true;
     private float simulationSpeed;
     private Stage primaryStage;
-    private VBox Layout;
+    private VBox layout;
 
 
     public void start(Stage stage) throws Exception {
@@ -24,7 +24,7 @@ public class Main extends Application {
         //load the GUI
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Main.class.getResource("/GUI.fxml"));
-        Layout = loader.load();
+        layout = loader.load();
 
         //get the controller and pass Map Object to it
         GUI controller = loader.getController();
@@ -32,7 +32,7 @@ public class Main extends Application {
         controller.setApplication(this);
 
         //display the GUI
-        Scene scene = new Scene(Layout);
+        Scene scene = new Scene(layout);
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -63,7 +63,9 @@ public class Main extends Application {
     }
 
     void runningToggle() {
-
+        running = !running;
+        if (running)
+            this.notify();
     }
 
     void stopSimulation() {
