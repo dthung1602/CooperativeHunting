@@ -15,7 +15,6 @@ import javax.swing.*;
 public class GUI {
     private boolean editDisable = false;
     private Main application;
-
     private Map map;
 
     @FXML
@@ -63,6 +62,9 @@ public class GUI {
     @FXML
     Button stop;
 
+    // list of text fields in GUI
+    private TextField[] textFields;
+
     void setApplication(Main application) {
         this.application = application;
     }
@@ -72,23 +74,8 @@ public class GUI {
     }
 
     private void setFieldsDisable() {
-        //Map fields disable
-        height.setDisable(editDisable);
-        width.setDisable(editDisable);
-
-        //Predator fields disable
-        predatorNumber.setDisable(editDisable);
-        predatorAttack.setDisable(editDisable);
-        predatorSpeed.setDisable(editDisable);
-        groupRadius.setDisable(editDisable);
-        health.setDisable(editDisable);
-
-        //Prey fields disable
-        preyNumber.setDisable(editDisable);
-        nutrition.setDisable(editDisable);
-        preyAttack.setDisable(editDisable);
-        preySpeed.setDisable(editDisable);
-
+        for (TextField field : textFields)
+            field.setDisable(editDisable);
     }
 
     @FXML
@@ -140,39 +127,21 @@ public class GUI {
     @FXML
     public void clear() {
         if (!editDisable) {
-            height.setText("0");
-            width.setText("0");
-
-            predatorNumber.setText("0");
-            predatorAttack.setText("0");
-            predatorSpeed.setText("0");
-            groupRadius.setText("0");
-            health.setText("0");
-
-            preyNumber.setText("0");
-            nutrition.setText("0");
-            preyAttack.setText("0");
-            preySpeed.setText("0");
+            setText("0");
         }
     }
 
     //Initialize
     @FXML
     public void initialize() {
+        textFields = new TextField[]{
+                height, width,
+                predatorNumber, health, predatorAttack, predatorSpeed, groupRadius,
+                preyNumber, nutrition, preyAttack, preySpeed,
+        };
+
         //initialize some variable
-        height.setText("");
-        width.setText("");
-
-        predatorNumber.setText("");
-        predatorAttack.setText("");
-        predatorSpeed.setText("");
-        groupRadius.setText("");
-        health.setText("");
-        preySpeed.setText("");
-
-        preyNumber.setText("");
-        nutrition.setText("");
-        preyAttack.setText("");
+        setText("");
 
         //create map
         final SwingNode swingNode = new SwingNode();
@@ -185,133 +154,28 @@ public class GUI {
         mapContainer.getChildren().add(swingNode);
 
         //Accept only valid input
-
         //Grid (Map) fields
-        width.textProperty().addListener(new ChangeListener<String>() {
-                                             @Override
-                                             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                                                 if (newValue.matches(".*[^\\d]+.*")) {
-                                                     width.setText(newValue.replaceAll("[^\\d]", ""));
-                                                 }
-                                             }
-                                         }
-        );
+        for (final TextField field : textFields)
+            field.textProperty().addListener(
+                    new ChangeListener<String>() {
+                        @Override
+                        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                            if (newValue.matches(".*[^\\d]+.*")) {
+                                field.setText(newValue.replaceAll("[^\\d]", ""));
+                            }
+                        }
+                    }
+            );
+    }
 
-        height.textProperty().addListener(new ChangeListener<String>() {
-                                              @Override
-                                              public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                                                  if (newValue.matches(".*[^\\d]+.*")) {
-                                                      height.setText(newValue.replaceAll("[^\\d]", ""));
-                                                  }
-                                              }
-                                          }
-        );
-
-        //Predator fields
-
-        health.textProperty().addListener(new ChangeListener<String>() {
-                                              @Override
-                                              public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                                                  if (newValue.matches(".*[^\\d]+.*")) {
-                                                      health.setText(newValue.replaceAll("[^\\d]", ""));
-                                                  }
-                                              }
-                                          }
-        );
-
-        predatorAttack.textProperty().addListener(new ChangeListener<String>() {
-                                                      @Override
-                                                      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                                                          if (newValue.matches(".*[^\\d]+.*")) {
-                                                              predatorAttack.setText(newValue.replaceAll("[^\\d]", ""));
-                                                          }
-                                                      }
-                                                  }
-        );
-
-        predatorNumber.textProperty().addListener(new ChangeListener<String>() {
-                                                      @Override
-                                                      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                                                          if (newValue.matches(".*[^\\d]+.*")) {
-                                                              predatorNumber.setText(newValue.replaceAll("[^\\d]", ""));
-                                                          }
-                                                      }
-                                                  }
-        );
-
-        predatorSpeed.textProperty().addListener(new ChangeListener<String>() {
-                                                     @Override
-                                                     public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                                                         if (newValue.matches(".*[^\\d]+.*")) {
-                                                             predatorSpeed.setText(newValue.replaceAll("[^\\d]", ""));
-                                                         }
-                                                     }
-                                                 }
-        );
-
-        groupRadius.textProperty().addListener(new ChangeListener<String>() {
-                                                   @Override
-                                                   public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                                                       if (newValue.matches(".*[^\\d]+.*")) {
-                                                           groupRadius.setText(newValue.replaceAll("[^\\d]", ""));
-                                                       }
-                                                   }
-                                               }
-        );
-
-        //Prey fields
-
-        preyNumber.textProperty().addListener(new ChangeListener<String>() {
-                                                  @Override
-                                                  public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                                                      if (newValue.matches(".*[^\\d]+.*")) {
-                                                          preyNumber.setText(newValue.replaceAll("[^\\d]", ""));
-                                                      }
-                                                  }
-                                              }
-        );
-
-        preyAttack.textProperty().addListener(new ChangeListener<String>() {
-                                                  @Override
-                                                  public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                                                      if (newValue.matches(".*[^\\d]+.*")) {
-                                                          preyAttack.setText(newValue.replaceAll("[^\\d]", ""));
-                                                      }
-                                                  }
-                                              }
-        );
-
-        preySpeed.textProperty().addListener(new ChangeListener<String>() {
-                                                 @Override
-                                                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                                                     if (newValue.matches(".*[^\\d]+.*")) {
-                                                         preySpeed.setText(newValue.replaceAll("[^\\d]", ""));
-                                                     }
-                                                 }
-                                             }
-        );
-
-        nutrition.textProperty().addListener(new ChangeListener<String>() {
-                                                 @Override
-                                                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                                                     if (newValue.matches(".*[^\\d]+.*")) {
-                                                         System.out.println("y");
-                                                         nutrition.setText(newValue.replaceAll("[^\\d]", ""));
-                                                     }
-                                                     if (nutrition.getText().equals("")) nutrition.setText("");
-
-                                                 }
-                                             }
-        );
-
-
-        //text.textProperty().addListener(((observable, oldValue, newValue) -> {
-        //    if (newValue.matches(".*[^\\d]+.*")){
-        //        text.setText(newValue.replaceAll("[^\\d]", ""));
-        //    }
-        //    if (text.getText().equals("")) text.setText("0");
-        //    label.setText(text.getText());
-        //}));
+    /**
+     * Set all text fields in GUI to value text
+     *
+     * @param text: text to set
+     */
+    private void setText(String text) {
+        for (TextField field : textFields)
+            field.setText(text);
     }
 }
 

@@ -1,10 +1,13 @@
 package CooperativeHunting;
 
-import javax.swing.*;
-import java.awt.Graphics;
 import javafx.scene.paint.Color;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Random;
 
 class Map extends JPanel {
     // preys and predator groups

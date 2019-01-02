@@ -2,8 +2,7 @@ package CooperativeHunting;
 
 import javafx.scene.paint.Color;
 
-import java.awt.Graphics;
-
+import java.awt.*;
 
 
 class Predator extends Animal {

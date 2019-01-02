@@ -52,7 +52,6 @@ class Prey extends Animal {
             sumY += y - predator.y;
         }
 
-        // TODO collision ?
         // move according to vector's angle to avoid predators
         double angle = Math.toDegrees(Math.atan2(sumY, sumX));
         if (angle > 45) {
