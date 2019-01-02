@@ -7,8 +7,8 @@ import java.util.*;
 
 class Map extends JPanel {
     // preys and predator groups
-    private ArrayList<Prey> preys;
-    private ArrayList<Group> groups;
+    protected ArrayList<Prey> preys;
+    protected ArrayList<Group> groups;
 
     // Map size
     static int mapWidth;
@@ -62,7 +62,7 @@ class Map extends JPanel {
      * @param g: Graphic object
      */
     public void paintComponent(Graphics g) {
-        clearScreen(g);
+        super.paintComponent(g);
 
         for (Group group : groups)
             group.paint(g);
@@ -126,17 +126,9 @@ class Map extends JPanel {
         ArrayList<Position> positions = getRandomPositions(number, usedPositions);
         groups.clear();
         for (Position position : positions)
-            groups.add(new Group(position));
+            groups.add(new Group(new Predator(position)));
     }
 
-    /**
-     * Clear map's visualizing panel
-     *
-     * @param g: graphic object
-     */
-    private void clearScreen(Graphics g) {
-        g.clearRect(0, 0, this.mapWidth, this.mapHeight);
-    }
 
     /**
      * Create random integer in range [min, max)

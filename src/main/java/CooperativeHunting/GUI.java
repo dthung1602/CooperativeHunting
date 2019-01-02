@@ -9,10 +9,8 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
-
+import java.awt.Color;
 import javax.swing.*;
-import java.awt.*;
 
 public class GUI {
     private boolean editDisable = false;
@@ -122,25 +120,35 @@ public class GUI {
     //Save button
     @FXML
     private void save() {
+        javafx.scene.paint.Color predatorColorJavafx = predatorColor.getValue();
+        Color predatorColorAwt = new java.awt.Color((float) predatorColorJavafx.getRed(),
+                (float) predatorColorJavafx.getGreen(),
+                (float) predatorColorJavafx.getBlue(),
+                (float) predatorColorJavafx.getOpacity());
+        javafx.scene.paint.Color preyColorJavafx = preyColor.getValue();
+        Color preyColorAwt = new java.awt.Color((float) preyColorJavafx.getRed(),
+                (float) preyColorJavafx.getGreen(),
+                (float) preyColorJavafx.getBlue(),
+                (float) preyColorJavafx.getOpacity());
         map.setMapSize(
                 Integer.parseInt(width.getText()),
                 Integer.parseInt(height.getText())
         );
-        /*map.initializePredators(
+        map.initializePredators(
                 Integer.parseInt(predatorNumber.getText()),
                 Integer.parseInt(predatorSpeed.getText()),
                 Integer.parseInt(health.getText()),
                 Integer.parseInt(predatorAttack.getText()),
                 Integer.parseInt(groupRadius.getText()),
-                predatorColor.getValue()
+                predatorColorAwt
         );
         map.initializePreys(
                 Integer.parseInt(preyNumber.getText()),
                 Integer.parseInt(preySpeed.getText()),
                 Float.parseFloat(nutrition.getText()),
                 Integer.parseInt(preyAttack.getText()),
-                preyColor.getValue()
-        );*/
+                preyColorAwt
+        );
     }
 
     //Clear button
@@ -155,14 +163,14 @@ public class GUI {
             predatorSpeed.setText("0");
             groupRadius.setText("0");
             health.setText("0");
-            predatorColor.setValue(Color.WHITE);
+            predatorColor.setValue(javafx.scene.paint.Color.WHITE);
 
             preyNumber.setText("0");
             nutrition.setText("0");
             preyAttack.setText("0");
             size.setText("0");
             preySpeed.setText("0");
-            preyColor.setValue(Color.WHITE);
+            preyColor.setValue(javafx.scene.paint.Color.WHITE);
         }
     }
 
