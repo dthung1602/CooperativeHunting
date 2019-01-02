@@ -9,8 +9,10 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class GUI {
     private boolean editDisable = false;
@@ -51,6 +53,8 @@ public class GUI {
     @FXML
     TextField preyAttack;
     @FXML
+    TextField size;
+    @FXML
     ColorPicker preyColor;
 
     //Button
@@ -82,12 +86,15 @@ public class GUI {
         predatorSpeed.setDisable(editDisable);
         groupRadius.setDisable(editDisable);
         health.setDisable(editDisable);
+        predatorColor.setDisable(editDisable);
 
         //Prey fields disable
         preyNumber.setDisable(editDisable);
         nutrition.setDisable(editDisable);
         preyAttack.setDisable(editDisable);
+        size.setDisable(editDisable);
         preySpeed.setDisable(editDisable);
+        preyColor.setDisable(editDisable);
 
     }
 
@@ -119,7 +126,7 @@ public class GUI {
                 Integer.parseInt(width.getText()),
                 Integer.parseInt(height.getText())
         );
-        map.initializePredators(
+        /*map.initializePredators(
                 Integer.parseInt(predatorNumber.getText()),
                 Integer.parseInt(predatorSpeed.getText()),
                 Integer.parseInt(health.getText()),
@@ -133,7 +140,7 @@ public class GUI {
                 Float.parseFloat(nutrition.getText()),
                 Integer.parseInt(preyAttack.getText()),
                 preyColor.getValue()
-        );
+        );*/
     }
 
     //Clear button
@@ -148,11 +155,14 @@ public class GUI {
             predatorSpeed.setText("0");
             groupRadius.setText("0");
             health.setText("0");
+            predatorColor.setValue(Color.WHITE);
 
             preyNumber.setText("0");
             nutrition.setText("0");
             preyAttack.setText("0");
+            size.setText("0");
             preySpeed.setText("0");
+            preyColor.setValue(Color.WHITE);
         }
     }
 
@@ -173,6 +183,7 @@ public class GUI {
         preyNumber.setText("");
         nutrition.setText("");
         preyAttack.setText("");
+        size.setText("");
 
         //create map
         final SwingNode swingNode = new SwingNode();
@@ -303,6 +314,8 @@ public class GUI {
                                                  }
                                              }
         );
+
+
 
 
         //text.textProperty().addListener(((observable, oldValue, newValue) -> {

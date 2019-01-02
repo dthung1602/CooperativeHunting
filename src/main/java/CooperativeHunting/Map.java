@@ -1,8 +1,7 @@
 package CooperativeHunting;
 
 import javax.swing.*;
-import java.awt.Graphics;
-import javafx.scene.paint.Color;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.*;
 
@@ -12,8 +11,8 @@ class Map extends JPanel {
     private ArrayList<Group> groups;
 
     // Map size
-    private int mapWidth;
-    private int mapHeight;
+    static int mapWidth;
+    static int mapHeight;
 
     private static Random random = new Random();
 
@@ -39,8 +38,8 @@ class Map extends JPanel {
     }
 
     void setMapSize(int width, int height) {
-        this.mapWidth = width;
-        this.mapHeight = height;
+        mapWidth = width;
+        mapHeight = height;
     }
 
     /**
@@ -68,6 +67,7 @@ class Map extends JPanel {
         for (Group group : groups)
             group.paint(g);
 
+        g.setColor(Prey.color);
         for (Prey prey : preys)
             prey.paint(g);
     }

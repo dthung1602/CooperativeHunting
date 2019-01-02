@@ -1,11 +1,11 @@
 package CooperativeHunting;
 
-import javafx.scene.paint.Color;
 
-import java.awt.Graphics;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 
 class Prey extends Animal {
     // TODO set vision radius?
@@ -13,7 +13,7 @@ class Prey extends Animal {
     private static int speed;
     private static float nutrition;
     private static int attack;
-    private static Color color;
+    static Color color;
 
     /**
      * @param position: initial position of the prey
@@ -86,7 +86,7 @@ class Prey extends Animal {
      */
     @Override
     void paint(Graphics graphics) {
-
+        graphics.drawRect(x, y, 600 / Map.mapWidth, 600 / Map.mapHeight);
     }
 
     /**

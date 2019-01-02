@@ -1,9 +1,6 @@
 package CooperativeHunting;
 
-import javafx.scene.paint.Color;
-
-import java.awt.Graphics;
-
+import java.awt.*;
 
 
 class Predator extends Animal {
@@ -11,7 +8,7 @@ class Predator extends Animal {
     private static int speed;
     private static int health;
     private static int attack;
-    private static Color color;
+    static Color color;
 
     Group group;
 
@@ -63,6 +60,5 @@ class Predator extends Animal {
      * @param graphics: Graphic object
      */
     void paint(Graphics graphics) {
-
     }
 }

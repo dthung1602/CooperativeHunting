@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.Menu?>
@@ -14,7 +18,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="573.0" prefWidth="782.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CooperativeHunting.GUI">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="624.0" prefWidth="830.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CooperativeHunting.GUI">
     <children>
         <MenuBar>
             <menus>
@@ -37,14 +41,14 @@
         </MenuBar>
         <HBox prefHeight="549.0" prefWidth="782.0">
             <children>
-                <AnchorPane fx:id="mapContainer" prefHeight="600.0" prefWidth="600.0" />
+                <AnchorPane fx:id="mapContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" style="-fx-border-color: lightgrey;" />
                 <VBox prefHeight="549.0" prefWidth="244.0">
                     <children>
                         <TabPane minHeight="-Infinity" prefHeight="250.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
                             <tabs>
                                 <Tab fx:id="grid" text="Grid">
                                     <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="216.0" prefWidth="230.0">
                                             <children>
                                                 <Text layoutX="22.0" layoutY="49.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Width" />
                                                 <Text layoutX="21.0" layoutY="107.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Height" />
@@ -56,7 +60,7 @@
                                 </Tab>
                                 <Tab text="Predator">
                                     <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="150.0" prefWidth="231.0">
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="150.0" prefWidth="231.0" style="-fx-border-color: lightgrey;">
                                             <children>
                                                 <Text layoutX="27.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Number" />
                                                 <Text layoutX="33.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Attack" textAlignment="CENTER" />
@@ -86,29 +90,27 @@
                                                 <Text layoutX="30.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Attack" />
                                                 <TextField fx:id="preySpeed" layoutX="94.0" layoutY="113.0" prefHeight="25.0" prefWidth="88.0" />
                                                 <Text layoutX="30.0" layoutY="122.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" />
-                                    <Text layoutX="30.0" layoutY="163.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Color" wrappingWidth="33.04686254241096" />
-                                    <ColorPicker fx:id="preyColor" layoutX="94.0" layoutY="146.0" />
+                                    <Text layoutX="30.0" layoutY="192.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Color" wrappingWidth="33.04686254241096" />
+                                    <ColorPicker fx:id="preyColor" layoutX="94.0" layoutY="175.0" />
+                                    <Text layoutX="30.0" layoutY="159.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Size" />
+                                    <TextField fx:id="size" layoutX="94.0" layoutY="142.0" prefHeight="25.0" prefWidth="88.0" />
                                             </children>
                                         </AnchorPane>
                                     </content>
                                 </Tab>
                             </tabs>
                         </TabPane>
-                        <AnchorPane prefHeight="14.0" prefWidth="231.0" style="-fx-border-color: lightgrey;">
+                        <AnchorPane prefHeight="131.0" prefWidth="230.0" style="-fx-border-color: lightgrey;">
                             <children>
-                                <Button fx:id="save" layoutX="125.0" layoutY="39.0" mnemonicParsing="false" onAction="#save" text="Save" />
-                                <Button fx:id="clear" layoutX="173.0" layoutY="39.0" mnemonicParsing="false" onAction="#clear" text="Clear" />
+                                <Slider fx:id="slider" layoutX="101.0" layoutY="103.0" onMouseDragged="#sliders" prefHeight="14.0" prefWidth="113.0" showTickLabels="true" showTickMarks="true" />
+                                <Text layoutX="28.0" layoutY="106.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" wrappingWidth="57.0" />
+                                <Button fx:id="play" layoutX="13.0" layoutY="53.0" mnemonicParsing="false" onAction="#play" prefHeight="26.0" prefWidth="84.0" text="Play/ Pause" />
+                                <Button fx:id="stop" layoutX="116.0" layoutY="53.0" mnemonicParsing="false" onAction="#stop" prefHeight="26.0" prefWidth="84.0" text="Stop" />
+                                <Button fx:id="save" layoutX="13.0" layoutY="15.0" mnemonicParsing="false" onAction="#save" prefHeight="25.0" prefWidth="84.0" text="Save" />
+                                <Button fx:id="clear" layoutX="116.0" layoutY="15.0" mnemonicParsing="false" onAction="#clear" prefHeight="25.0" prefWidth="84.0" text="Clear" />
                             </children>
                         </AnchorPane>
-                        <AnchorPane prefHeight="0.0" prefWidth="231.0">
-                            <children>
-                                <Slider fx:id="slider" layoutX="169.0" layoutY="32.0" onMouseDragged="#sliders" prefHeight="10.0" prefWidth="61.0" showTickLabels="true" showTickMarks="true" />
-                                <Text layoutX="129.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" />
-                                <Button fx:id="play" layoutY="27.0" mnemonicParsing="false" onAction="#play" prefHeight="26.0" prefWidth="78.0" text="Play/ Pause" />
-                                <Button fx:id="stop" layoutX="87.0" layoutY="27.0" mnemonicParsing="false" onAction="#stop" prefHeight="26.0" prefWidth="41.0" text="Stop" />
-                            </children>
-                        </AnchorPane>
-                        <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="230.0" style="-fx-border-color: lightgrey;" />
+                        <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="221.0" prefWidth="230.0" style="-fx-border-color: lightgrey;" />
                     </children>
                 </VBox>
             </children>

@@ -34,28 +34,29 @@ public class Main extends Application {
         //display the GUI
         Scene scene = new Scene(layout);
         primaryStage.setScene(scene);
+        primaryStage.sizeToScene();
         primaryStage.show();
 
-        while (true) {
-            // only update map when running
-            if (!running) {
-                try {
-                    this.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            // update and repaint
-            map.update();
-            map.repaint();
-
-            // sleep
-            try {
-                Thread.sleep((long) (1000.0 / simulationSpeed));
-            } catch (InterruptedException ignore) {
-            }
-        }
+//        while (true) {
+//            // only update map when running
+//            if (!running) {
+//                try {
+//                    this.wait();
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            // update and repaint
+//            map.update();
+//            map.repaint();
+//
+//            // sleep
+//            try {
+//                Thread.sleep((long) (1000.0 / simulationSpeed));
+//            } catch (InterruptedException ignore) {
+//            }
+//        }
     }
 
     public static void main(String... args) {
