@@ -65,25 +65,23 @@ public class Main extends Application {
     }
 
     /**
-     * Simulation thread
+     * Simulation thread runnable
      */
     class Simulator implements Runnable {
         @Override
         public void run() {
-            int i = 0;
             while (true) {
                 try {
                     // only update map when running
-                    if (!running) {
+                    if (!running)
                         synchronized (this) {
                             this.wait();
                         }
-                    }
 
                     // update and repaint
                     map.update();
                     map.repaint();
-                    System.out.println(i++);
+
                     // sleep
                     Thread.sleep((long) (1000.0 / simulationSpeed));
 

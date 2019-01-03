@@ -6,6 +6,9 @@ abstract class Entity {
     int x;
     int y;
 
+    Entity() {
+    }
+
     Entity(Position position) {
         x = position.x;
         y = position.y;

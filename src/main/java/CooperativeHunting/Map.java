@@ -1,7 +1,5 @@
 package CooperativeHunting;
 
-import javafx.scene.paint.Color;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -12,11 +10,11 @@ import java.util.Random;
 class Map extends JPanel {
     // preys and predator groups
     private ArrayList<Prey> preys;
-    private ArrayList<Group> groups;
+    ArrayList<Group> groups;
 
-    // Map size
-    private int mapWidth;
-    private int mapHeight;
+    // map size
+    static int mapWidth;
+    static int mapHeight;
 
     private static Random random = new Random();
 
@@ -42,8 +40,8 @@ class Map extends JPanel {
     }
 
     void setMapSize(int width, int height) {
-        this.mapWidth = width;
-        this.mapHeight = height;
+        mapWidth = width;
+        mapHeight = height;
     }
 
     /**
@@ -66,11 +64,12 @@ class Map extends JPanel {
      * @param g: Graphic object
      */
     public void paintComponent(Graphics g) {
-        clearScreen(g);
+        super.paintComponent(g);
 
         for (Group group : groups)
             group.paint(g);
 
+        g.setColor(Prey.color);
         for (Prey prey : preys)
             prey.paint(g);
     }
@@ -129,16 +128,7 @@ class Map extends JPanel {
         ArrayList<Position> positions = getRandomPositions(number, usedPositions);
         groups.clear();
         for (Position position : positions)
-            groups.add(new Group(position));
-    }
-
-    /**
-     * Clear map's visualizing panel
-     *
-     * @param g: graphic object
-     */
-    private void clearScreen(Graphics g) {
-        g.clearRect(0, 0, this.mapWidth, this.mapHeight);
+            groups.add(new Group(new Predator(position)));
     }
 
     /**

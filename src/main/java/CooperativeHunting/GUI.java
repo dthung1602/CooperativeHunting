@@ -5,12 +5,12 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class GUI {
     private boolean editDisable = false;
@@ -50,6 +50,8 @@ public class GUI {
     @FXML
     TextField preyAttack;
     @FXML
+    TextField size;
+    @FXML
     ColorPicker preyColor;
 
     //Button
@@ -62,8 +64,10 @@ public class GUI {
     @FXML
     Button stop;
 
-    // list of text fields in GUI
+    // list of all text fields in GUI
     private TextField[] textFields;
+    // list of all widgets in GUI
+    private Control[] widgets;
 
     void setApplication(Main application) {
         this.application = application;
@@ -74,8 +78,8 @@ public class GUI {
     }
 
     private void setFieldsDisable() {
-        for (TextField field : textFields)
-            field.setDisable(editDisable);
+        for (Control widget : widgets)
+            widget.setDisable(editDisable);
     }
 
     @FXML
@@ -102,6 +106,19 @@ public class GUI {
     //Save button
     @FXML
     private void save() {
+        // TODO common code to method toAwtColor
+        javafx.scene.paint.Color predatorColorJavafx = predatorColor.getValue();
+        Color predatorColorAwt = new java.awt.Color((float) predatorColorJavafx.getRed(),
+                (float) predatorColorJavafx.getGreen(),
+                (float) predatorColorJavafx.getBlue(),
+                (float) predatorColorJavafx.getOpacity());
+
+        javafx.scene.paint.Color preyColorJavafx = preyColor.getValue();
+        Color preyColorAwt = new java.awt.Color((float) preyColorJavafx.getRed(),
+                (float) preyColorJavafx.getGreen(),
+                (float) preyColorJavafx.getBlue(),
+                (float) preyColorJavafx.getOpacity());
+
         map.setMapSize(
                 Integer.parseInt(width.getText()),
                 Integer.parseInt(height.getText())
@@ -112,32 +129,37 @@ public class GUI {
                 Integer.parseInt(health.getText()),
                 Integer.parseInt(predatorAttack.getText()),
                 Integer.parseInt(groupRadius.getText()),
-                predatorColor.getValue()
+                predatorColorAwt
         );
         map.initializePreys(
                 Integer.parseInt(preyNumber.getText()),
                 Integer.parseInt(preySpeed.getText()),
                 Float.parseFloat(nutrition.getText()),
                 Integer.parseInt(preyAttack.getText()),
-                preyColor.getValue()
+                preyColorAwt
         );
     }
 
-    //Clear button
+    // Clear button
     @FXML
     public void clear() {
-        if (!editDisable) {
+        if (!editDisable)
             setText("0");
-        }
     }
 
-    //Initialize
+    // Initialize
     @FXML
     public void initialize() {
         textFields = new TextField[]{
                 height, width,
                 predatorNumber, health, predatorAttack, predatorSpeed, groupRadius,
-                preyNumber, nutrition, preyAttack, preySpeed,
+                preyNumber, nutrition, preyAttack, preySpeed, size
+        };
+
+        widgets = new Control[]{
+                height, width,
+                predatorNumber, health, predatorAttack, predatorSpeed, groupRadius, predatorColor,
+                preyNumber, nutrition, preyAttack, preySpeed, size, preyColor
         };
 
         //initialize some variable

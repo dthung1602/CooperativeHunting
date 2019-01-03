@@ -61,8 +61,7 @@ being aware of them, i.e. the prey should simply try to get as far as possible f
 predators without any specific strategy in mind.
 
 7. Predators should be able to see prey and other predators from the group only within
-some radius (preferably greater than the group radius). Outside of this radius a preda-
-tor may signal its presences and location to the others by "howling".
+some radius (preferably greater than the group radius). Outside of this radius a predator may signal its presences and location to the others by "howling".
 
 8. Each iteration all predators lose hit points due to starvation. These can be regained
 only through killing prey.
