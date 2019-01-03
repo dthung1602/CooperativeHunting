@@ -21,6 +21,10 @@ class Predator extends Animal {
         super(position);
     }
 
+    static int getAttack() {
+        return attack;
+    }
+
     // FIXME camelCase, write full name
     static void set(int sp, int HP, int ATK, Color clr) {
         speed = sp;
@@ -28,6 +32,7 @@ class Predator extends Animal {
         attack = ATK;
         color = clr;
     }
+
 
     // TODO overridden methods should be marked with @Override decorator
     void update(Map map) {
