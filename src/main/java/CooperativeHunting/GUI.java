@@ -39,7 +39,8 @@ public class GUI {
     TextField groupRadius;
     @FXML
     ColorPicker predatorColor;
-
+    @FXML
+    TextField predatorvisionRadius;
     //Prey
     @FXML
     TextField preyNumber;
@@ -52,6 +53,8 @@ public class GUI {
     @FXML
     TextField size;
     @FXML
+    TextField preyvisionRadius;
+    @FXML
     ColorPicker preyColor;
 
     //Button
@@ -63,11 +66,15 @@ public class GUI {
     Button play;
     @FXML
     Button stop;
+    @FXML
+    Button save;
 
     // list of all text fields in GUI
     private TextField[] textFields;
     // list of all widgets in GUI
     private Control[] widgets;
+
+    private Button[] button;
 
     void setApplication(Main application) {
         this.application = application;
@@ -82,21 +89,35 @@ public class GUI {
             widget.setDisable(editDisable);
     }
 
+    /**
+     * Disable clear and save buttons
+     */
+    private void setButtonDisable(){
+        for(Button button: button)
+            button.setDisable(editDisable);
+    }
+
     @FXML
     void play() {
+        stop.setDisable(false);
         editDisable = true;
         setFieldsDisable();
+        setButtonDisable();
         application.runningToggle();
     }
 
     @FXML
     void stop() {
         editDisable = false;
-        setFieldsDisable();
+        setFieldsDisable(); //enable fields
+        setButtonDisable(); //enable buttons
+        play.setDisable(true);
         application.stopSimulation();
     }
 
-    //Slider
+    /**
+     * The iteration speed will be changed base on the value of slider
+     */
     @FXML
     public void sliders() {
         slider.showTickLabelsProperty();
@@ -107,6 +128,12 @@ public class GUI {
     @FXML
     private void save() {
         // TODO common code to method toAwtColor
+        // Only display Play/Pause button after pressing Save
+        // Stop button is hided unless pressing Play button
+        editDisable=true;
+        play.setDisable(false);
+        stop.setDisable(false);
+        setButtonDisable();
         javafx.scene.paint.Color predatorColorJavafx = predatorColor.getValue();
         Color predatorColorAwt = new java.awt.Color((float) predatorColorJavafx.getRed(),
                 (float) predatorColorJavafx.getGreen(),
@@ -138,6 +165,8 @@ public class GUI {
                 Integer.parseInt(preyAttack.getText()),
                 preyColorAwt
         );
+
+
     }
 
     // Clear button
@@ -150,10 +179,15 @@ public class GUI {
     // Initialize
     @FXML
     public void initialize() {
+        play.setDisable(true);
+        stop.setDisable(true);
         textFields = new TextField[]{
                 height, width,
                 predatorNumber, health, predatorAttack, predatorSpeed, groupRadius,
                 preyNumber, nutrition, preyAttack, preySpeed, size
+        };
+        button= new Button[]{clear, save
+
         };
 
         widgets = new Control[]{

@@ -44,63 +44,113 @@
                 <AnchorPane fx:id="mapContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" style="-fx-border-color: lightgrey;" />
                 <VBox prefHeight="549.0" prefWidth="244.0">
                     <children>
-                        <TabPane minHeight="-Infinity" prefHeight="250.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                        <TabPane minHeight="-Infinity" prefHeight="286.0" prefWidth="230.0" tabClosingPolicy="UNAVAILABLE">
                             <tabs>
                                 <Tab fx:id="grid" text="Grid">
                                     <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="216.0" prefWidth="230.0">
                                             <children>
-                                                <Text layoutX="22.0" layoutY="49.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Width" />
-                                                <Text layoutX="21.0" layoutY="107.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Height" />
-                                                <TextField fx:id="width" layoutX="68.0" layoutY="32.0" />
-                                                <TextField fx:id="height" layoutX="68.0" layoutY="90.0" />
+                                    <GridPane layoutX="15.0" layoutY="136.0" prefHeight="236.0" prefWidth="230.0" AnchorPane.bottomAnchor="21.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Width" textAlignment="CENTER" wrappingWidth="114.0390625" />
+                                                      <TextField fx:id="width" GridPane.columnIndex="1" />
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Height" textAlignment="CENTER" wrappingWidth="112.625" GridPane.rowIndex="1" />
+                                                      <TextField fx:id="height" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                       </children>
+                                    </GridPane>
                                             </children>
                                         </AnchorPane>
                                     </content>
                                 </Tab>
                                 <Tab text="Predator">
                                     <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="150.0" prefWidth="231.0" style="-fx-border-color: lightgrey;">
-                                            <children>
-                                                <Text layoutX="27.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Number" />
-                                                <Text layoutX="33.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Attack" textAlignment="CENTER" />
-                                                <Text layoutX="31.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Health" />
-                                                <TextField fx:id="health" layoutX="91.0" layoutY="79.0" prefHeight="25.0" prefWidth="89.0" />
-                                                <TextField fx:id="predatorSpeed" layoutX="91.0" layoutY="109.0" prefHeight="25.0" prefWidth="89.0" />
-                                                <TextField fx:id="groupRadius" layoutX="91.0" layoutY="138.0" prefHeight="25.0" prefWidth="89.0" />
-                                                <Text layoutX="31.0" layoutY="126.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" />
-                                                <Text layoutX="15.0" layoutY="155.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Group radius" />
-                                    <TextField fx:id="predatorAttack" layoutX="91.0" layoutY="46.0" prefHeight="25.0" prefWidth="89.0" />
-                                    <TextField fx:id="predatorNumber" layoutX="91.0" layoutY="12.0" prefHeight="25.0" prefWidth="89.0" />
-                                    <ColorPicker fx:id="predatorColor" layoutX="91.0" layoutY="173.0" />
-                                    <Text layoutX="31.0" layoutY="190.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Color" wrappingWidth="33.04686254241096" />
-                                            </children>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="230.0" prefWidth="230.0" style="-fx-border-color: lightgrey;">
+                                 <children>
+                                    <GridPane layoutX="8.0" layoutY="21.0" prefHeight="257.0" prefWidth="230.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Number" textAlignment="CENTER" wrappingWidth="113.60546875" />
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Attack" textAlignment="CENTER" wrappingWidth="115.486328125" GridPane.rowIndex="1" />
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Health" textAlignment="CENTER" wrappingWidth="114.6640625" GridPane.rowIndex="2" />
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" textAlignment="CENTER" wrappingWidth="114.046875" GridPane.rowIndex="3" />
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Group radius" textAlignment="CENTER" wrappingWidth="112.701171875" GridPane.rowIndex="4" />
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Vision radius" textAlignment="CENTER" wrappingWidth="113.599609375" GridPane.rowIndex="5" />
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Color" textAlignment="CENTER" wrappingWidth="113.04686254241096" GridPane.rowIndex="6" />
+                                          <TextField fx:id="predatorNumber" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1" />
+                                          <TextField fx:id="predatorAttack" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                      <TextField fx:id="health" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                      <TextField fx:id="predatorSpeed" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                      <TextField fx:id="groupRadius" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                          <TextField fx:id="PredatorVisionRadius" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                          <ColorPicker fx:id="predatorColor" prefHeight="25.0" prefWidth="114.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                       </children>
+                                    </GridPane>
+                                 </children>
                                         </AnchorPane>
                                     </content>
                                 </Tab>
                                 <Tab text="Prey">
                                     <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                            <children>
-                                                <TextField fx:id="preyNumber" layoutX="94.0" layoutY="8.0" prefHeight="25.0" prefWidth="88.0" />
-                                                <Text layoutX="25.0" layoutY="26.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Number" />
-                                                <Text layoutX="23.0" layoutY="61.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nutrition" />
-                                                <TextField fx:id="nutrition" layoutX="94.0" layoutY="44.0" prefHeight="25.0" prefWidth="88.0" />
-                                                <TextField fx:id="preyAttack" layoutX="94.0" layoutY="79.0" prefHeight="25.0" prefWidth="88.0" />
-                                                <Text layoutX="30.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Attack" />
-                                                <TextField fx:id="preySpeed" layoutX="94.0" layoutY="113.0" prefHeight="25.0" prefWidth="88.0" />
-                                                <Text layoutX="30.0" layoutY="122.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" />
-                                    <Text layoutX="30.0" layoutY="192.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Color" wrappingWidth="33.04686254241096" />
-                                    <ColorPicker fx:id="preyColor" layoutX="94.0" layoutY="175.0" />
-                                    <Text layoutX="30.0" layoutY="159.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Size" />
-                                    <TextField fx:id="size" layoutX="94.0" layoutY="142.0" prefHeight="25.0" prefWidth="88.0" />
-                                            </children>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="281.0" prefWidth="230.0">
+                                 <children>
+                                    <GridPane layoutX="15.0" layoutY="24.0" prefHeight="257.0" prefWidth="230.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Number" textAlignment="CENTER" wrappingWidth="113.60546875" />
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Nutrition" textAlignment="CENTER" wrappingWidth="113.70703125" GridPane.rowIndex="1" />
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Attack" textAlignment="CENTER" wrappingWidth="113.486328125" GridPane.rowIndex="2" />
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" textAlignment="CENTER" wrappingWidth="114.046875" GridPane.rowIndex="3" />
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Size" textAlignment="CENTER" wrappingWidth="114.982421875" GridPane.rowIndex="4" />
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Vision radius" textAlignment="CENTER" wrappingWidth="115.599609375" GridPane.rowIndex="5" />
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Color" textAlignment="CENTER" wrappingWidth="114.04686254241096" GridPane.rowIndex="6" />
+                                          <ColorPicker fx:id="preyColor" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                          <TextField fx:id="PreyVisionRadius" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                          <TextField fx:id="size" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                      <TextField fx:id="preySpeed" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                      <TextField fx:id="preyAttack" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                      <TextField fx:id="nutrition" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                      <TextField fx:id="preyNumber" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1" />
+                                       </children>
+                                    </GridPane>
+                                 </children>
                                         </AnchorPane>
                                     </content>
                                 </Tab>
                             </tabs>
                         </TabPane>
-                        <AnchorPane prefHeight="131.0" prefWidth="230.0" style="-fx-border-color: lightgrey;">
+                        <AnchorPane prefHeight="15.0" prefWidth="230.0" style="-fx-border-color: lightgrey;">
                             <children>
                                 <Slider fx:id="slider" layoutX="101.0" layoutY="103.0" onMouseDragged="#sliders" prefHeight="14.0" prefWidth="113.0" showTickLabels="true" showTickMarks="true" />
                                 <Text layoutX="28.0" layoutY="106.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" wrappingWidth="57.0" />
@@ -110,7 +160,6 @@
                                 <Button fx:id="clear" layoutX="116.0" layoutY="15.0" mnemonicParsing="false" onAction="#clear" prefHeight="25.0" prefWidth="84.0" text="Clear" />
                             </children>
                         </AnchorPane>
-                        <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="221.0" prefWidth="230.0" style="-fx-border-color: lightgrey;" />
                     </children>
                 </VBox>
             </children>
