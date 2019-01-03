@@ -77,7 +77,6 @@ public class Main extends Application {
                         synchronized (this) {
                             this.wait();
                         }
-
                     // update and repaint
                     map.update();
                     map.repaint();

@@ -1,11 +1,9 @@
 package CooperativeHunting;
 
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 
 class Prey extends Animal {
     private static int visionRadius = 5;
@@ -16,6 +14,8 @@ class Prey extends Animal {
     static Color color;
 
     /**
+     * Prey constructor
+     *
      * @param position: initial position of the prey
      */
     Prey(Position position) {
@@ -38,7 +38,8 @@ class Prey extends Animal {
     }
 
     /**
-     * Prey moves and interacts with predators
+     * Update prey's position, health, etc after each iteration
+     * Handle interactions between predators and preys
      *
      * @param map: Map object
      */
@@ -89,18 +90,19 @@ class Prey extends Animal {
      * Prey moves randomly
      */
     private void moveRandomly() {
+        int step = random.nextInt(speed + 1);
         switch (random.nextInt() % 4) {
             case 0:
-                x += speed;
+                x += step;
                 break;
             case 1:
-                x -= speed;
+                x -= step;
                 break;
             case 3:
-                y += speed;
+                y += step;
                 break;
             default:
-                y -= speed;
+                y -= step;
         }
     }
 
