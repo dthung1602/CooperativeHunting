@@ -16,9 +16,9 @@ class Predator extends Animal {
     Group group;
 
     // hold the distance and direction to the prey for the predator
-    private int globalDistanceX;
-    private int globalDistanceY;
-    private int globalDistance = 600; // TODO change to map.width
+    int globalDistanceX;
+    int globalDistanceY;
+    int globalDistance = map.getMapWidth(); // TODO change to map.width
 
     /**
      * Predator constructor
@@ -28,6 +28,7 @@ class Predator extends Animal {
     Predator(Position position) {
         super(position);
         health = initHealth;
+        group = null;
     }
 
     static int getAttack() {
@@ -59,21 +60,6 @@ class Predator extends Animal {
     }
 
     /**
-     * Paint predator to the map
-     *
-     * @param graphics: Graphic object
-     */
-    @Override
-    void paint(Graphics graphics) {
-        graphics.setColor(color);
-        graphics.fillRect(map.tiles * x, map.tiles * y, map.tiles, map.tiles);
-        graphics.setColor(Color.PINK);
-        graphics.drawOval(
-                map.tiles * (x - visionRadius + map.tiles / 2), map.tiles * (y - visionRadius + map.tiles / 2),
-                map.tiles * visionRadius * 2, map.tiles * visionRadius * 2);
-    }
-
-    /**
      * Remove dead predators out of the given list
      *
      * @param predators: list to remove dead predators
@@ -86,23 +72,37 @@ class Predator extends Animal {
         }
     }
 
-    // TODO add comments for all below methods
-    // TODO comment in code for all below methods
-    private void updateScout() {
+
+    /**
+     * The predator looks for the closest prey inside the predator's vision
+     * Check for the health of the predator whether the predator is dead or not
+     */
+    void updateScout() {
         scout();
-        group.selectLeader(this, globalDistance, globalDistanceX, globalDistanceY);
+        //group.selectLeader(this, globalDistance, globalDistanceX, globalDistanceY);
         checkDead();
     }
 
-    private void updateMove() {
-        Predator leader = group.getLeader();
-        if (leader != null && this != leader) {
-            moveToLeader(leader);
-        } else {
+    /**
+     * Update the new position of the predator
+     */
+    void updateMove() {
+        if(this.group != null) {
+            Predator leader = group.getLeader();
+            if (leader != null && this != leader) {
+                moveToLeader(leader);
+            } else {
+                move();
+            }
+        }
+        else{
             move();
         }
     }
 
+    /**
+     * Check if the predator is dead or not
+     */
     private void checkDead() {
         health--;
         if (health < 1) {
@@ -111,6 +111,9 @@ class Predator extends Animal {
         }
     }
 
+    /**
+     * The predator looks around for prey
+     */
     private void scout() {
         globalDistanceX = -1;
         globalDistanceY = -1;
@@ -126,6 +129,9 @@ class Predator extends Animal {
         }
     }
 
+    /**
+     * Calculate the next position for the predator
+     */
     private void move() {
         if (globalDistanceX != -1) {
             // TODO duplicated code to line 138. consider move common code to another method
@@ -158,5 +164,43 @@ class Predator extends Animal {
             else
                 this.x -= speed;
         }
+    }
+
+    public void grouping(ArrayList<Predator> predators, ArrayList<Group> groups){
+        int dX=600, dY=600;
+        for (Predator predator : predators) {
+            if( this.group == null && predator != this){
+                dX = this.x - predator.x;
+                dY = this.y - predator.y;
+                if(dX*dX+dY*dY < this.visionRadius*this.visionRadius){
+                    if(predator.group == null){
+                        Group neu = new Group(this, predator);
+                        this.group = neu;
+                        predator.group = neu;
+                        groups.add(neu);
+                    }
+                    else{
+                        predator.group.addMember(this);
+                        this.group = predator.group;
+                    }
+                }
+
+            }
+        }
+    }
+
+    /**
+     * Paint predator to the map
+     *
+     * @param graphics: Graphic object
+     */
+    @Override
+    void paint(Graphics graphics) {
+        graphics.setColor(color);
+        graphics.fillRect(map.tiles * x, map.tiles * y, map.tiles, map.tiles);
+        graphics.setColor(Color.PINK);
+        graphics.drawOval(
+                map.tiles * (x - visionRadius + map.tiles / 2), map.tiles * (y - visionRadius + map.tiles / 2),
+                map.tiles * visionRadius * 2, map.tiles * visionRadius * 2);
     }
 }

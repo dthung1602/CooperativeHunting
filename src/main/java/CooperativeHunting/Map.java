@@ -11,6 +11,7 @@ class Map extends JPanel {
     // preys and predator groups
     private ArrayList<Prey> preys;
     ArrayList<Group> groups;
+    ArrayList<Predator> predators;
 
     private int preysNum;
 
@@ -27,6 +28,7 @@ class Map extends JPanel {
     private static Random random = new Random();
 
     Map() {
+        predators = new ArrayList<Predator>();
         preys = new ArrayList<Prey>();
         groups = new ArrayList<Group>();
     }
@@ -65,6 +67,9 @@ class Map extends JPanel {
     @Override
     public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
+        for(Predator predator : predators){
+            predator.paint(graphics);
+        }
 
         for (Group group : groups)
             group.paint(graphics);
@@ -82,30 +87,40 @@ class Map extends JPanel {
         avgFoodGained = 0;
 
         // remove dead animals
-        for (Group group : groups)
-            Predator.removeDeadPredators(group.members);
+        Predator.removeDeadPredators(predators);
         Prey.removeDeadPreys(preys);
 
         // new preys pop up
         createNewPreys();
 
         // split and merge predators groups
+        //Order
+        //Create group
+        //Scout
+        //Reset leader
+        //Select leader
+        //Move
+        //Calculate circle
+        //Delete member
+        for(Predator predator : predators){
+            predator.grouping(predators, groups);
+            predator.updateScout();
+        }
+
+        for(Group group : groups){
+            group.updateLeader();
+        }
+
+        for(Predator predator : predators){
+            predator.updateMove();
+        }
+
         ArrayList<Group> delGroups = new ArrayList<Group>();
-        ArrayList<Group> newGroups = new ArrayList<Group>();
-        for (Group group : groups) {
-            newGroups.addAll(group.rearrange());
-            if (group.isDead || group.members.size() < 1) {
+        for(Group group : groups){
+            group.updateCicleAndDeleteMember();
+            if(group.members.size() <= 1){
                 delGroups.add(group);
             }
-        }
-        groups.addAll(newGroups);
-        groups.removeAll(delGroups);
-        delGroups = new ArrayList<Group>();
-
-        // update all
-        for (Group group : groups) {
-            group.update();
-            delGroups.add(group.circleCenter());
         }
         groups.removeAll(delGroups);
 
@@ -113,7 +128,7 @@ class Map extends JPanel {
             prey.update();
 
         // display output
-        controller.displayOutput(avgFoodGained, predatorCount);
+        //controller.displayOutput(avgFoodGained, predatorCount);
     }
 
     /**
@@ -134,9 +149,8 @@ class Map extends JPanel {
 
         // get occupied positions on map
         HashSet<Position> usedPositions = new HashSet<Position>();
-        for (Group group : groups)
-            for (Predator member : group.getMembers())
-                usedPositions.add(member.getPosition());
+        for (Predator predator : predators)
+            usedPositions.add(predator.getPosition());
 
         // TODO check prey > map capacity
         // create preys randomly
@@ -172,9 +186,9 @@ class Map extends JPanel {
         // TODO check prey > map capacity
         // create predators randomly
         ArrayList<Position> positions = getRandomPositions(number, usedPositions);
-        groups.clear();
+        predators.clear();
         for (Position position : positions)
-            groups.add(new Group(new Predator(position)));
+            predators.add(new Predator(position));
     }
 
     /**
