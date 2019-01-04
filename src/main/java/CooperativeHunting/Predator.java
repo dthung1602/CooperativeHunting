@@ -37,7 +37,7 @@ class Predator extends Animal {
      * @param health:       predators' health point
      * @param attack:       predators' attack point
      * @param visionRadius: predators' vision radius
-     * @param color         : predators' color for visualization
+     * @param color:        predators' color for visualization
      */
     static void set(int speed, int health, int attack, int visionRadius, Color color) {
         Predator.speed = speed;
@@ -66,12 +66,13 @@ class Predator extends Animal {
      * @param graphics: Graphic object
      */
     @Override
-    // TODO rewrite
     void paint(Graphics graphics) {
         graphics.setColor(color);
-        graphics.fillRect(x - size / 2, y - size / 2, size, size);
+        graphics.fillRect(Map.tiles * x, Map.tiles * y, Map.tiles, Map.tiles);
         graphics.setColor(Color.PINK);
-        graphics.drawOval(x - visionRadius, y - visionRadius, visionRadius * 2, visionRadius * 2);
+        graphics.drawOval(
+                Map.tiles * (x - visionRadius + Map.tiles / 2), Map.tiles * (y - visionRadius + Map.tiles / 2),
+                Map.tiles * visionRadius * 2, Map.tiles * visionRadius * 2);
     }
 
     /**

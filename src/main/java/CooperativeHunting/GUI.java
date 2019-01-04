@@ -97,7 +97,6 @@ public class GUI {
         averageFood.setEditable(false);
         predatorCount.setEditable(false);
 
-
     }
 
     /**
@@ -109,11 +108,10 @@ public class GUI {
     }
 
     /**
-
      * Disable clear and save buttons
      */
-    private void setButtonDisable(){
-        for(Button button: button)
+    private void setButtonDisable() {
+        for (Button button : button)
             button.setDisable(editDisable);
     }
 
@@ -183,10 +181,10 @@ public class GUI {
     @FXML
     private void save() {
 
-
         //Cannot change the value of Output manually
         averageFood.setEditable(false);
         predatorCount.setEditable(false);
+
 
         // change color type to java.awt.Color
         Color predatorColorAwt = changeColorType(predatorColor.getValue());
@@ -196,7 +194,7 @@ public class GUI {
         try {
             // Only display Play/Pause button after pressing Save
             // Stop button is hided unless pressing Play button
-            editDisable=true;
+            editDisable = true;
             setButtonDisable();
             play.setDisable(false);
             stop.setDisable(false);
@@ -221,8 +219,8 @@ public class GUI {
                     Integer.parseInt(preyVisionRadius.getText()),
                     preyColorAwt
             );
-        } catch (NumberFormatException e){
-            editDisable=false;
+        } catch (NumberFormatException e) {
+            editDisable = false;
             setButtonDisable();
             play.setDisable(true);
             stop.setDisable(true);
@@ -232,7 +230,6 @@ public class GUI {
 
             alert.showAndWait();
         }
-
 
 
     }
@@ -263,7 +260,7 @@ public class GUI {
                 predatorNumber, health, predatorAttack, predatorSpeed, groupRadius, predatorVisionRadius,
                 preyNumber, nutrition, preyAttack, preySpeed, size, preyVisionRadius
         };
-        button= new Button[]{clear, save
+        button = new Button[]{clear, save
 
         };
 

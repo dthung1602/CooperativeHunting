@@ -15,6 +15,7 @@ class Map extends JPanel {
     // map size
     static int mapWidth;
     static int mapHeight;
+    static int tiles;
 
     private static Random random = new Random();
 
@@ -42,6 +43,7 @@ class Map extends JPanel {
     void setMapSize(int width, int height) {
         mapWidth = width;
         mapHeight = height;
+        tiles = Math.min(600 / mapHeight, 600 / mapWidth);
     }
 
     /**
