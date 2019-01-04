@@ -77,15 +77,16 @@ class Map extends JPanel {
     /**
      * Randomly create preys in the map
      *
-     * @param number:    number of preys to create
-     * @param speed:     preys' speed (tiles/iteration)
-     * @param nutrition: preys' nutrition
-     * @param attack:    preys' attack
-     * @param color:     preys' color for visualization
+     * @param number:       number of preys to create
+     * @param speed:        preys' speed (tiles/iteration)
+     * @param nutrition:    preys' nutrition
+     * @param attack:       preys' attack
+     * @param visionRadius: preys' vision radius
+     * @param color:        preys' color for visualization
      */
-    void initializePreys(int number, int speed, float nutrition, int attack, Color color) {
+    void initializePreys(int number, int speed, float nutrition, int attack, int visionRadius, Color color) {
         // set values for prey class
-        Prey.set(speed, nutrition, attack, color);
+        Prey.set(speed, nutrition, attack, visionRadius, color);
 
         // get occupied positions on map
         HashSet<Position> usedPositions = new HashSet<Position>();
@@ -106,16 +107,17 @@ class Map extends JPanel {
     /**
      * Randomly create predators in the map
      *
-     * @param number:      number of predators to create
-     * @param speed:       predators' speed (tiles/iteration)
-     * @param health:      predators' health
-     * @param attack:      predators' attack
-     * @param groupRadius: predators' group radius
-     * @param color:       predators' color for visualization
+     * @param number:       number of predators to create
+     * @param speed:        predators' speed (tiles/iteration)
+     * @param health:       predators' health
+     * @param attack:       predators' attack
+     * @param groupRadius:  predators' group radius
+     * @param visionRadius: predators' vision radius
+     * @param color:        predators' color for visualization
      */
-    void initializePredators(int number, int speed, int health, int attack, int groupRadius, Color color) {
+    void initializePredators(int number, int speed, int health, int attack, int groupRadius, int visionRadius, Color color) {
         // set values for predator class
-        Predator.set(speed, health, attack, color);
+        Predator.set(speed, health, attack, color); //TODO add visionRadius
         Group.setGroupRadius(groupRadius);
 
         // get occupied positions on map

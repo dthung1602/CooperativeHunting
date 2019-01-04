@@ -21,7 +21,7 @@ class Predator extends Animal {
         super(position);
     }
 
-    // FIXME camelCase, write full name
+    // FIXME camelCase, write full name, add visionRadius
     static void set(int sp, int HP, int ATK, Color clr) {
         speed = sp;
         health = HP;

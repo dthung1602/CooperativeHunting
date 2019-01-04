@@ -30,10 +30,11 @@ class Prey extends Animal {
      * @param attack:    preys' attack
      * @param color:     preys' color for visualization
      */
-    static void set(int speed, float nutrition, int attack, Color color) {
+    static void set(int speed, float nutrition, int attack, int visionRadius, Color color) {
         Prey.speed = speed;
         Prey.nutrition = nutrition;
         Prey.attack = attack;
+        Prey.visionRadius = visionRadius;
         Prey.color = color;
     }
 

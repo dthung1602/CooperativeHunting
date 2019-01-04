@@ -12,6 +12,7 @@ import javafx.scene.layout.AnchorPane;
 import javax.swing.*;
 import java.awt.*;
 
+
 public class GUI {
     private boolean editDisable = false;
     private Main application;
@@ -77,23 +78,34 @@ public class GUI {
         this.map = map;
     }
 
+    /**
+     * Do not let user type input to all fields
+     */
     private void setFieldsDisable() {
         for (Control widget : widgets)
             widget.setDisable(editDisable);
     }
 
+    /**
+     * Disable fields, save and clear buttons and do the runningToggle function in the main
+     */
     @FXML
     void play() {
         editDisable = true;
-        setFieldsDisable();
+        setFieldsDisable(); // disable fields
         application.runningToggle();
+
     }
 
+    /**
+     * Enable fields, disable play button and do the stopSimulation function in the main
+     */
     @FXML
     void stop() {
         editDisable = false;
         setFieldsDisable();
         application.stopSimulation();
+
     }
 
     //Slider
@@ -103,51 +115,79 @@ public class GUI {
         application.setSimulationSpeed(slider.getValue());
     }
 
-    //Save button
-    @FXML
-    private void save() {
-        // TODO common code to method toAwtColor
-        javafx.scene.paint.Color predatorColorJavafx = predatorColor.getValue();
-        Color predatorColorAwt = new java.awt.Color((float) predatorColorJavafx.getRed(),
-                (float) predatorColorJavafx.getGreen(),
-                (float) predatorColorJavafx.getBlue(),
-                (float) predatorColorJavafx.getOpacity());
-
-        javafx.scene.paint.Color preyColorJavafx = preyColor.getValue();
-        Color preyColorAwt = new java.awt.Color((float) preyColorJavafx.getRed(),
-                (float) preyColorJavafx.getGreen(),
-                (float) preyColorJavafx.getBlue(),
-                (float) preyColorJavafx.getOpacity());
-
-        map.setMapSize(
-                Integer.parseInt(width.getText()),
-                Integer.parseInt(height.getText())
-        );
-        map.initializePredators(
-                Integer.parseInt(predatorNumber.getText()),
-                Integer.parseInt(predatorSpeed.getText()),
-                Integer.parseInt(health.getText()),
-                Integer.parseInt(predatorAttack.getText()),
-                Integer.parseInt(groupRadius.getText()),
-                predatorColorAwt
-        );
-        map.initializePreys(
-                Integer.parseInt(preyNumber.getText()),
-                Integer.parseInt(preySpeed.getText()),
-                Float.parseFloat(nutrition.getText()),
-                Integer.parseInt(preyAttack.getText()),
-                preyColorAwt
+    /**
+     * Change color type from javafx.scene.paint.Color to java.awt.Color
+     *
+     * @param color: javafx.scene.paint.Color type to be changed
+     * @return java.awt.Color type
+     */
+    private java.awt.Color changeColorType(javafx.scene.paint.Color color) {
+        return new java.awt.Color(
+                (float) color.getRed(),
+                (float) color.getGreen(),
+                (float) color.getBlue(),
+                (float) color.getOpacity()
         );
     }
 
-    // Clear button
+    /**
+     * Save user inputs to 3 initializing functions in Map class
+     */
+    @FXML
+    private void save() {
+        // change color type to java.awt.Color
+        Color predatorColorAwt = changeColorType(predatorColor.getValue());
+        Color preyColorAwt = changeColorType(preyColor.getValue());
+
+        // pass value to 3 initializing functions in Map class
+        try {
+            map.setMapSize(
+                    Integer.parseInt(width.getText()),
+                    Integer.parseInt(height.getText())
+            );
+            map.initializePredators(
+                    Integer.parseInt(predatorNumber.getText()),
+                    Integer.parseInt(predatorSpeed.getText()),
+                    Integer.parseInt(health.getText()),
+                    Integer.parseInt(predatorAttack.getText()),
+                    Integer.parseInt(groupRadius.getText()),
+                    5, //TODO add visionRadius
+                    predatorColorAwt
+            );
+            map.initializePreys(
+                    Integer.parseInt(preyNumber.getText()),
+                    Integer.parseInt(preySpeed.getText()),
+                    Float.parseFloat(nutrition.getText()),
+                    Integer.parseInt(preyAttack.getText()),
+                    5, //TODO add visionRadius
+                    preyColorAwt
+            );
+        } catch (NumberFormatException e){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Invalid Input");
+            alert.setContentText("Please fill all the fields");
+
+            alert.showAndWait();
+        }
+
+
+    }
+
+    /**
+     * Set text of all fields to value 0
+     */
     @FXML
     public void clear() {
         if (!editDisable)
             setText("0");
     }
 
-    // Initialize
+    /**
+     * Initialize the controller class. This method is automatically called after the fxml file has been loaded.
+     * Initialize empty string in all fields
+     * Create the map in the big AnchorPane
+     * Initialize conditions that only accept numbers in the fields
+     */
     @FXML
     public void initialize() {
         textFields = new TextField[]{
