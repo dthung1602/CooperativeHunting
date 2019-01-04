@@ -42,13 +42,11 @@ class Prey extends Animal {
     /**
      * Update prey's position, health, etc after each iteration
      * Handle interactions between predators and preys
-     *
-     * @param map: Map object
      */
     @Override
-    void update(Map map) {
+    void update() {
         // get predators in vision
-        List<Predator> predators = getPredatorsInVision(map);
+        List<Predator> predators = getPredatorsInVision();
 
         // if no predator found, move randomly
         if (predators.isEmpty()) {
@@ -72,7 +70,7 @@ class Prey extends Animal {
      */
     @Override
     void paint(Graphics graphics) {
-        graphics.drawRect(x, y, 600 / Map.mapWidth, 600 / Map.mapHeight);
+        graphics.drawRect(x, y, 600 / map.mapWidth, 600 / map.mapHeight);
     }
 
     /**
@@ -148,25 +146,35 @@ class Prey extends Animal {
      * @param predators : predator in vision
      */
     private void resolveAttack(List<Predator> predators) {
-        // predators attacks first
+        // predators attacks first and succeed
         if (predators.size() * Predator.getAttack() * attackRatio >= attack) {
+            // prey is dead
             this.dead = true;
+
+            // increase food gained
+            map.avgFoodGained += nutrition;
+
+            // increase health of predators
+            int healthGained = (int) nutrition / predators.size();
+            for (Predator predator : predators)
+                predator.health += healthGained;
             return;
         }
 
         // prey attacks closest predator back
-        if (attack > attackRatio * Predator.getAttack())
+        if (attack > attackRatio * Predator.getAttack()) {
             predators.get(0).dead = true;
+            map.predatorCount--;
+        }
     }
 
     /**
      * Get a list of predators in prey's vision.
      * The closest predator is at the first position.
      *
-     * @param map: Map object
      * @return list of predators in prey's vision
      */
-    private List<Predator> getPredatorsInVision(Map map) {
+    private List<Predator> getPredatorsInVision() {
         ArrayList<Predator> predatorsInRange = new ArrayList<Predator>();
 
         // keep track of closest predator

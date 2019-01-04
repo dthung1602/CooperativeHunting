@@ -94,11 +94,10 @@ public class GUI {
     }
 
     /**
-
      * Disable clear and save buttons
      */
-    private void setButtonDisable(){
-        for(Button button: button)
+    private void setButtonDisable() {
+        for (Button button : button)
             button.setDisable(editDisable);
     }
 
@@ -142,28 +141,10 @@ public class GUI {
     }
 
     /**
-     * Change color type from javafx.scene.paint.Color to java.awt.Color
-     *
-     * @param color: javafx.scene.paint.Color type to be changed
-     * @return java.awt.Color type
-     */
-    private java.awt.Color changeColorType(javafx.scene.paint.Color color) {
-        return new java.awt.Color(
-                (float) color.getRed(),
-                (float) color.getGreen(),
-                (float) color.getBlue(),
-                (float) color.getOpacity()
-        );
-    }
-
-    /**
      * Save user inputs to 3 initializing functions in Map class
      */
     @FXML
     private void save() {
-
-
-
 
 
         // change color type to java.awt.Color
@@ -174,7 +155,7 @@ public class GUI {
         try {
             // Only display Play/Pause button after pressing Save
             // Stop button is hided unless pressing Play button
-            editDisable=true;
+            editDisable = true;
             setButtonDisable();
             play.setDisable(false);
             stop.setDisable(false);
@@ -199,20 +180,18 @@ public class GUI {
                     Integer.parseInt(preyVisionRadius.getText()),
                     preyColorAwt
             );
-        } catch (NumberFormatException e){
-            editDisable=false;
+
+        } catch (NumberFormatException e) {
+            editDisable = false;
             setButtonDisable();
             play.setDisable(true);
             stop.setDisable(true);
+
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Invalid Input");
             alert.setContentText("Please fill all the fields");
-
             alert.showAndWait();
         }
-
-
-
     }
 
     /**
@@ -236,15 +215,13 @@ public class GUI {
     public void initialize() {
         play.setDisable(true);
         stop.setDisable(true);
+
         textFields = new TextField[]{
                 height, width,
                 predatorNumber, health, predatorAttack, predatorSpeed, groupRadius, predatorVisionRadius,
                 preyNumber, nutrition, preyAttack, preySpeed, size, preyVisionRadius
         };
-        button= new Button[]{clear, save
-
-        };
-
+        button = new Button[]{clear, save};
         widgets = new Control[]{
                 height, width,
                 predatorNumber, health, predatorAttack, predatorSpeed, groupRadius, predatorVisionRadius, predatorColor,
@@ -287,6 +264,21 @@ public class GUI {
     private void setText(String text) {
         for (TextField field : textFields)
             field.setText(text);
+    }
+
+    /**
+     * Change color type from javafx.scene.paint.Color to java.awt.Color
+     *
+     * @param color: javafx.scene.paint.Color type to be changed
+     * @return java.awt.Color type
+     */
+    private java.awt.Color changeColorType(javafx.scene.paint.Color color) {
+        return new java.awt.Color(
+                (float) color.getRed(),
+                (float) color.getGreen(),
+                (float) color.getBlue(),
+                (float) color.getOpacity()
+        );
     }
 }
 

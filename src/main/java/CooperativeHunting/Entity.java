@@ -3,6 +3,7 @@ package CooperativeHunting;
 import java.awt.*;
 
 abstract class Entity {
+    static Map map;
     int x;
     int y;
 
@@ -14,7 +15,7 @@ abstract class Entity {
         y = position.y;
     }
 
-    abstract void update(Map map);
+    abstract void update();
 
     abstract void paint(Graphics graphics);
 

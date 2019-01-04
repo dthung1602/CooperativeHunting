@@ -41,27 +41,26 @@ class Group extends Entity {
 
     /**
      * TODO add comment
-     *
-     * @param map: Map object
      */
     @Override
-    void update(Map map) {
+    void update() {
         resetLeader();
         for (Predator member : members)
-            member.update(map);
+            member.update();
     }
 
     /**
      * Recalculate the group members after all the predators have moved in a iteration
      *
-     * @param map: Map object
      * @return TODO return what?
      */
-    ArrayList<Group> rearrange(Map map) {
-        circleCenter();
+    ArrayList<Group> rearrange() {
+        ArrayList<Group> delGroup = new ArrayList<Group>();
+        delGroup.add(circleCenter());
         grouping(map.groups);
-        circleCenter();
-        return deleteMember();
+        delGroup.add(circleCenter());
+        delGroup.addAll(deleteMember());
+        return  delGroup;
     }
 
     /**
@@ -86,15 +85,21 @@ class Group extends Entity {
 
     // TODO add comments for all below methods
     // TODO comment in code for all below methods
-    private void circleCenter() {
+    Group circleCenter() {
         x = 0;
         y = 0;
         for (Predator member : members) {
             x += member.x;
             y += member.y;
         }
-        x = x / members.size();
-        y = y / members.size();
+        try {
+            x = x / members.size();
+            y = y / members.size();
+        }
+        catch(ArithmeticException e){
+            return this;
+        }
+        return null;
     }
 
     private ArrayList<Group> deleteMember() {

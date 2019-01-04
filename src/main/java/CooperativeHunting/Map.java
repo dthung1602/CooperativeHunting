@@ -12,9 +12,15 @@ class Map extends JPanel {
     private ArrayList<Prey> preys;
     ArrayList<Group> groups;
 
+    private int preysNum;
+
     // map size
-    static int mapWidth;
-    static int mapHeight;
+    int mapWidth;
+    int mapHeight;
+
+    // output
+    float avgFoodGained;
+    int predatorCount;
 
     private static Random random = new Random();
 
@@ -65,28 +71,41 @@ class Map extends JPanel {
      * Preys and predators move and interact
      */
     void update() {
-        for (Group group : groups) {
+        // initialize output for this iteration
+        avgFoodGained = 0;
+
+        // remove dead animals
+        for (Group group : groups)
             Predator.removeDeadPredators(group.members);
-        }
         Prey.removeDeadPreys(preys);
 
-        // these arraylists are the list of new created groups and the list of old group for deleting
+        // new preys pop up
+        createNewPreys();
+
+        // split and merge predators groups
         ArrayList<Group> delGroups = new ArrayList<Group>();
         ArrayList<Group> newGroups = new ArrayList<Group>();
         for (Group group : groups) {
-            newGroups.addAll(group.rearrange(this));
+            newGroups.addAll(group.rearrange());
             if (group.isDead || group.members.size() < 1) {
                 delGroups.add(group);
             }
         }
         groups.addAll(newGroups);
         groups.removeAll(delGroups);
+        delGroups = new ArrayList<Group>();
 
-        for (Group group : groups)
-            group.update(this);
+        // update all
+        for (Group group : groups) {
+            group.update();
+            delGroups.add(group.circleCenter());
+        }
+        groups.removeAll(delGroups);
 
         for (Prey prey : preys)
-            prey.update(this);
+            prey.update();
+
+        // TODO display output
     }
 
     /**
@@ -100,16 +119,16 @@ class Map extends JPanel {
      * @param color:        preys' color for visualization
      */
     void initializePreys(int number, int speed, float nutrition, int attack, int visionRadius, Color color) {
+        preysNum = number;
+
         // set values for prey class
         Prey.set(speed, nutrition, attack, visionRadius, color);
 
         // get occupied positions on map
         HashSet<Position> usedPositions = new HashSet<Position>();
-        for (Group group : groups) {
-            usedPositions.add(group.getLeader().getPosition());
+        for (Group group : groups)
             for (Predator member : group.getMembers())
                 usedPositions.add(member.getPosition());
-        }
 
         // TODO check prey > map capacity
         // create preys randomly
@@ -131,6 +150,8 @@ class Map extends JPanel {
      * @param color:        predators' color for visualization
      */
     void initializePredators(int number, int speed, int health, int attack, int groupRadius, int visionRadius, Color color) {
+        predatorCount = number;
+
         // set values for predator class
         Predator.set(speed, health, attack, visionRadius, color);
         Group.setGroupRadius(groupRadius);
@@ -149,17 +170,13 @@ class Map extends JPanel {
     }
 
     /**
-     * Create random integer in range [min, max)
-     *
-     * @param min: lower bound - inclusive
-     * @param max: upper bound - exclusive
-     * @return random int in range [min, max)
+     * Create new preys to replace dead ones
      */
-    private static int getRandomInt(int min, int max) {
-        if (min > max)
-            throw new IllegalArgumentException("Max must not be less than min");
-
-        return random.nextInt(max - min) + min;
+    private void createNewPreys() {
+        int numPreyToAdd = preysNum - preys.size();
+        ArrayList<Position> positions = getRandomPositions(numPreyToAdd, new ArrayList<Position>());
+        for (int i = 0; i < numPreyToAdd; i++)
+            preys.add(new Prey(positions.get(i)));
     }
 
     /**
@@ -175,11 +192,12 @@ class Map extends JPanel {
             Position position;
             int x, y;
             do {
-                x = getRandomInt(0, mapWidth);
-                y = getRandomInt(0, mapWidth);
+                x = random.nextInt(mapWidth);
+                y = random.nextInt(mapHeight);
                 position = new Position(x, y);
             } while (usedPositions.contains(position));
             newPositions.add(position);
+            usedPositions.add(position);
         }
         return newPositions;
     }

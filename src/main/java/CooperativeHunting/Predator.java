@@ -7,11 +7,12 @@ import java.util.Iterator;
 class Predator extends Animal {
     static int visionRadius;
     private static int speed;
-    private static int health = 100;
+    private static int initHealth;
     private static int attack;
     private static Color color = Color.RED;
 
     // predator's group
+    int health;
     Group group;
 
     // hold the distance and direction to the prey for the predator
@@ -26,6 +27,7 @@ class Predator extends Animal {
      */
     Predator(Position position) {
         super(position);
+        health = initHealth;
     }
 
     static int getAttack() {
@@ -34,30 +36,26 @@ class Predator extends Animal {
 
     /**
      * @param speed:        predators' speed point (tiles/iteration)
-     * @param health:       predators' health point
+     * @param initHealth:   predators' initial health point
      * @param attack:       predators' attack point
      * @param visionRadius: predators' vision radius
-     * @param color         : predators' color for visualization
+     * @param color:        predators' color for visualization
      */
-    static void set(int speed, int health, int attack, int visionRadius, Color color) {
+    static void set(int speed, int initHealth, int attack, int visionRadius, Color color) {
         Predator.speed = speed;
-        Predator.health = health;
+        Predator.initHealth = initHealth;
         Predator.attack = attack;
         Predator.visionRadius = visionRadius;
         Predator.color = color;
-
     }
-
 
     /**
      * Update predator's position, health, etc after each iteration
-     *
-     * @param map: Map object
      */
     @Override
-    void update(Map map) {
-        updateScout(map);
-        updateMove(map);
+    void update() {
+        updateScout();
+        updateMove();
     }
 
     /**
@@ -89,27 +87,30 @@ class Predator extends Animal {
 
     // TODO add comments for all below methods
     // TODO comment in code for all below methods
-    private void updateScout(Map map) {
-        scout(map);
+    private void updateScout() {
+        scout();
         group.selectLeader(this, globalDistance, globalDistanceX, globalDistanceY);
         checkDead();
     }
 
-    private void updateMove(Map map) {
+    private void updateMove() {
         Predator leader = group.getLeader();
         if (leader != null && this != leader) {
             moveToLeader(leader);
         } else {
-            move(map);
+            move();
         }
     }
 
     private void checkDead() {
         health--;
-        this.dead = (health < 1);
+        if (health < 1) {
+            dead = true;
+            map.predatorCount--;
+        }
     }
 
-    private void scout(Map map) {
+    private void scout() {
         globalDistanceX = -1;
         globalDistanceY = -1;
         globalDistance = map.getMapWidth();
@@ -124,7 +125,7 @@ class Predator extends Animal {
         }
     }
 
-    private void move(Map map) {
+    private void move() {
         if (globalDistanceX != -1) {
             // TODO duplicated code to line 138. consider move common code to another method
             try {
