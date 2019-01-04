@@ -15,13 +15,15 @@ class Map extends JPanel {
     private int preysNum;
 
     // map size
-    int mapWidth;
-    int mapHeight;
+    private int mapWidth;
+    private int mapHeight;
+    int tiles;
 
     // output
     float avgFoodGained;
     int predatorCount;
 
+    private GUI controller;
     private static Random random = new Random();
 
     Map() {
@@ -48,6 +50,11 @@ class Map extends JPanel {
     void setMapSize(int width, int height) {
         mapWidth = width;
         mapHeight = height;
+        tiles = Math.min(600 / mapHeight, 600 / mapWidth);
+    }
+
+    void setController(GUI controller) {
+        this.controller = controller;
     }
 
     /**
@@ -105,7 +112,8 @@ class Map extends JPanel {
         for (Prey prey : preys)
             prey.update();
 
-        // TODO display output
+        // display output
+        controller.displayOutput(avgFoodGained, predatorCount);
     }
 
     /**

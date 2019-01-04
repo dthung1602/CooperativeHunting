@@ -34,6 +34,7 @@ public class Main extends Application {
         // get the controller and pass Map Object to it
         GUI controller = loader.getController();
         Entity.map = map = new Map();
+        map.setController(controller);
         controller.setMap(map);
         controller.setApplication(this);
 

@@ -64,12 +64,13 @@ class Predator extends Animal {
      * @param graphics: Graphic object
      */
     @Override
-    // TODO rewrite
     void paint(Graphics graphics) {
         graphics.setColor(color);
-        graphics.fillRect(x - size / 2, y - size / 2, size, size);
+        graphics.fillRect(map.tiles * x, map.tiles * y, map.tiles, map.tiles);
         graphics.setColor(Color.PINK);
-        graphics.drawOval(x - visionRadius, y - visionRadius, visionRadius * 2, visionRadius * 2);
+        graphics.drawOval(
+                map.tiles * (x - visionRadius + map.tiles / 2), map.tiles * (y - visionRadius + map.tiles / 2),
+                map.tiles * visionRadius * 2, map.tiles * visionRadius * 2);
     }
 
     /**

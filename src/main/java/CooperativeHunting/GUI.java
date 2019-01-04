@@ -12,7 +12,6 @@ import javafx.scene.layout.AnchorPane;
 import javax.swing.*;
 import java.awt.*;
 
-
 public class GUI {
     private boolean editDisable = false;
     private Main application;
@@ -58,6 +57,12 @@ public class GUI {
     @FXML
     ColorPicker preyColor;
 
+    //Output
+    @FXML
+    TextField averageFood;
+    @FXML
+    TextField predatorCount;
+
     //Button
     @FXML
     Button clear;
@@ -96,7 +101,7 @@ public class GUI {
     /**
      * Disable clear and save buttons
      */
-    private void setButtonDisable() {
+    private void setButtonsDisable() {
         for (Button button : button)
             button.setDisable(editDisable);
     }
@@ -110,12 +115,9 @@ public class GUI {
         editDisable = true;
 
         setFieldsDisable();
-        setButtonDisable();
-
-        setFieldsDisable(); // disable fields
+        setButtonsDisable();
 
         application.runningToggle();
-
     }
 
     /**
@@ -125,9 +127,12 @@ public class GUI {
     void stop() {
         editDisable = false;
         setFieldsDisable(); //enable fields
-        setButtonDisable(); //enable buttons
+        setButtonsDisable(); //enable buttons
         play.setDisable(true);
         application.stopSimulation();
+        //reset the value of Output
+        averageFood.setText("");
+        predatorCount.setText("");
 
     }
 
@@ -145,7 +150,9 @@ public class GUI {
      */
     @FXML
     private void save() {
-
+        //Cannot change the value of Output manually
+        averageFood.setEditable(false);
+        predatorCount.setEditable(false);
 
         // change color type to java.awt.Color
         Color predatorColorAwt = changeColorType(predatorColor.getValue());
@@ -156,7 +163,7 @@ public class GUI {
             // Only display Play/Pause button after pressing Save
             // Stop button is hided unless pressing Play button
             editDisable = true;
-            setButtonDisable();
+            setButtonsDisable();
             play.setDisable(false);
             stop.setDisable(false);
             map.setMapSize(
@@ -183,7 +190,7 @@ public class GUI {
 
         } catch (NumberFormatException e) {
             editDisable = false;
-            setButtonDisable();
+            setButtonsDisable();
             play.setDisable(true);
             stop.setDisable(true);
 
@@ -215,6 +222,8 @@ public class GUI {
     public void initialize() {
         play.setDisable(true);
         stop.setDisable(true);
+        averageFood.setEditable(false);
+        predatorCount.setEditable(false);
 
         textFields = new TextField[]{
                 height, width,
@@ -254,6 +263,17 @@ public class GUI {
                         }
                     }
             );
+    }
+
+    /**
+     * Display simulation outputs to GUI
+     *
+     * @param averageFoodIteration: average food gained per iteration
+     * @param predatorNumber:       number of remaining predators
+     */
+    void displayOutput(float averageFoodIteration, int predatorNumber) {
+        averageFood.setText(String.valueOf(averageFoodIteration));
+        predatorCount.setText(String.valueOf(predatorNumber));
     }
 
     /**
