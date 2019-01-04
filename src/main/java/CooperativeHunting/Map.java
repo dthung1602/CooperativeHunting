@@ -45,11 +45,42 @@ class Map extends JPanel {
     }
 
     /**
+     * Paint preys and predators to panel
+     *
+     * @param graphics: Graphic object
+     */
+    @Override
+    public void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
+
+        for (Group group : groups)
+            group.paint(graphics);
+
+        graphics.setColor(Prey.color);
+        for (Prey prey : preys)
+            prey.paint(graphics);
+    }
+
+    /**
      * Preys and predators move and interact
      */
     void update() {
+        for (Group group : groups) {
+            Predator.removeDeadPredators(group.members);
+        }
         Prey.removeDeadPreys(preys);
-        Group.mergeOrSplitGroups(groups);
+
+        // these arraylists are the list of new created groups and the list of old group for deleting
+        ArrayList<Group> delGroups = new ArrayList<Group>();
+        ArrayList<Group> newGroups = new ArrayList<Group>();
+        for (Group group : groups) {
+            newGroups.addAll(group.rearrange(this));
+            if (group.isDead || group.members.size() < 1) {
+                delGroups.add(group);
+            }
+        }
+        groups.addAll(newGroups);
+        groups.removeAll(delGroups);
 
         for (Group group : groups)
             group.update(this);
@@ -59,33 +90,18 @@ class Map extends JPanel {
     }
 
     /**
-     * Paint preys and predators to panel
-     *
-     * @param g: Graphic object
-     */
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
-        for (Group group : groups)
-            group.paint(g);
-
-        g.setColor(Prey.color);
-        for (Prey prey : preys)
-            prey.paint(g);
-    }
-
-    /**
      * Randomly create preys in the map
      *
-     * @param number:    number of preys to create
-     * @param speed:     preys' speed (tiles/iteration)
-     * @param nutrition: preys' nutrition
-     * @param attack:    preys' attack
-     * @param color:     preys' color for visualization
+     * @param number:       number of preys to create
+     * @param speed:        preys' speed (tiles/iteration)
+     * @param nutrition:    preys' nutrition
+     * @param attack:       preys' attack
+     * @param visionRadius: preys' vision radius
+     * @param color:        preys' color for visualization
      */
-    void initializePreys(int number, int speed, float nutrition, int attack, Color color) {
+    void initializePreys(int number, int speed, float nutrition, int attack, int visionRadius, Color color) {
         // set values for prey class
-        Prey.set(speed, nutrition, attack, color);
+        Prey.set(speed, nutrition, attack, visionRadius, color);
 
         // get occupied positions on map
         HashSet<Position> usedPositions = new HashSet<Position>();
@@ -106,16 +122,17 @@ class Map extends JPanel {
     /**
      * Randomly create predators in the map
      *
-     * @param number:      number of predators to create
-     * @param speed:       predators' speed (tiles/iteration)
-     * @param health:      predators' health
-     * @param attack:      predators' attack
-     * @param groupRadius: predators' group radius
-     * @param color:       predators' color for visualization
+     * @param number:       number of predators to create
+     * @param speed:        predators' speed (tiles/iteration)
+     * @param health:       predators' health
+     * @param attack:       predators' attack
+     * @param groupRadius:  predators' group radius
+     * @param visionRadius: predators' vision radius
+     * @param color:        predators' color for visualization
      */
-    void initializePredators(int number, int speed, int health, int attack, int groupRadius, Color color) {
+    void initializePredators(int number, int speed, int health, int attack, int groupRadius, int visionRadius, Color color) {
         // set values for predator class
-        Predator.set(speed, health, attack, color);
+        Predator.set(speed, health, attack, visionRadius, color);
         Group.setGroupRadius(groupRadius);
 
         // get occupied positions on map

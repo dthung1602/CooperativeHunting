@@ -101,7 +101,7 @@
                                                       <TextField fx:id="health" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                                       <TextField fx:id="predatorSpeed" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                                       <TextField fx:id="groupRadius" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                          <TextField fx:id="PredatorVisionRadius" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                          <TextField fx:id="predatorVisionRadius" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                                           <ColorPicker fx:id="predatorColor" prefHeight="25.0" prefWidth="114.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                                        </children>
                                     </GridPane>
@@ -136,7 +136,7 @@
                                           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Vision radius" textAlignment="CENTER" wrappingWidth="115.599609375" GridPane.rowIndex="5" />
                                           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Color" textAlignment="CENTER" wrappingWidth="114.04686254241096" GridPane.rowIndex="6" />
                                           <ColorPicker fx:id="preyColor" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                                          <TextField fx:id="PreyVisionRadius" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                          <TextField fx:id="preyVisionRadius" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                                           <TextField fx:id="size" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                                                       <TextField fx:id="preySpeed" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                                       <TextField fx:id="preyAttack" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />

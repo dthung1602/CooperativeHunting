@@ -1,11 +1,9 @@
 package CooperativeHunting;
 
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 
 class Prey extends Animal {
     private static int visionRadius = 5;
@@ -16,6 +14,8 @@ class Prey extends Animal {
     static Color color;
 
     /**
+     * Prey constructor
+     *
      * @param position: initial position of the prey
      */
     Prey(Position position) {
@@ -25,20 +25,23 @@ class Prey extends Animal {
     /**
      * Set numerous settings for preys
      *
-     * @param speed:     preys' speed
-     * @param nutrition: preys' nutrition value
-     * @param attack:    preys' attack
-     * @param color:     preys' color for visualization
+     * @param speed:        preys' speed
+     * @param nutrition:    preys' nutrition value
+     * @param attack:       preys' attack
+     * @param visionRadius: preys' vision radius
+     * @param color:        preys' color for visualization
      */
-    static void set(int speed, float nutrition, int attack, Color color) {
+    static void set(int speed, float nutrition, int attack, int visionRadius, Color color) {
         Prey.speed = speed;
         Prey.nutrition = nutrition;
         Prey.attack = attack;
+        Prey.visionRadius = visionRadius;
         Prey.color = color;
     }
 
     /**
-     * Prey moves and interacts with predators
+     * Update prey's position, health, etc after each iteration
+     * Handle interactions between predators and preys
      *
      * @param map: Map object
      */
@@ -89,18 +92,19 @@ class Prey extends Animal {
      * Prey moves randomly
      */
     private void moveRandomly() {
+        int step = random.nextInt(speed + 1);
         switch (random.nextInt() % 4) {
             case 0:
-                x += speed;
+                x += step;
                 break;
             case 1:
-                x -= speed;
+                x -= step;
                 break;
             case 3:
-                y += speed;
+                y += step;
                 break;
             default:
-                y -= speed;
+                y -= step;
         }
     }
 
