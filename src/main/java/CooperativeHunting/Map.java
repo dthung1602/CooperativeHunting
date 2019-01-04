@@ -45,33 +45,48 @@ class Map extends JPanel {
     }
 
     /**
+     * Paint preys and predators to panel
+     *
+     * @param graphics: Graphic object
+     */
+    @Override
+    public void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
+
+        for (Group group : groups)
+            group.paint(graphics);
+
+        graphics.setColor(Prey.color);
+        for (Prey prey : preys)
+            prey.paint(graphics);
+    }
+
+    /**
      * Preys and predators move and interact
      */
     void update() {
+        for (Group group : groups) {
+            Predator.removeDeadPredators(group.members);
+        }
         Prey.removeDeadPreys(preys);
-        Group.mergeOrSplitGroups(groups);
+
+        // these arraylists are the list of new created groups and the list of old group for deleting
+        ArrayList<Group> delGroups = new ArrayList<Group>();
+        ArrayList<Group> newGroups = new ArrayList<Group>();
+        for (Group group : groups) {
+            newGroups.addAll(group.rearrange(this));
+            if (group.isDead || group.members.size() < 1) {
+                delGroups.add(group);
+            }
+        }
+        groups.addAll(newGroups);
+        groups.removeAll(delGroups);
 
         for (Group group : groups)
             group.update(this);
 
         for (Prey prey : preys)
             prey.update(this);
-    }
-
-    /**
-     * Paint preys and predators to panel
-     *
-     * @param g: Graphic object
-     */
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
-        for (Group group : groups)
-            group.paint(g);
-
-        g.setColor(Prey.color);
-        for (Prey prey : preys)
-            prey.paint(g);
     }
 
     /**

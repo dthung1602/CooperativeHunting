@@ -3,21 +3,28 @@ package CooperativeHunting;
 import java.awt.*;
 import java.util.ArrayList;
 
-// TODO ADD COMMENTS
 class Group extends Entity {
     private static int groupRadius = 100;
     private static Color groupColor = Color.RED;
 
-    private ArrayList<Predator> members;
+    ArrayList<Predator> members;
     private Predator leader;
+    boolean isDead = false;
 
-    // FIXME isDead is assigned but never accessed
-    private boolean isDead = false;
+    private int localPreyDistance = 600; // TODO map.width
+    private int localGroupPreyX = 0; // FIXME not used
+    private int localGroupPreyY = 0; // FIXME not used
 
+    /**
+     * Group constructor
+     *
+     * @param predator: the initial member of the group
+     */
     Group(Predator predator) {
         members = new ArrayList<Predator>();
         members.add(predator);
         leader = null;
+        predator.group = this;
     }
 
     ArrayList<Predator> getMembers() {
@@ -32,24 +39,40 @@ class Group extends Entity {
         Group.groupRadius = groupRadius;
     }
 
+    /**
+     * TODO add comment
+     *
+     * @param map: Map object
+     */
     @Override
     void update(Map map) {
-        // update leader first, if exist
-        if (leader != null)
-            leader.updateAsLeader(map);
-
-        // update members later
-        // members follow leader or move on their own if there's no leader
-        for (Predator member : members) {
+        resetLeader();
+        for (Predator member : members)
             member.update(map);
-            System.out.println(member);
-        }
     }
 
+    /**
+     * Recalculate the group members after all the predators have moved in a iteration
+     *
+     * @param map: Map object
+     * @return TODO return what?
+     */
+    ArrayList<Group> rearrange(Map map) {
+        circleCenter();
+        grouping(map.groups);
+        circleCenter();
+        return deleteMember();
+    }
+
+    /**
+     * Paint group and its predators to the map
+     *
+     * @param graphics: Graphic object
+     */
     @Override
     void paint(Graphics graphics) {
         // paint predators
-        //leader.paint(graphics);
+        leader.paint(graphics);
         for (Predator predator : members)
             predator.paint(graphics);
 
@@ -61,17 +84,8 @@ class Group extends Entity {
 
     }
 
-    // FIXME what's this for? it's never called
-    ArrayList<Group> rearrange(Map map) {
-        ArrayList<Group> newGroups;
-        circleCenter();
-        grouping(map.groups);
-        System.out.println("!!");
-        circleCenter();
-        newGroups = deleteMember(map.groups);
-        return newGroups;
-    }
-
+    // TODO add comments for all below methods
+    // TODO comment in code for all below methods
     private void circleCenter() {
         x = 0;
         y = 0;
@@ -83,8 +97,7 @@ class Group extends Entity {
         y = y / members.size();
     }
 
-    // FIXME parameter ArrayList<Group> groups not used
-    private ArrayList<Group> deleteMember(ArrayList<Group> groups) {
+    private ArrayList<Group> deleteMember() {
         ArrayList<Predator> notMembers = new ArrayList<Predator>();
         ArrayList<Group> newGroups = new ArrayList<Group>();
 
@@ -103,7 +116,7 @@ class Group extends Entity {
     /**
      * Select alone predator to compare with group
      *
-     * @param groups: FIXME add explanation
+     * @param groups: the list of the predators' groups which are existing on the map
      */
     private void grouping(ArrayList<Group> groups) {
         ArrayList<Predator> addGroup = new ArrayList<Predator>();
@@ -116,6 +129,9 @@ class Group extends Entity {
                         if (distance < Predator.visionRadius) {
                             addGroup.addAll(this.members);
                             this.isDead = true;
+                            for (Predator thisMember : this.members) {
+                                thisMember.group = group;
+                            }
                         }
                     }
                 }
@@ -124,10 +140,19 @@ class Group extends Entity {
         }
     }
 
-    // FIXME if is not needed -> delete
-    static void mergeOrSplitGroups(ArrayList<Group> groups) {
-        // merge groups
+    private void resetLeader() {
+        leader = null;
+        localGroupPreyX = 0;
+        localGroupPreyY = 0;
+        localPreyDistance = 600; // TODO map.width
+    }
 
-        // remove dead and out of group members
+    void selectLeader(Predator nextLeader, int preyDistance, int groupPreyX, int groupPreyY) {
+        if (preyDistance < localPreyDistance && groupPreyX != -1) {
+            localPreyDistance = preyDistance;
+            leader = nextLeader;
+            localGroupPreyX = groupPreyX;
+            localGroupPreyY = groupPreyY;
+        }
     }
 }
