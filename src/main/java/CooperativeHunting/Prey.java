@@ -72,7 +72,8 @@ class Prey extends Animal {
      */
     @Override
     void paint(Graphics graphics) {
-        graphics.drawRect(x, y, 600 / Map.mapWidth, 600 / Map.mapHeight);
+        graphics.setColor(color);
+        graphics.fillRect(Map.tiles * x, Map.tiles * y, Map.tiles, Map.tiles);
     }
 
     /**
