@@ -58,6 +58,12 @@ public class GUI {
     @FXML
     ColorPicker preyColor;
 
+    //Output
+    @FXML
+    TextField averageFood;
+    @FXML
+    TextField predatorCount;
+
     //Button
     @FXML
     Button clear;
@@ -83,6 +89,15 @@ public class GUI {
 
     void setMap(Map map) {
         this.map = map;
+    }
+
+    void displayOutput(float averageFoodIteration,int predatorNumber){
+        averageFood.setText(String.valueOf(averageFoodIteration));
+        predatorCount.setText(String.valueOf(predatorNumber));
+        averageFood.setEditable(false);
+        predatorCount.setEditable(false);
+
+
     }
 
     /**
@@ -117,6 +132,9 @@ public class GUI {
 
         application.runningToggle();
 
+
+
+
     }
 
     /**
@@ -129,6 +147,9 @@ public class GUI {
         setButtonDisable(); //enable buttons
         play.setDisable(true);
         application.stopSimulation();
+        //reset the value of Output
+        averageFood.setText("");
+        predatorCount.setText("");
 
     }
 
@@ -163,8 +184,9 @@ public class GUI {
     private void save() {
 
 
-
-
+        //Cannot change the value of Output manually
+        averageFood.setEditable(false);
+        predatorCount.setEditable(false);
 
         // change color type to java.awt.Color
         Color predatorColorAwt = changeColorType(predatorColor.getValue());
