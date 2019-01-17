@@ -1,11 +1,14 @@
 package CooperativeHunting;
 
-import java.awt.*;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+
 import java.util.ArrayList;
 
 class Group extends Entity {
     private static int groupRadius = 100;
-    private static Color groupColor = Color.RED;
+    private static int groupDiameter = 200;
+    private static Color color = Color.RED;
 
     ArrayList<Predator> members;
     private Predator leader = null;
@@ -22,8 +25,13 @@ class Group extends Entity {
      * @param predator2: the initial member of the group
      */
     Group(Predator predator1, Predator predator2) {
+        members = new ArrayList<Predator>();
         members.add(predator1);
         members.add(predator2);
+    }
+
+    static Color getColor() {
+        return color;
     }
 
     ArrayList<Predator> getMembers() {
@@ -36,6 +44,7 @@ class Group extends Entity {
 
     static void setGroupRadius(int groupRadius) {
         Group.groupRadius = groupRadius;
+        groupDiameter = 2 * groupRadius;
     }
 
     /**
@@ -52,7 +61,7 @@ class Group extends Entity {
     /**
      * Select leader
      */
-    void updateLeader(){
+    void updateLeader() {
         this.resetLeader();
         this.selectLeader();
     }
@@ -60,7 +69,7 @@ class Group extends Entity {
     /**
      * Calculate the group's circle center and delete member
      */
-    void updateCicleAndDeleteMember(){
+    void updateCircleAndDeleteMember() {
         this.circleCenter();
         this.delMember();
     }
@@ -70,33 +79,32 @@ class Group extends Entity {
      *
      * @param predator: the new member of the group
      */
-    public void addMember(Predator predator){
+    void addMember(Predator predator) {
         members.add(predator);
     }
 
     /**
      * Delete the ID of the members who left
      */
-    public void delMember(){
-        int dX=0, dY=0;
+    private void delMember() {
+        int dX = 0, dY = 0;
         ArrayList<Predator> notMembers = new ArrayList<Predator>();
-        for(Predator member : members){
+        for (Predator member : members) {
             dX = Math.abs(this.x - member.x);
             dY = Math.abs(this.y - member.y);
             //System.out.println(dX*dX+dY*dY);
-            if(dX*dX+dY*dY > groupRadius *groupRadius){
+            if (dX * dX + dY * dY > groupRadius * groupRadius) {
                 notMembers.add(member);
                 member.group = null;
             }
         }
         members.removeAll(notMembers);
-        System.out.println("S: "+notMembers.size());
     }
 
     /**
      * Calculate the group circle center
      */
-    public void circleCenter(){
+    void circleCenter() {
         this.x = 0;
         this.y = 0;
         //System.out.println("New");
@@ -105,8 +113,8 @@ class Group extends Entity {
             this.x += member.x;
             this.y += member.y;
         }
-        x = x/members.size();
-        y = y/members.size();
+        x = x / members.size();
+        y = y / members.size();
         //System.out.println(X+" "+Y+" "+members.size());
     }
 
@@ -124,7 +132,7 @@ class Group extends Entity {
      * Select the leader based on the closest prey
      */
     private void selectLeader() {
-        for(Predator member : members) {
+        for (Predator member : members) {
             if (member.globalDistance < localPreyDistance && member.globalDistanceX != -1) {
                 localPreyDistance = member.globalDistance;
                 leader = member;
@@ -134,23 +142,17 @@ class Group extends Entity {
         }
     }
 
+
     /**
      * Paint group and its predators to the map
-     *
-     * @param graphics: Graphic object
      */
     @Override
-    void paint(Graphics graphics) {
-        // paint predators
-        leader.paint(graphics);
-        for (Predator predator : members)
-            predator.paint(graphics);
-
-        // paint group radius
-        if (members.size() > 1) {
-            graphics.setColor(groupColor);
-            graphics.drawOval(this.x - groupRadius, this.y - groupRadius, groupRadius * 2, groupRadius * 2);
-        }
-
+    void paint(GraphicsContext graphics) {
+        graphics.strokeOval(
+                x * map.tiles,
+                y * map.tiles,
+                groupDiameter,
+                groupDiameter
+        );
     }
 }

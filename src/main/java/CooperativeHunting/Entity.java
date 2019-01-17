@@ -1,6 +1,6 @@
 package CooperativeHunting;
 
-import java.awt.*;
+import javafx.scene.canvas.GraphicsContext;
 
 abstract class Entity {
     static Map map;
@@ -17,7 +17,7 @@ abstract class Entity {
 
     abstract void update();
 
-    abstract void paint(Graphics graphics);
+    abstract void paint(GraphicsContext graphics);
 
     double distanceTo(Entity entity) {
         float dx = x - entity.x;

@@ -1,11 +1,14 @@
 package CooperativeHunting;
 
-import java.awt.*;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
 class Predator extends Animal {
-    static int visionRadius;
+    private static int visionRadius;
+    private static int visionDiameter;
     private static int speed;
     private static int initHealth;
     private static int attack;
@@ -19,6 +22,10 @@ class Predator extends Animal {
     int globalDistanceX;
     int globalDistanceY;
     int globalDistance = map.getMapWidth(); // TODO change to map.width
+
+    static Color getColor() {
+        return color;
+    }
 
     /**
      * Predator constructor
@@ -47,6 +54,7 @@ class Predator extends Animal {
         Predator.initHealth = initHealth;
         Predator.attack = attack;
         Predator.visionRadius = visionRadius;
+        Predator.visionDiameter = visionRadius * 2;
         Predator.color = color;
     }
 
@@ -87,15 +95,14 @@ class Predator extends Animal {
      * Update the new position of the predator
      */
     void updateMove() {
-        if(this.group != null) {
+        if (this.group != null) {
             Predator leader = group.getLeader();
             if (leader != null && this != leader) {
                 moveToLeader(leader);
             } else {
                 move();
             }
-        }
-        else{
+        } else {
             move();
         }
     }
@@ -166,20 +173,19 @@ class Predator extends Animal {
         }
     }
 
-    public void grouping(ArrayList<Predator> predators, ArrayList<Group> groups){
-        int dX=600, dY=600;
+    void grouping(ArrayList<Predator> predators, ArrayList<Group> groups) {
+        int dX = 600, dY = 600;
         for (Predator predator : predators) {
-            if( this.group == null && predator != this){
+            if (this.group == null && predator != this) {
                 dX = this.x - predator.x;
                 dY = this.y - predator.y;
-                if(dX*dX+dY*dY < this.visionRadius*this.visionRadius){
-                    if(predator.group == null){
+                if (dX * dX + dY * dY < visionRadius * visionRadius) {
+                    if (predator.group == null) {
                         Group neu = new Group(this, predator);
                         this.group = neu;
                         predator.group = neu;
                         groups.add(neu);
-                    }
-                    else{
+                    } else {
                         predator.group.addMember(this);
                         this.group = predator.group;
                     }
@@ -191,16 +197,15 @@ class Predator extends Animal {
 
     /**
      * Paint predator to the map
-     *
-     * @param graphics: Graphic object
      */
     @Override
-    void paint(Graphics graphics) {
-        graphics.setColor(color);
+    void paint(GraphicsContext graphics) {
         graphics.fillRect(map.tiles * x, map.tiles * y, map.tiles, map.tiles);
-        graphics.setColor(Color.PINK);
-        graphics.drawOval(
-                map.tiles * (x - visionRadius + map.tiles / 2), map.tiles * (y - visionRadius + map.tiles / 2),
-                map.tiles * visionRadius * 2, map.tiles * visionRadius * 2);
+        graphics.strokeOval(
+                map.tiles * (x - visionRadius + map.tiles / 2.0),
+                map.tiles * (y - visionRadius + map.tiles / 2.0),
+                map.tiles * visionDiameter,
+                map.tiles * visionDiameter
+        );
     }
 }

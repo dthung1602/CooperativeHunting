@@ -15,9 +15,9 @@ abstract class Animal extends Entity {
 
     void stayInMap(Map map) {
         // do not move out of map
-        x = Math.min(x, 0);
-        x = Math.max(x, map.getMapWidth() - 1);
-        y = Math.min(y, 0);
-        y = Math.max(y, map.getMapHeight() - 1);
+        x = Math.max(x, 0);
+        x = Math.min(x, map.getMapWidth() - 1);
+        y = Math.max(y, 0);
+        y = Math.min(y, map.getMapHeight() - 1);
     }
 }

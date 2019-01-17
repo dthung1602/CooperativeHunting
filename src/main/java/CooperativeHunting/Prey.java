@@ -1,6 +1,8 @@
 package CooperativeHunting;
 
-import java.awt.*;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -11,7 +13,7 @@ class Prey extends Animal {
     private static float nutrition;
     private static int attack;
     private static float attackRatio;
-    static Color color;
+    private static Color color;
 
     /**
      * Prey constructor
@@ -20,6 +22,10 @@ class Prey extends Animal {
      */
     Prey(Position position) {
         super(position);
+    }
+
+    static Color getColor() {
+        return color;
     }
 
     /**
@@ -65,11 +71,9 @@ class Prey extends Animal {
 
     /**
      * Paint prey to the map
-     *
-     * @param graphics: Graphic object
      */
     @Override
-    void paint(Graphics graphics) {
+    void paint(GraphicsContext graphics) {
         graphics.fillRect(map.tiles * x, map.tiles * y, map.tiles, map.tiles);
     }
 

@@ -80,7 +80,7 @@ public class Main extends Application {
                         }
                     // update and repaint
                     map.update();
-                    map.repaint();
+                    map.paint();
 
                     // sleep
                     Thread.sleep((long) (1000.0 / simulationSpeed));

@@ -1,17 +1,20 @@
 package CooperativeHunting;
 
-import javax.swing.*;
-import java.awt.*;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Random;
 
-class Map extends JPanel {
-    // preys and predator groups
+class Map {
     private ArrayList<Prey> preys;
-    ArrayList<Group> groups;
-    ArrayList<Predator> predators;
+    private ArrayList<Group> groups;
+    private ArrayList<Predator> predators;
+
+    private GUI controller;
+    private GraphicsContext graphics;
 
     private int preysNum;
 
@@ -24,7 +27,6 @@ class Map extends JPanel {
     float avgFoodGained;
     int predatorCount;
 
-    private GUI controller;
     private static Random random = new Random();
 
     Map() {
@@ -39,6 +41,10 @@ class Map extends JPanel {
 
     ArrayList<Group> getGroups() {
         return groups;
+    }
+
+    ArrayList<Predator> getPredators() {
+        return predators;
     }
 
     int getMapWidth() {
@@ -57,24 +63,30 @@ class Map extends JPanel {
 
     void setController(GUI controller) {
         this.controller = controller;
+        this.graphics = controller.mapCanvas.getGraphicsContext2D();
     }
 
     /**
-     * Paint preys and predators to panel
-     *
-     * @param graphics: Graphic object
+     * Paint preys and predators to canvas
      */
-    @Override
-    public void paintComponent(Graphics graphics) {
-        super.paintComponent(graphics);
-        for(Predator predator : predators){
-            predator.paint(graphics);
-        }
+    void paint() {
+        // clear screen
+        graphics.setFill(Color.WHITE);
+        graphics.fillRect(0, 0, mapWidth * tiles, mapHeight * tiles);
 
+        // paint predators
+        graphics.setFill(Predator.getColor());
+        graphics.setStroke(Predator.getColor());
+        for (Predator predator : predators)
+            predator.paint(graphics);
+
+        // paint groups
+        graphics.setStroke(Group.getColor());
         for (Group group : groups)
             group.paint(graphics);
 
-        graphics.setColor(Prey.color);
+        // paint preys
+        graphics.setFill(Prey.getColor());
         for (Prey prey : preys)
             prey.paint(graphics);
     }
@@ -102,23 +114,23 @@ class Map extends JPanel {
         //Move
         //Calculate circle
         //Delete member
-        for(Predator predator : predators){
+        for (Predator predator : predators) {
             predator.grouping(predators, groups);
             predator.updateScout();
         }
 
-        for(Group group : groups){
+        for (Group group : groups) {
             group.updateLeader();
         }
 
-        for(Predator predator : predators){
+        for (Predator predator : predators) {
             predator.updateMove();
         }
 
         ArrayList<Group> delGroups = new ArrayList<Group>();
-        for(Group group : groups){
-            group.updateCicleAndDeleteMember();
-            if(group.members.size() <= 1){
+        for (Group group : groups) {
+            group.updateCircleAndDeleteMember();
+            if (group.members.size() <= 1) {
                 delGroups.add(group);
             }
         }
@@ -128,7 +140,7 @@ class Map extends JPanel {
             prey.update();
 
         // display output
-        //controller.displayOutput(avgFoodGained, predatorCount);
+        controller.displayOutput(avgFoodGained, predatorCount);
     }
 
     /**

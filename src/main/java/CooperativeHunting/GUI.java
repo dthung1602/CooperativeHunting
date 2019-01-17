@@ -2,31 +2,24 @@ package CooperativeHunting;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class GUI {
     private boolean editDisable = false;
     private Main application;
     private Map map;
 
+    // Grid (Map)
     @FXML
-    AnchorPane mapContainer;
-
-    //Grid (Map)
+    Canvas mapCanvas;
     @FXML
     TextField width;
     @FXML
     TextField height;
 
-    //Predator
+    // Predator
     @FXML
     TextField predatorNumber;
     @FXML
@@ -41,7 +34,8 @@ public class GUI {
     ColorPicker predatorColor;
     @FXML
     TextField predatorVisionRadius;
-    //Prey
+
+    // Prey
     @FXML
     TextField preyNumber;
     @FXML
@@ -57,13 +51,13 @@ public class GUI {
     @FXML
     ColorPicker preyColor;
 
-    //Output
+    // Output
     @FXML
     TextField averageFood;
     @FXML
     TextField predatorCount;
 
-    //Button
+    // Button
     @FXML
     Button clear;
     @FXML
@@ -75,12 +69,10 @@ public class GUI {
     @FXML
     Button save;
 
-    // list of all text fields in GUI
+    // GUI component groups
     private TextField[] textFields;
-    // list of all widgets in GUI
     private Control[] widgets;
-
-    private Button[] button;
+    private Button[] buttons;
 
     void setApplication(Main application) {
         this.application = application;
@@ -102,7 +94,7 @@ public class GUI {
      * Disable clear and save buttons
      */
     private void setButtonsDisable() {
-        for (Button button : button)
+        for (Button button : buttons)
             button.setDisable(editDisable);
     }
 
@@ -121,7 +113,7 @@ public class GUI {
     }
 
     /**
-     * Enable fields, disable play button and do the stopSimulation function in the main
+     * Enable fields, disable play buttons and do the stopSimulation function in the main
      */
     @FXML
     void stop() {
@@ -154,14 +146,10 @@ public class GUI {
         averageFood.setEditable(false);
         predatorCount.setEditable(false);
 
-        // change color type to java.awt.Color
-        Color predatorColorAwt = changeColorType(predatorColor.getValue());
-        Color preyColorAwt = changeColorType(preyColor.getValue());
-
         // pass value to 3 initializing functions in Map class
         try {
-            // Only display Play/Pause button after pressing Save
-            // Stop button is hided unless pressing Play button
+            // Only display Play/Pause buttons after pressing Save
+            // Stop buttons is hided unless pressing Play buttons
             editDisable = true;
             setButtonsDisable();
             play.setDisable(false);
@@ -177,7 +165,7 @@ public class GUI {
                     Integer.parseInt(predatorAttack.getText()),
                     Integer.parseInt(groupRadius.getText()),
                     Integer.parseInt(predatorVisionRadius.getText()),
-                    predatorColorAwt
+                    predatorColor.getValue()
             );
             map.initializePreys(
                     Integer.parseInt(preyNumber.getText()),
@@ -185,7 +173,7 @@ public class GUI {
                     Float.parseFloat(nutrition.getText()),
                     Integer.parseInt(preyAttack.getText()),
                     Integer.parseInt(preyVisionRadius.getText()),
-                    preyColorAwt
+                    preyColor.getValue()
             );
 
         } catch (NumberFormatException e) {
@@ -230,7 +218,7 @@ public class GUI {
                 predatorNumber, health, predatorAttack, predatorSpeed, groupRadius, predatorVisionRadius,
                 preyNumber, nutrition, preyAttack, preySpeed, size, preyVisionRadius
         };
-        button = new Button[]{clear, save};
+        buttons = new Button[]{clear, save};
         widgets = new Control[]{
                 height, width,
                 predatorNumber, health, predatorAttack, predatorSpeed, groupRadius, predatorVisionRadius, predatorColor,
@@ -239,16 +227,6 @@ public class GUI {
 
         //initialize some variable
         setText("");
-
-        //create map
-        final SwingNode swingNode = new SwingNode();
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                swingNode.setContent(map);
-            }
-        });
-        mapContainer.getChildren().add(swingNode);
 
         //Accept only valid input
         //Grid (Map) fields
@@ -286,19 +264,5 @@ public class GUI {
             field.setText(text);
     }
 
-    /**
-     * Change color type from javafx.scene.paint.Color to java.awt.Color
-     *
-     * @param color: javafx.scene.paint.Color type to be changed
-     * @return java.awt.Color type
-     */
-    private java.awt.Color changeColorType(javafx.scene.paint.Color color) {
-        return new java.awt.Color(
-                (float) color.getRed(),
-                (float) color.getGreen(),
-                (float) color.getBlue(),
-                (float) color.getOpacity()
-        );
-    }
 }
 
