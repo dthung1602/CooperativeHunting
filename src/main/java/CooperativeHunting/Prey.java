@@ -1,6 +1,5 @@
 package CooperativeHunting;
 
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
@@ -8,12 +7,19 @@ import java.util.Iterator;
 import java.util.List;
 
 class Prey extends Animal {
-    private static int visionRadius = 5;
+    private static int visionRadius;
     private static int speed;
-    private static float nutrition;
-    private static int attack;
+    private static float defaultNutrition;
+    private static float defaultAttack;
+
+    private static int minSize;
+    private static int maxSize;
+
     private static float attackRatio;
-    private static Color color;
+
+    private static Color smallPreyColor;
+    private static Color mediumPreyColor;
+    private static Color largePreyColor;
 
     /**
      * Prey constructor
@@ -22,27 +28,54 @@ class Prey extends Animal {
      */
     Prey(Position position) {
         super(position);
+        size = random.nextInt(minSize, maxSize);
+        attack = (int) (size * defaultAttack);
+
+        // minSize     1/3        2/3      maxSize
+        //    |---------|----------|----------|
+        //       small       mid       large
+        double midThreshold = minSize + (maxSize - minSize) / 3.0;
+        double largeThreshold = minSize + (maxSize - minSize) / 3.0 * 2;
+        if (size > largeThreshold)
+            color = largePreyColor;
+        else if (size > midThreshold)
+            color = mediumPreyColor;
+        else
+            color = smallPreyColor;
     }
 
-    static Color getColor() {
-        return color;
+    @Override
+    int getVisionRadius() {
+        return visionRadius;
+    }
+
+    @Override
+    int getSpeed() {
+        return speed;
     }
 
     /**
-     * Set numerous settings for preys
+     * Setter for Prey static fields
      *
-     * @param speed:        preys' speed
-     * @param nutrition:    preys' nutrition value
-     * @param attack:       preys' attack
-     * @param visionRadius: preys' vision radius
-     * @param color:        preys' color for visualization
+     * @param speed:            preys' speed
+     * @param defaultNutrition: preys' defaultNutrition value
+     * @param defaultAttack:    preys' attack
+     * @param visionRadius:     preys' vision radius
+     * @param smallPreyColor:   small preys' color for visualization
+     * @param mediumPreyColor:  medium preys' color for visualization
+     * @param largePreyColor:   large preys' color for visualization
      */
-    static void set(int speed, float nutrition, int attack, int visionRadius, Color color) {
+    static void set(int speed, float defaultNutrition, int defaultAttack, int visionRadius, int minSize, int maxSize,
+                    Color smallPreyColor, Color mediumPreyColor, Color largePreyColor) {
         Prey.speed = speed;
-        Prey.nutrition = nutrition;
-        Prey.attack = attack;
+        Prey.defaultNutrition = defaultNutrition;
+        Prey.defaultAttack = defaultAttack;
         Prey.visionRadius = visionRadius;
-        Prey.color = color;
+        Prey.minSize = minSize;
+        Prey.maxSize = maxSize;
+        Prey.smallPreyColor = smallPreyColor;
+        Prey.mediumPreyColor = mediumPreyColor;
+        Prey.largePreyColor = largePreyColor;
     }
 
     /**
@@ -70,14 +103,6 @@ class Prey extends Animal {
     }
 
     /**
-     * Paint prey to the map
-     */
-    @Override
-    void paint(GraphicsContext graphics) {
-        graphics.fillRect(map.tiles * x, map.tiles * y, map.tiles, map.tiles);
-    }
-
-    /**
      * Remove dead preys in the given prey list
      *
      * @param preys: list of prey
@@ -87,26 +112,6 @@ class Prey extends Animal {
             Prey prey = iterator.next();
             if (prey.dead)
                 iterator.remove();
-        }
-    }
-
-    /**
-     * Prey moves randomly
-     */
-    private void moveRandomly() {
-        int step = random.nextInt(speed + 1);
-        switch (random.nextInt() % 4) {
-            case 0:
-                x += step;
-                break;
-            case 1:
-                x -= step;
-                break;
-            case 3:
-                y += step;
-                break;
-            default:
-                y -= step;
         }
     }
 
@@ -150,26 +155,26 @@ class Prey extends Animal {
      * @param predators : predator in vision
      */
     private void resolveAttack(List<Predator> predators) {
+        float predatorAttack = predators.get(0).attack * attackRatio;
+
         // predators attacks first and succeed
-        if (predators.size() * Predator.getAttack() * attackRatio >= attack) {
+        if (predators.size() * predatorAttack >= attack) {
             // prey is dead
             this.dead = true;
 
             // increase food gained
-            map.avgFoodGained += nutrition;
+            map.avgFoodGained += defaultNutrition;
 
             // increase health of predators
-            int healthGained = (int) nutrition / predators.size();
+            int healthGained = (int) defaultNutrition / predators.size();
             for (Predator predator : predators)
                 predator.health += healthGained;
             return;
         }
 
         // prey attacks closest predator back
-        if (attack > attackRatio * Predator.getAttack()) {
+        if (attack > predatorAttack)
             predators.get(0).dead = true;
-            map.predatorCount--;
-        }
     }
 
     /**
@@ -187,21 +192,19 @@ class Prey extends Animal {
         int index = 0;
 
         // loop through every predators
-        for (Group group : map.getGroups()) {
-            for (Predator predator : group.getMembers()) {
-                double distance = distanceTo(predator);
+        for (Predator predator : map.getPredators()) {
+            double distance = distanceTo(predator);
 
-                if (distance <= visionRadius) {
-                    // add predator to list
-                    predatorsInRange.add(predator);
+            if (distance <= visionRadius) {
+                // add predator to list
+                predatorsInRange.add(predator);
 
-                    // update min distance
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        minIndex = index;
-                    }
-                    index++;
+                // update min distance
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    minIndex = index;
                 }
+                index++;
             }
         }
 

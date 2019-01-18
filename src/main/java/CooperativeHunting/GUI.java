@@ -13,66 +13,83 @@ public class GUI {
 
     // Grid (Map)
     @FXML
-    Canvas mapCanvas;
+    private Canvas mapCanvas;
     @FXML
-    TextField width;
+    private TextField width;
     @FXML
-    TextField height;
+    private TextField height;
+    @FXML
+    private CheckBox showGrid;
 
     // Predator
     @FXML
-    TextField predatorNumber;
+    private TextField predatorNumber;
     @FXML
-    TextField predatorAttack;
+    private TextField predatorAttack;
     @FXML
-    TextField health;
+    private TextField health;
     @FXML
-    TextField predatorSpeed;
+    private TextField predatorSpeed;
     @FXML
-    TextField groupRadius;
+    private TextField predatorVisionRadius;
     @FXML
-    ColorPicker predatorColor;
+    private TextField groupRadius;
     @FXML
-    TextField predatorVisionRadius;
+    private ColorPicker predatorColor;
+    @FXML
+    private ColorPicker groupColor;
+    @FXML
+    private CheckBox predatorShowVision;
+    @FXML
+    private CheckBox showGroup;
 
     // Prey
     @FXML
-    TextField preyNumber;
+    private TextField preyNumber;
     @FXML
-    TextField preySpeed;
+    private TextField preySpeed;
     @FXML
-    TextField nutrition;
+    private TextField nutrition;
     @FXML
-    TextField preyAttack;
+    private TextField preyAttack;
     @FXML
-    TextField size;
+    private TextField preyMinSize;
     @FXML
-    TextField preyVisionRadius;
+    private TextField preyMaxSize;
     @FXML
-    ColorPicker preyColor;
+    private TextField preyVisionRadius;
+    @FXML
+    private ColorPicker preyColor;
+    @FXML
+    private CheckBox preyShowVision;
+    @FXML
+    private CheckBox autoGeneratePreys;
 
     // Output
     @FXML
-    TextField averageFood;
+    private TextField averageFood;
     @FXML
-    TextField predatorCount;
+    private TextField predatorCount;
 
     // Button
     @FXML
-    Button clear;
+    private Button clear;
     @FXML
-    Slider slider;
+    private Slider slider;
     @FXML
-    Button play;
+    private Button play;
     @FXML
-    Button stop;
+    private Button stop;
     @FXML
-    Button save;
+    private Button save;
 
     // GUI component groups
-    private TextField[] textFields;
+    private TextField[] inputTextFields;
     private Control[] widgets;
-    private Button[] buttons;
+
+    Canvas getMapCanvas() {
+        return mapCanvas;
+    }
 
     void setApplication(Main application) {
         this.application = application;
@@ -80,22 +97,6 @@ public class GUI {
 
     void setMap(Map map) {
         this.map = map;
-    }
-
-    /**
-     * Do not let user type input to all fields
-     */
-    private void setFieldsDisable() {
-        for (Control widget : widgets)
-            widget.setDisable(editDisable);
-    }
-
-    /**
-     * Disable clear and save buttons
-     */
-    private void setButtonsDisable() {
-        for (Button button : buttons)
-            button.setDisable(editDisable);
     }
 
     /**
@@ -107,7 +108,7 @@ public class GUI {
         editDisable = true;
 
         setFieldsDisable();
-        setButtonsDisable();
+        setButtonsEditable();
 
         application.runningToggle();
     }
@@ -119,7 +120,7 @@ public class GUI {
     void stop() {
         editDisable = false;
         setFieldsDisable(); //enable fields
-        setButtonsDisable(); //enable buttons
+        setButtonsEditable(); //enable buttons
         play.setDisable(true);
         application.stopSimulation();
         //reset the value of Output
@@ -142,21 +143,23 @@ public class GUI {
      */
     @FXML
     private void save() {
-        //Cannot change the value of Output manually
-        averageFood.setEditable(false);
-        predatorCount.setEditable(false);
-
-        // pass value to 3 initializing functions in Map class
         try {
             // Only display Play/Pause buttons after pressing Save
             // Stop buttons is hided unless pressing Play buttons
             editDisable = true;
-            setButtonsDisable();
+            setButtonsEditable();
             play.setDisable(false);
             stop.setDisable(false);
-            map.setMapSize(
+
+            // pass values to initializing functions in Map class
+            map.set(
                     Integer.parseInt(width.getText()),
-                    Integer.parseInt(height.getText())
+                    Integer.parseInt(height.getText()),
+                    autoGeneratePreys.isSelected(),
+                    predatorShowVision.isSelected(),
+                    preyShowVision.isSelected(),
+                    showGroup.isSelected(),
+                    showGrid.isSelected()
             );
             map.initializePredators(
                     Integer.parseInt(predatorNumber.getText()),
@@ -165,27 +168,30 @@ public class GUI {
                     Integer.parseInt(predatorAttack.getText()),
                     Integer.parseInt(groupRadius.getText()),
                     Integer.parseInt(predatorVisionRadius.getText()),
-                    predatorColor.getValue()
+                    predatorColor.getValue(),
+                    groupColor.getValue()
             );
             map.initializePreys(
                     Integer.parseInt(preyNumber.getText()),
                     Integer.parseInt(preySpeed.getText()),
                     Float.parseFloat(nutrition.getText()),
                     Integer.parseInt(preyAttack.getText()),
+                    Integer.parseInt(preyMinSize.getText()),
+                    Integer.parseInt(preyMaxSize.getText()),
                     Integer.parseInt(preyVisionRadius.getText()),
                     preyColor.getValue()
             );
 
-        } catch (NumberFormatException e) {
-            editDisable = false;
-            setButtonsDisable();
-            play.setDisable(true);
-            stop.setDisable(true);
+            // paint the init position in the map
+            map.paint();
 
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Invalid Input");
-            alert.setContentText("Please fill all the fields");
-            alert.showAndWait();
+        } catch (NumberFormatException e) { // Invalid input -> warning
+            alert(
+                    "Invalid format",
+                    "Some fields has invalid number format:\n" + e.getMessage()
+            );
+        } catch (IllegalArgumentException e) {
+            alert("Invalid argument", e.getMessage());
         }
     }
 
@@ -213,30 +219,30 @@ public class GUI {
         averageFood.setEditable(false);
         predatorCount.setEditable(false);
 
-        textFields = new TextField[]{
+        inputTextFields = new TextField[]{
                 height, width,
                 predatorNumber, health, predatorAttack, predatorSpeed, groupRadius, predatorVisionRadius,
-                preyNumber, nutrition, preyAttack, preySpeed, size, preyVisionRadius
+                preyNumber, nutrition, preyAttack, preySpeed, preyMinSize, preyMaxSize, preyVisionRadius
         };
-        buttons = new Button[]{clear, save};
         widgets = new Control[]{
-                height, width,
-                predatorNumber, health, predatorAttack, predatorSpeed, groupRadius, predatorVisionRadius, predatorColor,
-                preyNumber, nutrition, preyAttack, preySpeed, size, preyVisionRadius, preyColor
+                height, width, showGrid,
+                predatorNumber, health, predatorAttack, predatorSpeed, groupRadius, predatorVisionRadius,
+                predatorColor, groupColor, predatorShowVision, showGroup,
+                preyNumber, nutrition, preyAttack, preySpeed, preyMinSize, preyMaxSize, preyVisionRadius,
+                preyColor, predatorShowVision, autoGeneratePreys
         };
 
-        //initialize some variable
+        // clear text in input text fields
         setText("");
 
-        //Accept only valid input
-        //Grid (Map) fields
-        for (final TextField field : textFields)
+        // Accept only 0-9 and .
+        for (final TextField field : inputTextFields)
             field.textProperty().addListener(
                     new ChangeListener<String>() {
                         @Override
                         public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                            if (newValue.matches(".*[^\\d]+.*")) {
-                                field.setText(newValue.replaceAll("[^\\d]", ""));
+                            if (newValue.matches(".*[^\\d.]+.*")) {
+                                field.setText(newValue.replaceAll("[^\\d.]", ""));
                             }
                         }
                     }
@@ -255,14 +261,41 @@ public class GUI {
     }
 
     /**
-     * Set all text fields in GUI to value text
+     * Set all input text fields in GUI to value text
      *
      * @param text: text to set
      */
     private void setText(String text) {
-        for (TextField field : textFields)
+        for (TextField field : inputTextFields)
             field.setText(text);
     }
 
+    /**
+     * Do not let user type input to all fields
+     */
+    private void setFieldsDisable() {
+        for (Control widget : widgets)
+            widget.setDisable(editDisable);
+    }
+
+    /**
+     * Disable clear and save buttons
+     */
+    private void setButtonsEditable() {
+        clear.setDisable(editDisable);
+        save.setDisable(editDisable);
+    }
+
+    private void alert(String title, String text) {
+        editDisable = false;
+        setButtonsEditable();
+        play.setDisable(true);
+        stop.setDisable(true);
+
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Invalid Input");
+        alert.setContentText("Please fill all the fields");
+        alert.showAndWait();
+    }
 }
 

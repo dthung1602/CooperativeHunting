@@ -1,6 +1,5 @@
 package CooperativeHunting;
 
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
@@ -8,24 +7,18 @@ import java.util.Iterator;
 
 class Predator extends Animal {
     private static int visionRadius;
-    private static int visionDiameter;
     private static int speed;
-    private static int initHealth;
-    private static int attack;
-    private static Color color = Color.RED;
+    private static int defaultHealth;
+    private static int defaultAttack;
+    private static Color defaultColor;
 
-    // predator's group
     int health;
     Group group;
 
     // hold the distance and direction to the prey for the predator
     int globalDistanceX;
     int globalDistanceY;
-    int globalDistance = map.getMapWidth(); // TODO change to map.width
-
-    static Color getColor() {
-        return color;
-    }
+    int globalDistance = map.getMapWidth();
 
     /**
      * Predator constructor
@@ -34,28 +27,38 @@ class Predator extends Animal {
      */
     Predator(Position position) {
         super(position);
-        health = initHealth;
+        size = 1;
+        attack = defaultAttack;
+        color = defaultColor;
+        health = defaultHealth;
         group = null;
     }
 
-    static int getAttack() {
-        return attack;
+    @Override
+    int getVisionRadius() {
+        return visionRadius;
+    }
+
+    @Override
+    int getSpeed() {
+        return speed;
     }
 
     /**
-     * @param speed:        predators' speed point (tiles/iteration)
-     * @param initHealth:   predators' initial health point
-     * @param attack:       predators' attack point
-     * @param visionRadius: predators' vision radius
-     * @param color:        predators' color for visualization
+     * Setter for Predator static fields
+     *
+     * @param speed:         predators' speed point (tiles/iteration)
+     * @param defaultHealth: predators' initial health point
+     * @param defaultAttack: predators' attack point
+     * @param visionRadius:  predators' vision radius
+     * @param defaultColor:  predators' color for visualization
      */
-    static void set(int speed, int initHealth, int attack, int visionRadius, Color color) {
+    static void set(int speed, int defaultHealth, int defaultAttack, int visionRadius, Color defaultColor) {
         Predator.speed = speed;
-        Predator.initHealth = initHealth;
-        Predator.attack = attack;
+        Predator.defaultHealth = defaultHealth;
+        Predator.defaultAttack = defaultAttack;
         Predator.visionRadius = visionRadius;
-        Predator.visionDiameter = visionRadius * 2;
-        Predator.color = color;
+        Predator.defaultColor = defaultColor;
     }
 
     /**
@@ -79,7 +82,6 @@ class Predator extends Animal {
                 iterator.remove();
         }
     }
-
 
     /**
      * The predator looks for the closest prey inside the predator's vision
@@ -112,10 +114,7 @@ class Predator extends Animal {
      */
     private void checkDead() {
         health--;
-        if (health < 1) {
-            dead = true;
-            map.predatorCount--;
-        }
+        dead = (health < 1);
     }
 
     /**
@@ -174,7 +173,7 @@ class Predator extends Animal {
     }
 
     void grouping(ArrayList<Predator> predators, ArrayList<Group> groups) {
-        int dX = 600, dY = 600;
+        int dX = 600, dY = 600; // TODO map.width
         for (Predator predator : predators) {
             if (this.group == null && predator != this) {
                 dX = this.x - predator.x;
@@ -193,19 +192,5 @@ class Predator extends Animal {
 
             }
         }
-    }
-
-    /**
-     * Paint predator to the map
-     */
-    @Override
-    void paint(GraphicsContext graphics) {
-        graphics.fillRect(map.tiles * x, map.tiles * y, map.tiles, map.tiles);
-        graphics.strokeOval(
-                map.tiles * (x - visionRadius + map.tiles / 2.0),
-                map.tiles * (y - visionRadius + map.tiles / 2.0),
-                map.tiles * visionDiameter,
-                map.tiles * visionDiameter
-        );
     }
 }

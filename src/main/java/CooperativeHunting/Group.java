@@ -6,9 +6,9 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 
 class Group extends Entity {
-    private static int groupRadius = 100;
-    private static int groupDiameter = 200;
-    private static Color color = Color.RED;
+    private static int groupRadius;
+    private static int groupTileDiameter;
+    private static Color color;
 
     ArrayList<Predator> members;
     private Predator leader = null;
@@ -42,9 +42,10 @@ class Group extends Entity {
         return leader;
     }
 
-    static void setGroupRadius(int groupRadius) {
+    static void set(int groupRadius, Color color) {
         Group.groupRadius = groupRadius;
-        groupDiameter = 2 * groupRadius;
+        Group.groupTileDiameter = 2 * groupRadius * map.tiles;
+        Group.color = color;
     }
 
     /**
@@ -104,7 +105,7 @@ class Group extends Entity {
     /**
      * Calculate the group circle center
      */
-    void circleCenter() {
+    private void circleCenter() {
         this.x = 0;
         this.y = 0;
         //System.out.println("New");
@@ -142,17 +143,17 @@ class Group extends Entity {
         }
     }
 
-
     /**
      * Paint group and its predators to the map
      */
     @Override
-    void paint(GraphicsContext graphics) {
+    void paint(GraphicsContext graphics, boolean showGroup) {
+        graphics.setStroke(color);
         graphics.strokeOval(
                 x * map.tiles,
                 y * map.tiles,
-                groupDiameter,
-                groupDiameter
+                groupTileDiameter,
+                groupTileDiameter
         );
     }
 }
