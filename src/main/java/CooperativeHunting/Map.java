@@ -12,7 +12,7 @@ class Map {
     private ArrayList<Prey> preys;
     private ArrayList<Group> groups;
     private ArrayList<Predator> predators;
-    boolean autoGeneratePreys;
+    private int newPreyPerIteration;
 
     private GUI controller;
     private Canvas canvas;
@@ -21,7 +21,7 @@ class Map {
     // map size
     private int mapWidth;
     private int mapHeight;
-    int tiles;
+    private int tileSize;
 
     // display options
     private boolean showPreyVision;
@@ -60,15 +60,18 @@ class Map {
         return mapHeight;
     }
 
-    void set(int width, int height, boolean autoGeneratePreys,
-             boolean showPredatorVision, boolean showPreyVision, boolean showGroup, boolean showGrid) {
+    int getTileSize() {
+        return tileSize;
+    }
+
+    void set(int width, int height, boolean showGrid,
+             boolean showPredatorVision, boolean showPreyVision, boolean showGroup) {
         mapWidth = width;
         mapHeight = height;
-        tiles = Math.min(
+        tileSize = Math.min(
                 (int) (canvas.getHeight() / mapHeight),
                 (int) (canvas.getWidth() / mapWidth)
         );
-        this.autoGeneratePreys = autoGeneratePreys;
         this.showPredatorVision = showPredatorVision;
         this.showPreyVision = showPreyVision;
         this.showGroup = showGroup;
@@ -109,14 +112,14 @@ class Map {
             graphics.setStroke(Color.BLACK);
             for (int i = 0; i <= mapWidth; i++) {
                 graphics.strokeLine(
-                        i * tiles, 0,
-                        i * tiles, mapHeight * tiles
+                        i * tileSize, 0,
+                        i * tileSize, mapHeight * tileSize
                 );
             }
             for (int i = 0; i <= mapHeight; i++) {
                 graphics.strokeLine(
-                        0, i * tiles,
-                        mapWidth * tiles, i * tiles
+                        0, i * tileSize,
+                        mapWidth * tileSize, i * tileSize
                 );
             }
         }
@@ -134,7 +137,7 @@ class Map {
         Prey.removeDeadPreys(preys);
 
         // new preys pop up
-        if (autoGeneratePreys)
+        if (newPreyPerIteration > 0)
             createNewPreys();
 
         // split and merge predators groups
@@ -179,7 +182,7 @@ class Map {
      * Randomly create preys in the map
      *
      * @param number:       number of preys to create
-     * @param speed:        preys' speed (tiles/iteration)
+     * @param speed:        preys' speed (tileSize/iteration)
      * @param nutrition:    preys' nutrition
      * @param attack:       preys' attack
      * @param minSize:      preys' min size, cannot be less than 1
@@ -188,15 +191,15 @@ class Map {
      * @param primaryColor: preys' primary color for visualization
      */
     void initializePreys(int number, int speed, float nutrition, int attack, int minSize, int maxSize,
-                         int visionRadius, Color primaryColor) throws IllegalArgumentException {
+                         int visionRadius, int newPreyPerIteration, Color primaryColor) throws IllegalArgumentException {
 
         // validate arguments
         if (minSize > maxSize || minSize < 1)
             throw new IllegalArgumentException("Condition 1 <= prey min size <= prey max size must be satisfied");
-        if (number > mapWidth * mapHeight)
-            throw new IllegalArgumentException("Too many preys");
-        if (number < 0 || speed < 0 || nutrition < 0 || attack < 0 || visionRadius < 0)
-            throw new IllegalArgumentException("Prey's number, speed, nutrition and attack cannot be negative");
+        if (number > mapWidth * mapHeight || newPreyPerIteration > mapHeight * mapHeight)
+            throw new IllegalArgumentException("Too many preys / new prey per iteration");
+        if (number < 0 || speed < 0 || nutrition < 0 || attack < 0 || visionRadius < 0 || newPreyPerIteration < 0)
+            throw new IllegalArgumentException("Prey's number, speed, nutrition, attack and new prey/iter cannot be negative");
 
         // calculate colors for preys from primary color
         Color smallPreyColor = copyColor(primaryColor, 0.8);
@@ -204,6 +207,7 @@ class Map {
         Color largePreyColor = copyColor(primaryColor, 1);
 
         // set values for prey class
+        this.newPreyPerIteration = newPreyPerIteration;
         Prey.set(speed, nutrition, attack, visionRadius, minSize, maxSize,
                 smallPreyColor, mediumPreyColor, largePreyColor);
 
@@ -251,7 +255,9 @@ class Map {
      * Create new preys to replace dead ones
      */
     private void createNewPreys() {
-        // TODO
+        ArrayList<Position> positions = getRandomPositions(newPreyPerIteration);
+        for (Position position : positions)
+            preys.add(new Prey(position));
     }
 
     /**

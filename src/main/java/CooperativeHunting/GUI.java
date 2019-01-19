@@ -18,8 +18,16 @@ public class GUI {
     private TextField width;
     @FXML
     private TextField height;
+
+    // Display options
     @FXML
     private CheckBox showGrid;
+    @FXML
+    private CheckBox predatorShowVision;
+    @FXML
+    private CheckBox showGroup;
+    @FXML
+    private CheckBox preyShowVision;
 
     // Predator
     @FXML
@@ -38,10 +46,6 @@ public class GUI {
     private ColorPicker predatorColor;
     @FXML
     private ColorPicker groupColor;
-    @FXML
-    private CheckBox predatorShowVision;
-    @FXML
-    private CheckBox showGroup;
 
     // Prey
     @FXML
@@ -61,9 +65,7 @@ public class GUI {
     @FXML
     private ColorPicker preyColor;
     @FXML
-    private CheckBox preyShowVision;
-    @FXML
-    private CheckBox autoGeneratePreys;
+    private TextField newPreyPerIteration;
 
     // Output
     @FXML
@@ -104,6 +106,9 @@ public class GUI {
      */
     @FXML
     void play() {
+        // change Play <--> Pause
+        play.setText((play.getText().equals("Play")) ? "Pause" : "Play");
+
         stop.setDisable(false);
         editDisable = true;
 
@@ -121,9 +126,13 @@ public class GUI {
         editDisable = false;
         setFieldsDisable(); //enable fields
         setButtonsEditable(); //enable buttons
+
+        play.setText("Play");
         play.setDisable(true);
+
         application.stopSimulation();
-        //reset the value of Output
+
+        // reset the value of output
         averageFood.setText("");
         predatorCount.setText("");
 
@@ -155,11 +164,10 @@ public class GUI {
             map.set(
                     Integer.parseInt(width.getText()),
                     Integer.parseInt(height.getText()),
-                    autoGeneratePreys.isSelected(),
+                    showGrid.isSelected(),
                     predatorShowVision.isSelected(),
                     preyShowVision.isSelected(),
-                    showGroup.isSelected(),
-                    showGrid.isSelected()
+                    showGroup.isSelected()
             );
             map.initializePredators(
                     Integer.parseInt(predatorNumber.getText()),
@@ -179,6 +187,7 @@ public class GUI {
                     Integer.parseInt(preyMinSize.getText()),
                     Integer.parseInt(preyMaxSize.getText()),
                     Integer.parseInt(preyVisionRadius.getText()),
+                    Integer.parseInt(newPreyPerIteration.getText()),
                     preyColor.getValue()
             );
 
@@ -221,15 +230,15 @@ public class GUI {
 
         inputTextFields = new TextField[]{
                 height, width,
-                predatorNumber, health, predatorAttack, predatorSpeed, groupRadius, predatorVisionRadius,
+                predatorNumber, health, predatorAttack, predatorSpeed, groupRadius, predatorVisionRadius, newPreyPerIteration,
                 preyNumber, nutrition, preyAttack, preySpeed, preyMinSize, preyMaxSize, preyVisionRadius
         };
         widgets = new Control[]{
-                height, width, showGrid,
-                predatorNumber, health, predatorAttack, predatorSpeed, groupRadius, predatorVisionRadius,
-                predatorColor, groupColor, predatorShowVision, showGroup,
+                height, width,
+                predatorNumber, health, predatorAttack, predatorSpeed, groupRadius, predatorVisionRadius, newPreyPerIteration,
                 preyNumber, nutrition, preyAttack, preySpeed, preyMinSize, preyMaxSize, preyVisionRadius,
-                preyColor, predatorShowVision, autoGeneratePreys
+                showGrid, showGroup, predatorShowVision, predatorShowVision,
+                predatorColor, groupColor, preyColor
         };
 
         // clear text in input text fields
@@ -286,6 +295,12 @@ public class GUI {
         save.setDisable(editDisable);
     }
 
+    /**
+     * Stop simulation and display error
+     *
+     * @param title: Dialog box's title
+     * @param text:  Dialog box's content
+     */
     private void alert(String title, String text) {
         editDisable = false;
         setButtonsEditable();
@@ -293,8 +308,8 @@ public class GUI {
         stop.setDisable(true);
 
         Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Invalid Input");
-        alert.setContentText("Please fill all the fields");
+        alert.setTitle(title);
+        alert.setContentText(text);
         alert.showAndWait();
     }
 }

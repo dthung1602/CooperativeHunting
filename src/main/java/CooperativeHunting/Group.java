@@ -44,7 +44,7 @@ class Group extends Entity {
 
     static void set(int groupRadius, Color color) {
         Group.groupRadius = groupRadius;
-        Group.groupTileDiameter = 2 * groupRadius * map.tiles;
+        Group.groupTileDiameter = 2 * groupRadius * map.getTileSize();
         Group.color = color;
     }
 
@@ -148,10 +148,11 @@ class Group extends Entity {
      */
     @Override
     void paint(GraphicsContext graphics, boolean showGroup) {
+        int tileSize = map.getTileSize();
         graphics.setStroke(color);
         graphics.strokeOval(
-                x * map.tiles,
-                y * map.tiles,
+                x * tileSize,
+                y * tileSize,
                 groupTileDiameter,
                 groupTileDiameter
         );

@@ -43,13 +43,15 @@ abstract class Animal extends Entity {
      * @param showVision: whether to paint the vision circle
      */
     void paint(GraphicsContext graphics, boolean showVision) {
+        int tileSize = map.getTileSize();
+
         // paint a square for the animal
         graphics.setFill(color);
         graphics.fillRect(
-                map.tiles * x,
-                map.tiles * y,
-                map.tiles * size,
-                map.tiles * size
+                tileSize * x,
+                tileSize * y,
+                tileSize * size,
+                tileSize * size
         );
 
         // paint vision circle
@@ -59,10 +61,10 @@ abstract class Animal extends Entity {
 
             graphics.setStroke(color);
             graphics.strokeOval(
-                    map.tiles * (x - visionRadius + size / 2.0),
-                    map.tiles * (y - visionRadius + size / 2.0),
-                    map.tiles * visionDiameter,
-                    map.tiles * visionDiameter
+                    tileSize * (x - visionRadius + size / 2.0),
+                    tileSize * (y - visionRadius + size / 2.0),
+                    tileSize * visionDiameter,
+                    tileSize * visionDiameter
             );
         }
     }
