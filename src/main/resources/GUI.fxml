@@ -24,19 +24,15 @@
     <children>
         <MenuBar>
             <menus>
-                <Menu mnemonicParsing="false" text="File">
+                <Menu mnemonicParsing="false" text="Simulation">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Close" />
+                        <MenuItem mnemonicParsing="false" onAction="#setDefaultValues" text="Default values" />
                     </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Edit">
+                <Menu mnemonicParsing="false" text="About">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Delete" />
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Help">
-                    <items>
-                        <MenuItem mnemonicParsing="false" text="About" />
+                  <MenuItem mnemonicParsing="false" onAction="#showSpecification" text="Specification" />
+                        <MenuItem mnemonicParsing="false" onAction="#showContributing" text="Contributing" />
                     </items>
                 </Menu>
             </menus>
@@ -84,7 +80,7 @@
                                                 <Insets />
                                              </GridPane.margin>
                                           </CheckBox>
-                                          <CheckBox fx:id="predatorShowVision" mnemonicParsing="false" prefHeight="18.0" prefWidth="262.0" text="Show prey vison" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                          <CheckBox fx:id="preyShowVision" mnemonicParsing="false" prefHeight="18.0" prefWidth="262.0" text="Show prey vison" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                              <GridPane.margin>
                                                 <Insets />
                                              </GridPane.margin>
@@ -94,7 +90,7 @@
                                                 <Insets />
                                              </GridPane.margin>
                                           </CheckBox>
-                                          <CheckBox fx:id="preyShowVision" mnemonicParsing="false" text="Show predator vision" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                          <CheckBox fx:id="predatorShowVision" mnemonicParsing="false" text="Show predator vision" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                                        </children>
                                     </GridPane>
                                             </children>

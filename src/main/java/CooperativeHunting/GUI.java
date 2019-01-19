@@ -2,9 +2,16 @@ package CooperativeHunting;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.paint.Color;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Scanner;
 
 public class GUI {
     private boolean editDisable = false;
@@ -51,21 +58,21 @@ public class GUI {
     @FXML
     private TextField preyNumber;
     @FXML
-    private TextField preySpeed;
+    private TextField preyAttack;
     @FXML
     private TextField nutrition;
     @FXML
-    private TextField preyAttack;
+    private TextField preySpeed;
+    @FXML
+    private TextField preyVisionRadius;
     @FXML
     private TextField preyMinSize;
     @FXML
     private TextField preyMaxSize;
     @FXML
-    private TextField preyVisionRadius;
+    private TextField newPreyPerIteration;
     @FXML
     private ColorPicker preyColor;
-    @FXML
-    private TextField newPreyPerIteration;
 
     // Output
     @FXML
@@ -87,6 +94,8 @@ public class GUI {
 
     // GUI component groups
     private TextField[] inputTextFields;
+    private CheckBox[] checkBoxes;
+    private ColorPicker[] colorPickers;
     private Control[] widgets;
 
     Canvas getMapCanvas() {
@@ -216,6 +225,79 @@ public class GUI {
     }
 
     /**
+     * Display a window contains the project specification
+     */
+    @FXML
+    public void setDefaultValues(ActionEvent event) {
+        String rawValues = readWholeFile("DEFAULT_VALUES.txt");
+
+        // error occurred
+        if (rawValues.indexOf("Error reading file") == 0) {
+            alert("Warning", rawValues);
+            return;
+        }
+
+        try {
+            String[] values = rawValues.split("\n");
+            int i = 0;
+
+            for (int j = 0; j < inputTextFields.length; j++, i++)
+                inputTextFields[j].setText(values[i]);
+            for (int j = 0; j < checkBoxes.length; j++, i++)
+                checkBoxes[j].setSelected(Boolean.parseBoolean(values[i]));
+            for (int j = 0; j < colorPickers.length; j++, i++) {
+                String[] colorValues = values[i].split(" ");
+                Color color = Color.rgb(
+                        Integer.parseInt(colorValues[0]),
+                        Integer.parseInt(colorValues[1]),
+                        Integer.parseInt(colorValues[2]),
+                        Float.parseFloat(colorValues[3])
+                );
+                colorPickers[j].setValue(color);
+            }
+
+        } catch (NumberFormatException e) {
+            alert("Warning", "Corrupted default value file");
+        } catch (IllegalArgumentException e) {
+            alert("Warning", "Corrupted color value in default value file");
+        }
+    }
+
+    @FXML
+    void showContributing(ActionEvent event) {
+        Dialog<Boolean> dialog = new Dialog<Boolean>();
+
+        ButtonType button = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().add(button);
+
+        dialog.getDialogPane().setMinSize(350, 200);
+        dialog.setTitle("Contributing");
+        dialog.setContentText(readWholeFile("CONTRIBUTING.txt"));
+
+        dialog.showAndWait();
+    }
+
+    /**
+     * Display a window contains the project specification
+     */
+    @FXML
+    public void showSpecification(ActionEvent event) {
+        Dialog<Boolean> dialog = new Dialog<Boolean>();
+
+        ButtonType button = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().add(button);
+
+        dialog.getDialogPane().setMinSize(700, 500);
+        dialog.setTitle("Project specification");
+
+        TextArea textArea = new TextArea(readWholeFile("SPECIFICATIONS.txt"));
+        textArea.setDisable(true);
+        dialog.getDialogPane().setContent(textArea);
+
+        dialog.showAndWait();
+    }
+
+    /**
      * Initialize the controller class. This method is automatically called after the fxml file has been loaded.
      * Initialize empty string in all fields
      * Create the map in the big AnchorPane
@@ -229,15 +311,21 @@ public class GUI {
         predatorCount.setEditable(false);
 
         inputTextFields = new TextField[]{
-                height, width,
-                predatorNumber, health, predatorAttack, predatorSpeed, groupRadius, predatorVisionRadius, newPreyPerIteration,
-                preyNumber, nutrition, preyAttack, preySpeed, preyMinSize, preyMaxSize, preyVisionRadius
+                width, height,
+                predatorNumber, predatorAttack, health, predatorSpeed, predatorVisionRadius, groupRadius,
+                preyNumber, preyAttack, nutrition, preySpeed, preyVisionRadius, preyMinSize, preyMaxSize, newPreyPerIteration,
+        };
+        checkBoxes = new CheckBox[]{
+                showGrid, predatorShowVision, showGroup, preyShowVision
+        };
+        colorPickers = new ColorPicker[]{
+                predatorColor, groupColor, preyColor
         };
         widgets = new Control[]{
-                height, width,
-                predatorNumber, health, predatorAttack, predatorSpeed, groupRadius, predatorVisionRadius, newPreyPerIteration,
-                preyNumber, nutrition, preyAttack, preySpeed, preyMinSize, preyMaxSize, preyVisionRadius,
-                showGrid, showGroup, predatorShowVision, predatorShowVision,
+                width, height,
+                predatorNumber, predatorAttack, health, predatorSpeed, predatorVisionRadius, groupRadius,
+                preyNumber, preyAttack, nutrition, preySpeed, preyVisionRadius, preyMinSize, preyMaxSize, newPreyPerIteration,
+                showGrid, predatorShowVision, showGroup, preyShowVision,
                 predatorColor, groupColor, preyColor
         };
 
@@ -311,6 +399,25 @@ public class GUI {
         alert.setTitle(title);
         alert.setContentText(text);
         alert.showAndWait();
+    }
+
+    /**
+     * @param fileName: file to read
+     * @return file content string
+     */
+    private String readWholeFile(String fileName) {
+        try {
+            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+            InputStream stream = classloader.getResourceAsStream(fileName);
+            if (stream == null)
+                throw new FileNotFoundException();
+            Scanner s = new Scanner(stream).useDelimiter("\\A");
+            String content = s.hasNext() ? s.next() : "";
+            stream.close();
+            return content;
+        } catch (IOException e) {
+            return "Error reading file '" + fileName + "'";
+        }
     }
 }
 
