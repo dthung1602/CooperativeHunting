@@ -13,7 +13,6 @@ abstract class Animal extends Entity {
 
     boolean dead;
     int size;
-    int attack;
     Color color;
 
     /**
@@ -29,7 +28,7 @@ abstract class Animal extends Entity {
     /**
      * @return The animal's vision radius
      */
-    abstract int getVisionRadius();
+    abstract float getVisionRadius();
 
     /**
      * @return The animal's speed
@@ -43,7 +42,7 @@ abstract class Animal extends Entity {
      * @param showVision: whether to paint the vision circle
      */
     void paint(GraphicsContext graphics, boolean showVision) {
-        int tileSize = map.getTileSize();
+        float tileSize = map.getTileSize();
 
         // paint a square for the animal
         graphics.setFill(color);
@@ -56,25 +55,23 @@ abstract class Animal extends Entity {
 
         // paint vision circle
         if (showVision) {
-            int visionRadius = getVisionRadius();
-            int visionDiameter = visionRadius * 2;
+            float visionRadius = getVisionRadius();
+            float visionDiameterInPixel = visionRadius * 2 * tileSize;
 
             graphics.setStroke(color);
             graphics.strokeOval(
                     tileSize * (x - visionRadius + size / 2.0),
                     tileSize * (y - visionRadius + size / 2.0),
-                    tileSize * visionDiameter,
-                    tileSize * visionDiameter
+                    visionDiameterInPixel,
+                    visionDiameterInPixel
             );
         }
     }
 
     /**
      * If the animal is out of map, move it to the map edge
-     *
-     * @param map: Map object to check the boundary
      */
-    void stayInMap(Map map) {
+    void stayInMap() {
         x = Math.max(x, 0);
         x = Math.min(x, map.getMapWidth() - 1);
         y = Math.max(y, 0);
@@ -82,23 +79,47 @@ abstract class Animal extends Entity {
     }
 
     /**
+     * The animal in the given direction
+     * The animal move X tiles horizontally and Y tiles vertically with
+     * |X| + |Y| = speed
+     * X / Y  = directionX / directionY
+     * X, directionX have the same sign
+     * Y, directionY have the same sign
+     *
+     * @param directionX: the horizontal direction
+     * @param directionY: the vertical direction
+     */
+    void moveInDirection(float directionX, float directionY) {
+        int speed = this.getSpeed();
+
+        if (directionY == 0 || Float.isInfinite(directionX)) { // move along x-axis only
+            if (directionX > 0)
+                this.x += speed;
+            else
+                this.x -= speed;
+        } else if (directionX == 0 || Float.isInfinite(directionY)) { // move along y-axis only
+            if (directionY > 0)
+                this.y += speed;
+            else
+                this.y -= speed;
+        } else {
+            float sum = Math.abs(directionX) + Math.abs(directionY);
+            this.x += Math.round((float) speed * directionX / sum);
+            this.y += Math.round((float) speed * directionY / sum);
+        }
+    }
+
+    /**
      * Animal moves randomly
+     * The animal move X tiles horizontally and Y tiles vertically with
+     * |X| + |Y| = speed
      */
     void moveRandomly() {
-        int step = random.nextInt(getSpeed() + 1);
-        switch (random.nextInt(4)) {
-            case 0:
-                x += step;
-                break;
-            case 1:
-                x -= step;
-                break;
-            case 2:
-                y += step;
-                break;
-            default:
-                y -= step;
-        }
+        int speed = getSpeed();
+        int dx = random.nextInt(-speed, speed);
+        int signY = (random.nextInt(2) == 0) ? 1 : -1;
+        this.x += dx;
+        this.y += (speed - Math.abs(dx)) * signY;
     }
 }
 

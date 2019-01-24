@@ -151,7 +151,7 @@ public class GUI {
      * The iteration speed will be changed base on the value of slider
      */
     @FXML
-    public void sliders() {
+    void sliders() {
         slider.showTickLabelsProperty();
         application.setSimulationSpeed(slider.getValue());
     }
@@ -160,11 +160,12 @@ public class GUI {
      * Save user inputs to 3 initializing functions in Map class
      */
     @FXML
-    private void save() {
+    void save() {
         try {
             // Only display Play/Pause buttons after pressing Save
             // Stop buttons is hided unless pressing Play buttons
             editDisable = true;
+            setFieldsDisable();
             setButtonsEditable();
             play.setDisable(false);
             stop.setDisable(false);
@@ -183,8 +184,8 @@ public class GUI {
                     Integer.parseInt(predatorSpeed.getText()),
                     Integer.parseInt(health.getText()),
                     Integer.parseInt(predatorAttack.getText()),
-                    Integer.parseInt(groupRadius.getText()),
-                    Integer.parseInt(predatorVisionRadius.getText()),
+                    Float.parseFloat(groupRadius.getText()),
+                    Float.parseFloat(predatorVisionRadius.getText()),
                     predatorColor.getValue(),
                     groupColor.getValue()
             );
@@ -196,7 +197,7 @@ public class GUI {
                     Integer.parseInt(preyMinSize.getText()),
                     Integer.parseInt(preyMaxSize.getText()),
                     Integer.parseInt(preyVisionRadius.getText()),
-                    Integer.parseInt(newPreyPerIteration.getText()),
+                    Float.parseFloat(newPreyPerIteration.getText()),
                     preyColor.getValue()
             );
 
@@ -217,7 +218,7 @@ public class GUI {
      * Set text of all fields to value 0
      */
     @FXML
-    public void clear() {
+    void clear() {
         if (!editDisable)
             setText("0");
         preyColor.setValue(javafx.scene.paint.Color.WHITE);
@@ -228,7 +229,7 @@ public class GUI {
      * Display a window contains the project specification
      */
     @FXML
-    public void setDefaultValues(ActionEvent event) {
+    void setDefaultValues(ActionEvent event) {
         String rawValues = readWholeFile("DEFAULT_VALUES.txt");
 
         // error occurred
@@ -281,7 +282,7 @@ public class GUI {
      * Display a window contains the project specification
      */
     @FXML
-    public void showSpecification(ActionEvent event) {
+    void showSpecification(ActionEvent event) {
         Dialog<Boolean> dialog = new Dialog<Boolean>();
 
         ButtonType button = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
@@ -291,7 +292,7 @@ public class GUI {
         dialog.setTitle("Project specification");
 
         TextArea textArea = new TextArea(readWholeFile("SPECIFICATIONS.txt"));
-        textArea.setDisable(true);
+        textArea.setEditable(true);
         dialog.getDialogPane().setContent(textArea);
 
         dialog.showAndWait();
@@ -304,7 +305,7 @@ public class GUI {
      * Initialize conditions that only accept numbers in the fields
      */
     @FXML
-    public void initialize() {
+    void initialize() {
         play.setDisable(true);
         stop.setDisable(true);
         averageFood.setEditable(false);

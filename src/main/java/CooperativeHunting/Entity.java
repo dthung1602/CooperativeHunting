@@ -9,6 +9,7 @@ abstract class Entity {
     static Map map;
     int x;
     int y;
+    int attack;
 
     /**
      * Default constructor
@@ -27,11 +28,6 @@ abstract class Entity {
     }
 
     /**
-     * Entity move an interact with other entities in map
-     */
-    abstract void update();
-
-    /**
      * Paint entity to the canvas
      *
      * @param graphics:   canvas's graphic context
@@ -43,9 +39,9 @@ abstract class Entity {
      * @param entity: any entity object
      * @return distance from this entity to the given entity
      */
-    double distanceTo(Entity entity) {
+    float distanceTo(Entity entity) {
         float dx = x - entity.x;
         float dy = y - entity.y;
-        return Math.sqrt(dx * dx + dy * dy);
+        return (float) Math.sqrt(dx * dx + dy * dy);
     }
 }

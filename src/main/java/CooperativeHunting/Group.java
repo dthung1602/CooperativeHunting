@@ -3,20 +3,15 @@ package CooperativeHunting;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
+import java.util.*;
 
 class Group extends Entity {
-    private static int groupRadius;
-    private static int groupTileDiameter;
+    private static float groupRadius;
+    private static float groupTileDiameterInPixel;
     private static Color color;
 
-    ArrayList<Predator> members;
-    private Predator leader = null;
-    boolean isDead = false;
-
-    private int localPreyDistance = map.getMapWidth(); // TODO map.width
-    private int localGroupPreyX = 0;
-    private int localGroupPreyY = 0;
+    List<Predator> members;
+    Predator leader;
 
     /**
      * Group constructor
@@ -24,121 +19,111 @@ class Group extends Entity {
      * @param predator1: the initial member of the group
      * @param predator2: the initial member of the group
      */
-    Group(Predator predator1, Predator predator2) {
-        members = new ArrayList<Predator>();
+    private Group(Predator predator1, Predator predator2) {
+        members = new LinkedList<Predator>();
         members.add(predator1);
         members.add(predator2);
+        predator1.group = predator2.group = this;
     }
 
     static Color getColor() {
         return color;
     }
 
-    ArrayList<Predator> getMembers() {
-        return members;
-    }
-
-    Predator getLeader() {
-        return leader;
-    }
-
-    static void set(int groupRadius, Color color) {
+    /**
+     * Setter for Predator static fields
+     *
+     * @param groupRadius: group radius (tiles)
+     * @param color:       group circle color
+     */
+    static void set(float groupRadius, Color color) {
         Group.groupRadius = groupRadius;
-        Group.groupTileDiameter = 2 * groupRadius * map.getTileSize();
+        Group.groupTileDiameterInPixel = 2 * groupRadius * map.getTileSize();
         Group.color = color;
     }
 
     /**
-     * Recalculate the group circle center and check for leaving members
-     */
-    @Override
-    void update() {
-        resetLeader();
-        selectLeader();
-        this.circleCenter();
-        this.delMember();
-    }
-
-    /**
-     * Select leader
-     */
-    void updateLeader() {
-        this.resetLeader();
-        this.selectLeader();
-    }
-
-    /**
-     * Calculate the group's circle center and delete member
-     */
-    void updateCircleAndDeleteMember() {
-        this.circleCenter();
-        this.delMember();
-    }
-
-    /**
-     * Add new member to the group
+     * Form new groups for lone predators or let them join existing groups
      *
-     * @param predator: the new member of the group
+     * @param groups:    list of current groups in map
+     * @param predators: list of current predators in map
      */
-    void addMember(Predator predator) {
-        members.add(predator);
-    }
+    static void formNewGroups(List<Group> groups, List<Predator> predators) {
 
-    /**
-     * Delete the ID of the members who left
-     */
-    private void delMember() {
-        int dX = 0, dY = 0;
-        ArrayList<Predator> notMembers = new ArrayList<Predator>();
-        for (Predator member : members) {
-            dX = Math.abs(this.x - member.x);
-            dY = Math.abs(this.y - member.y);
-            //System.out.println(dX*dX+dY*dY);
-            if (dX * dX + dY * dY > groupRadius * groupRadius) {
-                notMembers.add(member);
-                member.group = null;
+        for (int i = 0; i < predators.size() - 1; i++) { // for every pair of predator
+            Predator predator = predators.get(i);
+
+            if (predator.group == null) { // only touch predators that do not belong to any group
+                for (int j = i + 1; j < predators.size(); j++) { // for every pair of predator
+                    Predator otherPredator = predators.get(j);
+
+                    if (predator.distanceTo(otherPredator) < groupRadius) { // if close enough to form new group
+                        if (otherPredator.group == null) { // other predator also has no group
+                            Group newGroup = new Group(predator, otherPredator); // -> new group contains both of them
+                            groups.add(newGroup);
+                        } else { // other predator has already in a group
+                            otherPredator.group.members.add(predator); // predator join that group
+                            predator.group = otherPredator.group;
+                        }
+                        break;
+                    }
+                }
             }
         }
-        members.removeAll(notMembers);
+    }
+
+    /**
+     * Recalculate the group circle center, check for leaving members and updateMove leader
+     */
+    void updateMembers() {
+        calculateCenter();
+        deleteMembers();
     }
 
     /**
      * Calculate the group circle center
      */
-    private void circleCenter() {
-        this.x = 0;
-        this.y = 0;
-        //System.out.println("New");
+    private void calculateCenter() {
+        x = 0;
+        y = 0;
         for (Predator member : members) {
-            //System.out.println("M: "+member.X+" "+member.Y+" "+members.size());
-            this.x += member.x;
-            this.y += member.y;
+            x += member.x;
+            y += member.y;
         }
         x = x / members.size();
         y = y / members.size();
-        //System.out.println(X+" "+Y+" "+members.size());
     }
 
     /**
-     * Reset leader to null before new iteration
+     * Remove members that moved out of the group radius
      */
-    private void resetLeader() {
+    private void deleteMembers() {
+        // remove members out of group radius
+        Iterator<Predator> iterator = members.iterator();
+        while (iterator.hasNext()) {
+            Predator member = iterator.next();
+            if (distanceTo(member) > groupRadius) {
+                iterator.remove();
+                member.group = null;
+            }
+        }
+    }
+
+    /**
+     * Select leader for the group
+     * The leader is the predator that saw a prey is closest to its prey
+     * It no member saw a prey, the group has no leader
+     */
+    void updateLeader() {
+        // reset leader
         leader = null;
-        localGroupPreyX = 0;
-        localGroupPreyY = 0;
-        localPreyDistance = 600; // TODO map.width
-    }
+        float minPreyDistance = Float.POSITIVE_INFINITY;
 
-    /**
-     * Select the leader based on the closest prey
-     */
-    private void selectLeader() {
+        // select leader with the closest prey
         for (Predator member : members) {
-            if (member.globalDistance < localPreyDistance && member.globalDistanceX != -1) {
-                localPreyDistance = member.globalDistance;
+            if (member.closestPreyDistance < minPreyDistance) {
+                minPreyDistance = member.closestPreyDistance;
                 leader = member;
-                localGroupPreyX = member.globalDistanceX;
-                localGroupPreyY = member.globalDistanceY;
             }
         }
     }
@@ -148,13 +133,14 @@ class Group extends Entity {
      */
     @Override
     void paint(GraphicsContext graphics, boolean showGroup) {
-        int tileSize = map.getTileSize();
+        if (members.size() < 2) return;
+        float tileSize = map.getTileSize();
         graphics.setStroke(color);
         graphics.strokeOval(
-                x * tileSize,
-                y * tileSize,
-                groupTileDiameter,
-                groupTileDiameter
+                (x - groupRadius + 0.5) * tileSize,
+                (y - groupRadius + 0.5) * tileSize,
+                groupTileDiameterInPixel,
+                groupTileDiameterInPixel
         );
     }
 }

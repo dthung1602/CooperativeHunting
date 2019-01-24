@@ -2,23 +2,20 @@ package CooperativeHunting;
 
 import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 class Predator extends Animal {
-    private static int visionRadius;
+    private static float visionRadius;
     private static int speed;
     private static int defaultHealth;
     private static int defaultAttack;
     private static Color defaultColor;
 
-    int health;
+    private int health;
     Group group;
 
     // hold the distance and direction to the prey for the predator
-    int globalDistanceX;
-    int globalDistanceY;
-    int globalDistance = map.getMapWidth();
+    private int closestPreyDistanceX;
+    private int closestPreyDistanceY;
+    float closestPreyDistance;
 
     /**
      * Predator constructor
@@ -35,7 +32,7 @@ class Predator extends Animal {
     }
 
     @Override
-    int getVisionRadius() {
+    float getVisionRadius() {
         return visionRadius;
     }
 
@@ -44,16 +41,20 @@ class Predator extends Animal {
         return speed;
     }
 
+    int getAttack() {
+        return (group == null) ? attack : group.attack;
+    }
+
     /**
      * Setter for Predator static fields
      *
      * @param speed:         predators' speed point (tiles/iteration)
      * @param defaultHealth: predators' initial health point
      * @param defaultAttack: predators' attack point
-     * @param visionRadius:  predators' vision radius
+     * @param visionRadius:  predators' vision radius (tiles)
      * @param defaultColor:  predators' color for visualization
      */
-    static void set(int speed, int defaultHealth, int defaultAttack, int visionRadius, Color defaultColor) {
+    static void set(int speed, int defaultHealth, int defaultAttack, float visionRadius, Color defaultColor) {
         Predator.speed = speed;
         Predator.defaultHealth = defaultHealth;
         Predator.defaultAttack = defaultAttack;
@@ -62,135 +63,94 @@ class Predator extends Animal {
     }
 
     /**
-     * Update predator's position, health, etc after each iteration
-     */
-    @Override
-    void update() {
-        updateScout();
-        updateMove();
-    }
-
-    /**
-     * Remove dead predators out of the given list
-     *
-     * @param predators: list to remove dead predators
-     */
-    static void removeDeadPredators(ArrayList<Predator> predators) {
-        for (Iterator<Predator> iterator = predators.iterator(); iterator.hasNext(); ) {
-            Predator predator = iterator.next();
-            if (predator.dead)
-                iterator.remove();
-        }
-    }
-
-    /**
      * The predator looks for the closest prey inside the predator's vision
      * Check for the health of the predator whether the predator is dead or not
      */
     void updateScout() {
-        scout();
-        //group.selectLeader(this, globalDistance, globalDistanceX, globalDistanceY);
-        checkDead();
+        // update health first
+        health--;
+        if (health < 1) {
+            die();
+            return;
+        }
+
+        // find closest prey
+        closestPreyDistanceX = Integer.MAX_VALUE;
+        closestPreyDistanceY = Integer.MAX_VALUE;
+        closestPreyDistance = Float.POSITIVE_INFINITY;
+        float groupAttack = getAttack();
+
+        for (Prey prey : map.getPreys()) {
+            float distance = distanceTo(prey);
+            if (distance <= visionRadius // prey in vision range
+                    && distance < closestPreyDistance // prey is the closest
+                    && prey.getAttack() < groupAttack) { // prey must be weaker than group
+                closestPreyDistance = distance;
+                closestPreyDistanceX = prey.x - this.x;
+                closestPreyDistanceY = prey.y - this.y;
+            }
+        }
     }
 
     /**
      * Update the new position of the predator
      */
     void updateMove() {
-        if (this.group != null) {
-            Predator leader = group.getLeader();
-            if (leader != null && this != leader) {
-                moveToLeader(leader);
-            } else {
-                move();
-            }
+        // this predator belongs to a group
+        // this group has a leader
+        // but this predator is not that leader
+        // -> follow leader
+        if (group != null && group.leader != null && this != group.leader) {
+            moveInDirection(group.leader.x - x, group.leader.y - y);
+
         } else {
-            move();
+            // predator has no group
+            // or predator's group has no leader
+            // or predator is the leader
+            // -> decide its own move
+
+            if (closestPreyDistance < Float.POSITIVE_INFINITY)
+                // a prey is found -> move to that prey
+                moveInDirection(closestPreyDistanceX, closestPreyDistanceY);
+            else
+                // no prey -> move randomly
+                moveRandomly();
         }
+
+        stayInMap();
     }
 
     /**
-     * Check if the predator is dead or not
+     * Attacks Preys in range
      */
-    private void checkDead() {
-        health--;
-        dead = (health < 1);
-    }
-
-    /**
-     * The predator looks around for prey
-     */
-    private void scout() {
-        globalDistanceX = -1;
-        globalDistanceY = -1;
-        globalDistance = map.getMapWidth();
+    void attack() {
+        int atk = getAttack(); // total attack of the group
 
         for (Prey prey : map.getPreys()) {
-            int templateDistance = (int) distanceTo(prey);
-            if (templateDistance <= visionRadius && templateDistance < globalDistance) {
-                globalDistance = templateDistance;
-                globalDistanceX = prey.x - this.x;
-                globalDistanceY = prey.y - this.y;
+            // if prey not dead, in range and weaker
+            if (!prey.dead && distanceTo(prey) <= visionRadius && prey.getAttack() <= atk) {
+                // get killed
+                prey.dead = true;
+
+                // increase health for predators in the same group
+                float nutrition = prey.getNutrition();
+                int healthGain = (int) (nutrition / group.members.size());
+                map.avgFoodGained += nutrition;
+                for (Predator predator : group.members)
+                    predator.health += healthGain;
+
+                break; // TODO attack multiple preys?
             }
         }
     }
 
     /**
-     * Calculate the next position for the predator
+     * Mark predator as dead and remove it from its group
      */
-    private void move() {
-        if (globalDistanceX != -1) {
-            // TODO duplicated code to line 138. consider move common code to another method
-            try {
-                float ratio = Math.abs((float) globalDistanceX / globalDistanceY);
-                this.y += Math.round(speed / (ratio + 1)) * (globalDistanceY / Math.abs(globalDistanceY));
-                this.x += Math.round(speed / (1 / ratio + 1)) * (globalDistanceX / Math.abs(globalDistanceX));
-            } catch (ArithmeticException e) { // division by zero
-                if (globalDistanceX > 0)
-                    this.x += speed;
-                else
-                    this.x -= speed;
-            }
-        } else {
-            this.x += random.nextInt(speed) + -speed / 4;
-            this.y += random.nextInt(speed) + -speed / 4;
-        }
-
-        stayInMap(map);
-    }
-
-    private void moveToLeader(Predator leader) {
-        try {
-            float ratio = Math.abs((float) leader.x / leader.y);
-            this.y += Math.round(speed / (ratio + 1)) * (leader.y / Math.abs(leader.y));
-            this.x += Math.round(speed / (1 / ratio + 1)) * (leader.x / Math.abs(leader.x));
-        } catch (ArithmeticException e) { // division by zero
-            if (leader.x > 0)
-                this.x += speed;
-            else
-                this.x -= speed;
-        }
-    }
-
-    void grouping(ArrayList<Predator> predators, ArrayList<Group> groups) {
-        int dX = 600, dY = 600; // TODO map.width
-        for (Predator predator : predators) {
-            if (this.group == null && predator != this) {
-                dX = this.x - predator.x;
-                dY = this.y - predator.y;
-                if (dX * dX + dY * dY < visionRadius * visionRadius) {
-                    if (predator.group == null) {
-                        Group neu = new Group(this, predator);
-                        this.group = neu;
-                        predator.group = neu;
-                        groups.add(neu);
-                    } else {
-                        predator.group.addMember(this);
-                        this.group = predator.group;
-                    }
-                }
-
-            }
-        }
+    void die() {
+        dead = true;
+        health = 0;
+        if (group != null)
+            group.members.remove(this);
     }
 }

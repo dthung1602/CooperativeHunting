@@ -253,7 +253,7 @@
                                 <Button fx:id="clear" layoutX="148.0" layoutY="15.0" mnemonicParsing="false" onAction="#clear" prefHeight="26.0" prefWidth="108.0" text="Clear" />
                                 <Button fx:id="play" layoutX="13.0" layoutY="53.0" mnemonicParsing="false" onAction="#play" prefHeight="26.0" prefWidth="108.0" text="Play" />
                                 <Button fx:id="stop" layoutX="148.0" layoutY="53.0" mnemonicParsing="false" onAction="#stop" prefHeight="26.0" prefWidth="108.0" text="Stop" />
-                                <Slider fx:id="slider" layoutX="81.0" layoutY="103.0" max="50.0" onMouseDragged="#sliders" prefHeight="38.0" prefWidth="182.0" showTickLabels="true" showTickMarks="true" />
+                                <Slider fx:id="slider" layoutX="81.0" layoutY="103.0" max="50.0" onMouseClicked="#sliders" onMouseDragged="#sliders" prefHeight="38.0" prefWidth="182.0" showTickLabels="true" showTickMarks="true" />
                             </children>
                         </AnchorPane>
                   <AnchorPane prefHeight="227.0" prefWidth="280.0">

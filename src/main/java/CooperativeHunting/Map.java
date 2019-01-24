@@ -4,15 +4,16 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Random;
+import java.util.*;
 
 class Map {
-    private ArrayList<Prey> preys;
-    private ArrayList<Group> groups;
-    private ArrayList<Predator> predators;
-    private int newPreyPerIteration;
+    private List<Prey> preys;
+    private List<Group> groups;
+    private List<Predator> predators;
+
+    private boolean createPrey;
+    private int newPreyPerIterationInt;
+    private float newPreyPerIterationFloat;
 
     private GUI controller;
     private Canvas canvas;
@@ -21,7 +22,7 @@ class Map {
     // map size
     private int mapWidth;
     private int mapHeight;
-    private int tileSize;
+    private float tileSize;
 
     // display options
     private boolean showPreyVision;
@@ -36,19 +37,15 @@ class Map {
 
     Map() {
         predators = new ArrayList<Predator>();
-        preys = new ArrayList<Prey>();
-        groups = new ArrayList<Group>();
+        preys = new LinkedList<Prey>();
+        groups = new LinkedList<Group>();
     }
 
-    ArrayList<Prey> getPreys() {
+    List<Prey> getPreys() {
         return preys;
     }
 
-    ArrayList<Group> getGroups() {
-        return groups;
-    }
-
-    ArrayList<Predator> getPredators() {
+    List<Predator> getPredators() {
         return predators;
     }
 
@@ -60,7 +57,7 @@ class Map {
         return mapHeight;
     }
 
-    int getTileSize() {
+    float getTileSize() {
         return tileSize;
     }
 
@@ -68,9 +65,9 @@ class Map {
              boolean showPredatorVision, boolean showPreyVision, boolean showGroup) {
         mapWidth = width;
         mapHeight = height;
-        tileSize = Math.min(
-                (int) (canvas.getHeight() / mapHeight),
-                (int) (canvas.getWidth() / mapWidth)
+        tileSize = (float) Math.min(
+                canvas.getHeight() / mapHeight,
+                canvas.getWidth() / mapWidth
         );
         this.showPredatorVision = showPredatorVision;
         this.showPreyVision = showPreyVision;
@@ -132,47 +129,33 @@ class Map {
         // initialize output for this iteration
         avgFoodGained = 0;
 
-        // remove dead animals
-        Predator.removeDeadPredators(predators);
-        Prey.removeDeadPreys(preys);
-
-        // new preys pop up
-        if (newPreyPerIteration > 0)
+        if (createPrey)
             createNewPreys();
 
-        // split and merge predators groups
-        //Order
-        //Create group
-        //Scout
-        //Reset leader
-        //Select leader
-        //Move
-        //Calculate circle
-        //Delete member
-        for (Predator predator : predators) {
-            predator.grouping(predators, groups);
+        Group.formNewGroups(groups, predators);
+
+        for (Predator predator : predators)
             predator.updateScout();
-        }
 
-        for (Group group : groups) {
+        for (Group group : groups)
             group.updateLeader();
-        }
 
-        for (Predator predator : predators) {
+        for (Predator predator : predators)
             predator.updateMove();
-        }
 
-        ArrayList<Group> delGroups = new ArrayList<Group>();
-        for (Group group : groups) {
-            group.updateCircleAndDeleteMember();
-            if (group.members.size() <= 1) {
-                delGroups.add(group);
-            }
-        }
-        groups.removeAll(delGroups);
+        for (Group group : groups)
+            group.updateMembers();
+
+        for (Predator predator : predators)
+            predator.attack();
+
+        removeDeadAnimals(preys);
 
         for (Prey prey : preys)
             prey.update();
+
+        removeDeadAnimals(predators);
+        removeEmptyGroups();
 
         // display output
         controller.displayOutput(avgFoodGained, predators.size());
@@ -191,7 +174,7 @@ class Map {
      * @param primaryColor: preys' primary color for visualization
      */
     void initializePreys(int number, int speed, float nutrition, int attack, int minSize, int maxSize,
-                         int visionRadius, int newPreyPerIteration, Color primaryColor) throws IllegalArgumentException {
+                         float visionRadius, float newPreyPerIteration, Color primaryColor) throws IllegalArgumentException {
 
         // validate arguments
         if (minSize > maxSize || minSize < 1)
@@ -206,8 +189,16 @@ class Map {
         Color mediumPreyColor = copyColor(primaryColor, 0.9);
         Color largePreyColor = copyColor(primaryColor, 1);
 
+        // set value for creating new Preys
+        if (newPreyPerIteration == 0) {
+            createPrey = false;
+        } else {
+            createPrey = true;
+            this.newPreyPerIterationInt = (int) newPreyPerIteration;
+            this.newPreyPerIterationFloat = newPreyPerIteration - (int) newPreyPerIteration;
+        }
+
         // set values for prey class
-        this.newPreyPerIteration = newPreyPerIteration;
         Prey.set(speed, nutrition, attack, visionRadius, minSize, maxSize,
                 smallPreyColor, mediumPreyColor, largePreyColor);
 
@@ -230,7 +221,7 @@ class Map {
      * @param predatorColor: predators' color for visualization
      * @param groupColor:    groups' color for visualization
      */
-    void initializePredators(int number, int speed, int health, int attack, int groupRadius, int visionRadius,
+    void initializePredators(int number, int speed, int health, int attack, float groupRadius, float visionRadius,
                              Color predatorColor, Color groupColor) throws IllegalArgumentException {
 
         // Validate arguments
@@ -247,6 +238,7 @@ class Map {
         // create predators randomly
         ArrayList<Position> positions = getRandomPositions(number);
         predators.clear();
+        groups.clear();
         for (Position position : positions)
             predators.add(new Predator(position));
     }
@@ -255,9 +247,36 @@ class Map {
      * Create new preys to replace dead ones
      */
     private void createNewPreys() {
-        ArrayList<Position> positions = getRandomPositions(newPreyPerIteration);
+        int one = (random.nextFloat() < newPreyPerIterationFloat) ? 1 : 0;
+        ArrayList<Position> positions = getRandomPositions(newPreyPerIterationInt + one);
         for (Position position : positions)
             preys.add(new Prey(position));
+    }
+
+    /**
+     * Remove dead animal from the list
+     *
+     * @param animals: list to remove
+     */
+    private void removeDeadAnimals(List<? extends Animal> animals) {
+        for (Iterator<? extends Animal> iterator = animals.iterator(); iterator.hasNext(); )
+            if (iterator.next().dead)
+                iterator.remove();
+    }
+
+    /**
+     * Remove empty groups and groups with only 1 member
+     */
+    private void removeEmptyGroups() {
+        for (Iterator<Group> iterator = groups.iterator(); iterator.hasNext(); ) {
+            Group group = iterator.next();
+            switch (group.members.size()) {
+                case 1:
+                    group.members.get(0).group = null;
+                case 0:
+                    iterator.remove();
+            }
+        }
     }
 
     /**
@@ -285,6 +304,12 @@ class Map {
         return newPositions;
     }
 
+    /**
+     * Clone a color and change the clone's opacity
+     *
+     * @param color:      original color
+     * @param newOpacity: clone color opacity
+     */
     private Color copyColor(Color color, double newOpacity) {
         return new Color(
                 color.getRed(),
