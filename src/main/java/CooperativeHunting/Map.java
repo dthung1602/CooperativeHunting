@@ -4,9 +4,10 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.io.Serializable;
 import java.util.*;
 
-class Map {
+class Map implements Serializable {
     private List<Prey> preys;
     private List<Group> groups;
     private List<Predator> predators;
@@ -15,9 +16,9 @@ class Map {
     private int newPreyPerIterationInt;
     private float newPreyPerIterationFloat;
 
-    private GUI controller;
-    private Canvas canvas;
-    private GraphicsContext graphics;
+    transient private GUI controller;
+    transient private Canvas canvas;
+    transient private GraphicsContext graphics;
 
     // map size
     private int mapWidth;
@@ -35,10 +36,11 @@ class Map {
 
     private static Random random = new Random();
 
-    Map() {
-        predators = new ArrayList<Predator>();
-        preys = new LinkedList<Prey>();
-        groups = new LinkedList<Group>();
+    Map(GUI gui) {
+        setController(gui);
+        predators = new ArrayList<>();
+        preys = new LinkedList<>();
+        groups = new LinkedList<>();
     }
 
     List<Prey> getPreys() {
@@ -75,10 +77,10 @@ class Map {
         this.showGrid = showGrid;
     }
 
-    void setController(GUI controller) {
-        this.controller = controller;
-        this.canvas = controller.getMapCanvas();
-        this.graphics = canvas.getGraphicsContext2D();
+    void setController(GUI gui) {
+        controller = gui;
+        canvas = controller.getMapCanvas();
+        graphics = canvas.getGraphicsContext2D();
     }
 
     /**
@@ -86,8 +88,7 @@ class Map {
      */
     void paint() {
         // clear screen
-        graphics.setFill(Color.WHITE);
-        graphics.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        clearScreen();
 
         // paint predators
         for (Predator predator : predators)
@@ -317,5 +318,17 @@ class Map {
                 color.getBlue(),
                 newOpacity
         );
+    }
+
+    private void clearScreen() {
+        graphics.setFill(Color.WHITE);
+        graphics.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+    }
+
+    void clear() {
+        predators.clear();
+        groups.clear();
+        preys.clear();
+        clearScreen();
     }
 }

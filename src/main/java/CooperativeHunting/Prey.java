@@ -27,18 +27,14 @@ class Prey extends Animal {
         super(position);
         size = random.nextInt(minSize, maxSize);
         attack = (int) (size * defaultAttack);
+        adjustColorAccordingToSize();
+    }
 
-        // minSize     1/3        2/3      maxSize
-        //    |---------|----------|----------|
-        //       small       mid       large
-        float midThreshold = minSize + (maxSize - minSize) / 3.0f;
-        float largeThreshold = minSize + (maxSize - minSize) / 3.0f * 2;
-        if (size > largeThreshold)
-            color = largePreyColor;
-        else if (size > midThreshold)
-            color = mediumPreyColor;
-        else
-            color = smallPreyColor;
+    Prey(Position position, int size) {
+        super(position);
+        this.size = size;
+        attack = (int) (size * defaultAttack);
+        adjustColorAccordingToSize();
     }
 
     @Override
@@ -81,6 +77,11 @@ class Prey extends Animal {
         Prey.smallPreyColor = smallPreyColor;
         Prey.mediumPreyColor = mediumPreyColor;
         Prey.largePreyColor = largePreyColor;
+    }
+
+    @Override
+    void postDeserialize() {
+        adjustColorAccordingToSize();
     }
 
     /**
@@ -172,5 +173,20 @@ class Prey extends Animal {
         }
 
         return predatorsInRange;
+    }
+
+    private void adjustColorAccordingToSize() {
+        // minSize     1/3        2/3      maxSize
+        //    |---------|----------|----------|
+        //       small       mid       large
+
+        float midThreshold = minSize + (maxSize - minSize) / 3.0f;
+        float largeThreshold = minSize + (maxSize - minSize) / 3.0f * 2;
+        if (size > largeThreshold)
+            color = largePreyColor;
+        else if (size > midThreshold)
+            color = mediumPreyColor;
+        else
+            color = smallPreyColor;
     }
 }

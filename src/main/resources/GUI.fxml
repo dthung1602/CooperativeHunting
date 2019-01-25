@@ -8,6 +8,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -24,11 +25,25 @@
     <children>
         <MenuBar>
             <menus>
-                <Menu mnemonicParsing="false" text="Simulation">
+                <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#setDefaultValues" text="Default values" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="loadSettings" mnemonicParsing="false" onAction="#loadSettingsFromFile" text="Load settings" />
+                  <MenuItem fx:id="loadMap" mnemonicParsing="false" onAction="#loadMapFromFile" text="Load map" />
+                  <MenuItem fx:id="loadSimulation" mnemonicParsing="false" onAction="#loadSimulationFromFile" text="Load simulation" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="saveSettings" mnemonicParsing="false" onAction="#saveSettingsToFile" text="Save settings" />
+                  <MenuItem fx:id="saveMap" mnemonicParsing="false" onAction="#saveMapToFile" text="Save map" />
+                  <MenuItem fx:id="saveSimulation" mnemonicParsing="false" onAction="#saveSimulationToFile" text="Save simulation" />
                     </items>
                 </Menu>
+            <Menu mnemonicParsing="false" text="Demo">
+              <items>
+                        <MenuItem mnemonicParsing="false" onAction="#showDemo1" text="Demo 1" />
+                  <MenuItem mnemonicParsing="false" onAction="#showDemo2" text="Demo 2" />
+                  <MenuItem mnemonicParsing="false" onAction="#showDemo3" text="Demo 3" />
+              </items>
+            </Menu>
                 <Menu mnemonicParsing="false" text="About">
                     <items>
                   <MenuItem mnemonicParsing="false" onAction="#showSpecification" text="Specification" />
@@ -249,11 +264,11 @@
                         <AnchorPane prefHeight="143.0" prefWidth="317.0" style="-fx-border-color: lightgrey;">
                             <children>
                                 <Text layoutX="14.0" layoutY="115.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" wrappingWidth="57.0" />
-                                <Button fx:id="save" layoutX="13.0" layoutY="15.0" mnemonicParsing="false" onAction="#save" prefHeight="26.0" prefWidth="108.0" text="Save" />
+                                <Button fx:id="apply" layoutX="13.0" layoutY="15.0" mnemonicParsing="false" onAction="#apply" prefHeight="26.0" prefWidth="108.0" text="Apply" />
                                 <Button fx:id="clear" layoutX="148.0" layoutY="15.0" mnemonicParsing="false" onAction="#clear" prefHeight="26.0" prefWidth="108.0" text="Clear" />
                                 <Button fx:id="play" layoutX="13.0" layoutY="53.0" mnemonicParsing="false" onAction="#play" prefHeight="26.0" prefWidth="108.0" text="Play" />
                                 <Button fx:id="stop" layoutX="148.0" layoutY="53.0" mnemonicParsing="false" onAction="#stop" prefHeight="26.0" prefWidth="108.0" text="Stop" />
-                                <Slider fx:id="slider" layoutX="81.0" layoutY="103.0" max="50.0" onMouseClicked="#sliders" onMouseDragged="#sliders" prefHeight="38.0" prefWidth="182.0" showTickLabels="true" showTickMarks="true" />
+                                <Slider fx:id="slider" layoutX="81.0" layoutY="103.0" max="50.0" onMouseClicked="#updateSimulationSpeed" onMouseDragged="#updateSimulationSpeed" prefHeight="38.0" prefWidth="182.0" showTickLabels="true" showTickMarks="true" />
                             </children>
                         </AnchorPane>
                   <AnchorPane prefHeight="227.0" prefWidth="280.0">

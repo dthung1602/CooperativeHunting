@@ -6,17 +6,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
-import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Scanner;
+import static CooperativeHunting.FileLoader.readResourceFile;
 
 public class GUI {
-    private boolean editDisable = false;
     private Main application;
-    private Map map;
+    Stage stage;
+    Map map;
 
     // Grid (Map)
     @FXML
@@ -25,6 +22,20 @@ public class GUI {
     private TextField width;
     @FXML
     private TextField height;
+
+    // Menu items
+    @FXML
+    private MenuItem loadSettings;
+    @FXML
+    private MenuItem loadMap;
+    @FXML
+    private MenuItem loadSimulation;
+    @FXML
+    private MenuItem saveSettings;
+    @FXML
+    private MenuItem saveMap;
+    @FXML
+    private MenuItem saveSimulation;
 
     // Display options
     @FXML
@@ -82,49 +93,58 @@ public class GUI {
 
     // Button
     @FXML
-    private Button clear;
+    private Button apply;
     @FXML
-    private Slider slider;
+    private Button clear;
     @FXML
     private Button play;
     @FXML
     private Button stop;
+
     @FXML
-    private Button save;
+    private Slider slider;
 
     // GUI component groups
-    private TextField[] inputTextFields;
-    private CheckBox[] checkBoxes;
-    private ColorPicker[] colorPickers;
+    TextField[] inputTextFields;
+    CheckBox[] checkBoxes;
+    ColorPicker[] colorPickers;
+    private MenuItem[] menuItems;
     private Control[] widgets;
 
     Canvas getMapCanvas() {
         return mapCanvas;
     }
 
-    void setApplication(Main application) {
+    void set(Main application, Map map, Stage stage) {
         this.application = application;
+        this.stage = stage;
+        setMap(map);
     }
 
     void setMap(Map map) {
         this.map = map;
+        Entity.map = map;
+        application.setMap(map);
     }
 
     /**
-     * Disable fields, save and clear buttons and do the runningToggle function in the main
+     * Disable fields, apply and clear buttons and do the runningToggle function in the main
      */
     @FXML
     void play() {
-        // change Play <--> Pause
-        play.setText((play.getText().equals("Play")) ? "Pause" : "Play");
+        boolean running = application.runningToggle();
 
+        play.setText(running ? "Pause" : "Play");
+
+        apply.setDisable(true);
+        clear.setDisable(true);
+        play.setDisable(false);
         stop.setDisable(false);
-        editDisable = true;
 
-        setFieldsDisable();
-        setButtonsEditable();
-
-        application.runningToggle();
+        setSettingsDisable(true);
+        saveSettings.setDisable(running);
+        saveMap.setDisable(running);
+        saveSimulation.setDisable(running);
     }
 
     /**
@@ -132,44 +152,27 @@ public class GUI {
      */
     @FXML
     void stop() {
-        editDisable = false;
-        setFieldsDisable(); //enable fields
-        setButtonsEditable(); //enable buttons
-
         play.setText("Play");
-        play.setDisable(true);
 
+        apply.setDisable(false);
+        clear.setDisable(false);
+        play.setDisable(true);
+        stop.setDisable(true);
+
+        setSettingsDisable(false);
         application.stopSimulation();
 
         // reset the value of output
         averageFood.setText("");
         predatorCount.setText("");
-
-    }
-
-    /**
-     * The iteration speed will be changed base on the value of slider
-     */
-    @FXML
-    void sliders() {
-        slider.showTickLabelsProperty();
-        application.setSimulationSpeed(slider.getValue());
     }
 
     /**
      * Save user inputs to 3 initializing functions in Map class
      */
     @FXML
-    void save() {
+    void apply() {
         try {
-            // Only display Play/Pause buttons after pressing Save
-            // Stop buttons is hided unless pressing Play buttons
-            editDisable = true;
-            setFieldsDisable();
-            setButtonsEditable();
-            play.setDisable(false);
-            stop.setDisable(false);
-
             // pass values to initializing functions in Map class
             map.set(
                     Integer.parseInt(width.getText()),
@@ -209,63 +212,72 @@ public class GUI {
                     "Invalid format",
                     "Some fields has invalid number format:\n" + e.getMessage()
             );
+            return;
         } catch (IllegalArgumentException e) {
             alert("Invalid argument", e.getMessage());
-        }
-    }
-
-    /**
-     * Set text of all fields to value 0
-     */
-    @FXML
-    void clear() {
-        if (!editDisable)
-            setText("0");
-        preyColor.setValue(javafx.scene.paint.Color.WHITE);
-        predatorColor.setValue(javafx.scene.paint.Color.WHITE);
-    }
-
-    /**
-     * Display a window contains the project specification
-     */
-    @FXML
-    void setDefaultValues(ActionEvent event) {
-        String rawValues = readWholeFile("DEFAULT_VALUES.txt");
-
-        // error occurred
-        if (rawValues.indexOf("Error reading file") == 0) {
-            alert("Warning", rawValues);
             return;
         }
 
-        try {
-            String[] values = rawValues.split("\n");
-            int i = 0;
+        apply.setDisable(false);
+        clear.setDisable(false);
+        play.setDisable(false);
+        stop.setDisable(true);
+    }
 
-            for (int j = 0; j < inputTextFields.length; j++, i++)
-                inputTextFields[j].setText(values[i]);
-            for (int j = 0; j < checkBoxes.length; j++, i++)
-                checkBoxes[j].setSelected(Boolean.parseBoolean(values[i]));
-            for (int j = 0; j < colorPickers.length; j++, i++) {
-                String[] colorValues = values[i].split(" ");
-                Color color = Color.rgb(
-                        Integer.parseInt(colorValues[0]),
-                        Integer.parseInt(colorValues[1]),
-                        Integer.parseInt(colorValues[2]),
-                        Float.parseFloat(colorValues[3])
-                );
-                colorPickers[j].setValue(color);
-            }
+    /**
+     * Reset all input fields
+     */
+    @FXML
+    void clear() {
+        clearTextFields();
+        for (CheckBox checkBox : checkBoxes)
+            checkBox.setSelected(false);
+        for (ColorPicker colorPicker : colorPickers)
+            colorPicker.setValue(javafx.scene.paint.Color.WHITE);
+    }
 
-        } catch (NumberFormatException e) {
-            alert("Warning", "Corrupted default value file");
-        } catch (IllegalArgumentException e) {
-            alert("Warning", "Corrupted color value in default value file");
-        }
+    /**
+     * The iteration speed will be changed base on the value of slider
+     */
+    @FXML
+    void updateSimulationSpeed() {
+        slider.showTickLabelsProperty();
+        application.setSimulationSpeed(slider.getValue());
+    }
+
+    /**
+     * Show demo 1
+     */
+    @FXML
+    void showDemo1(ActionEvent event) {
+        showDemo(1);
+    }
+
+    /**
+     * Show demo 2
+     */
+    @FXML
+    void showDemo2(ActionEvent event) {
+        showDemo(2);
+    }
+
+    /**
+     * Show demo 3
+     */
+    @FXML
+    void showDemo3(ActionEvent event) {
+        showDemo(3);
     }
 
     @FXML
     void showContributing(ActionEvent event) {
+        String content = readResourceFile("CONTRIBUTING.txt");
+
+        if (content == null) {
+            alert("Warning", "Error opening file CONTRIBUTING.txt");
+            return;
+        }
+
         Dialog<Boolean> dialog = new Dialog<Boolean>();
 
         ButtonType button = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
@@ -273,7 +285,7 @@ public class GUI {
 
         dialog.getDialogPane().setMinSize(350, 200);
         dialog.setTitle("Contributing");
-        dialog.setContentText(readWholeFile("CONTRIBUTING.txt"));
+        dialog.setContentText(content);
 
         dialog.showAndWait();
     }
@@ -283,6 +295,13 @@ public class GUI {
      */
     @FXML
     void showSpecification(ActionEvent event) {
+        String content = readResourceFile("SPECIFICATIONS.txt");
+
+        if (content == null) {
+            alert("Warning", "Error opening file SPECIFICATIONS.txt");
+            return;
+        }
+
         Dialog<Boolean> dialog = new Dialog<Boolean>();
 
         ButtonType button = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
@@ -291,11 +310,58 @@ public class GUI {
         dialog.getDialogPane().setMinSize(700, 500);
         dialog.setTitle("Project specification");
 
-        TextArea textArea = new TextArea(readWholeFile("SPECIFICATIONS.txt"));
+        TextArea textArea = new TextArea(content);
         textArea.setEditable(true);
         dialog.getDialogPane().setContent(textArea);
 
         dialog.showAndWait();
+    }
+
+    @FXML
+    void loadSettingsFromFile(ActionEvent event) {
+        FileLoader.loadFromFile(
+                "Load settings",
+                "loadSettingsFromString",
+                this);
+    }
+
+    @FXML
+    void loadMapFromFile(ActionEvent event) {
+        FileLoader.loadFromFile(
+                "Load map",
+                "loadMapFromString",
+                this);
+    }
+
+    @FXML
+    void loadSimulationFromFile(ActionEvent event) {
+        FileLoader.loadFromFile("Load simulation",
+                "loadSimulationFromString",
+                this);
+    }
+
+    @FXML
+    void saveSettingsToFile(ActionEvent event) {
+        FileLoader.saveToFile(
+                "Save settings",
+                "saveSettingsToString",
+                this);
+    }
+
+    @FXML
+    void saveMapToFile(ActionEvent event) {
+        FileLoader.saveToFile(
+                "Save map",
+                "saveMapToString",
+                this);
+    }
+
+    @FXML
+    void saveSimulationToFile(ActionEvent event) {
+        FileLoader.saveToFile(
+                "Save simulation",
+                "saveSimulationToString",
+                this);
     }
 
     /**
@@ -329,9 +395,13 @@ public class GUI {
                 showGrid, predatorShowVision, showGroup, preyShowVision,
                 predatorColor, groupColor, preyColor
         };
+        menuItems = new MenuItem[]{
+                loadSettings, loadMap, loadSimulation,
+                saveSettings, saveMap, saveSimulation
+        };
 
         // clear text in input text fields
-        setText("");
+        clearTextFields();
 
         // Accept only 0-9 and .
         for (final TextField field : inputTextFields)
@@ -360,28 +430,20 @@ public class GUI {
 
     /**
      * Set all input text fields in GUI to value text
-     *
-     * @param text: text to set
      */
-    private void setText(String text) {
+    private void clearTextFields() {
         for (TextField field : inputTextFields)
-            field.setText(text);
+            field.setText("");
     }
 
     /**
      * Do not let user type input to all fields
      */
-    private void setFieldsDisable() {
+    private void setSettingsDisable(boolean value) {
         for (Control widget : widgets)
-            widget.setDisable(editDisable);
-    }
-
-    /**
-     * Disable clear and save buttons
-     */
-    private void setButtonsEditable() {
-        clear.setDisable(editDisable);
-        save.setDisable(editDisable);
+            widget.setDisable(value);
+        for (MenuItem item : menuItems)
+            item.setDisable(value);
     }
 
     /**
@@ -390,35 +452,19 @@ public class GUI {
      * @param title: Dialog box's title
      * @param text:  Dialog box's content
      */
-    private void alert(String title, String text) {
-        editDisable = false;
-        setButtonsEditable();
-        play.setDisable(true);
-        stop.setDisable(true);
-
+    static void alert(String title, String text) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(title);
         alert.setContentText(text);
         alert.showAndWait();
     }
 
-    /**
-     * @param fileName: file to read
-     * @return file content string
-     */
-    private String readWholeFile(String fileName) {
-        try {
-            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            InputStream stream = classloader.getResourceAsStream(fileName);
-            if (stream == null)
-                throw new FileNotFoundException();
-            Scanner s = new Scanner(stream).useDelimiter("\\A");
-            String content = s.hasNext() ? s.next() : "";
-            stream.close();
-            return content;
-        } catch (IOException e) {
-            return "Error reading file '" + fileName + "'";
-        }
+    void enablePlayButton() {
+        play.setDisable(false);
+    }
+
+    private void showDemo(int i) {
+        FileLoader.loadSettingsFromString(FileLoader.readResourceFile("SettingsDemo" + i + ".txt"), this);
+        FileLoader.loadMapFromString(FileLoader.readResourceFile("MapDemo" + i + ".txt"), this);
     }
 }
-

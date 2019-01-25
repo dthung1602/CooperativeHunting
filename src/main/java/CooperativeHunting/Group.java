@@ -3,7 +3,9 @@ package CooperativeHunting;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 class Group extends Entity {
     private static float groupRadius;
@@ -20,10 +22,15 @@ class Group extends Entity {
      * @param predator2: the initial member of the group
      */
     private Group(Predator predator1, Predator predator2) {
-        members = new LinkedList<Predator>();
+        members = new LinkedList<>();
         members.add(predator1);
         members.add(predator2);
         predator1.group = predator2.group = this;
+    }
+
+    @Override
+    void postDeserialize() {
+
     }
 
     static Color getColor() {

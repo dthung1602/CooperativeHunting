@@ -13,7 +13,7 @@ abstract class Animal extends Entity {
 
     boolean dead;
     int size;
-    Color color;
+    transient Color color;
 
     /**
      * Animal constructor

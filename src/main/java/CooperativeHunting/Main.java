@@ -32,11 +32,9 @@ public class Main extends Application {
         VBox layout = loader.load();
 
         // get the controller and pass Map Object to it
-        GUI controller = loader.getController();
-        Entity.map = map = new Map();
-        map.setController(controller);
-        controller.setMap(map);
-        controller.setApplication(this);
+        GUI gui = loader.getController();
+        Map m = new Map(gui);
+        gui.set(this, m, stage);
 
         // display the GUI
         stage.setScene(new Scene(layout));
@@ -51,10 +49,15 @@ public class Main extends Application {
         launch(args);
     }
 
-    void runningToggle() {
+    void setMap(Map map) {
+        this.map = map;
+    }
+
+    boolean runningToggle() {
         running = !running;
         if (running)
             mainThread.interrupt();
+        return running;
     }
 
     void stopSimulation() {

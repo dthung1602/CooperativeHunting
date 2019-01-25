@@ -62,6 +62,11 @@ class Predator extends Animal {
         Predator.defaultColor = defaultColor;
     }
 
+    @Override
+    void postDeserialize() {
+        color = defaultColor;
+    }
+
     /**
      * The predator looks for the closest prey inside the predator's vision
      * Check for the health of the predator whether the predator is dead or not
@@ -134,10 +139,14 @@ class Predator extends Animal {
 
                 // increase health for predators in the same group
                 float nutrition = prey.getNutrition();
-                int healthGain = (int) (nutrition / group.members.size());
                 map.avgFoodGained += nutrition;
-                for (Predator predator : group.members)
-                    predator.health += healthGain;
+                if (group == null) {
+                    health += (int) nutrition;
+                } else {
+                    int healthGain = (int) (nutrition / group.members.size());
+                    for (Predator predator : group.members)
+                        predator.health += healthGain;
+                }
 
                 break; // TODO attack multiple preys?
             }

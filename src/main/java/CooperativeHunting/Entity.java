@@ -2,10 +2,12 @@ package CooperativeHunting;
 
 import javafx.scene.canvas.GraphicsContext;
 
+import java.io.Serializable;
+
 /**
  * Abstract base class for group, preys and predators
  */
-abstract class Entity {
+abstract class Entity implements Serializable {
     static Map map;
     int x;
     int y;
@@ -34,6 +36,11 @@ abstract class Entity {
      * @param showCircle: whether to paint the circle around the entity
      */
     abstract void paint(GraphicsContext graphics, boolean showCircle);
+
+    /**
+     * Initialize transient fields after deserialize
+     */
+    abstract void postDeserialize();
 
     /**
      * @param entity: any entity object
