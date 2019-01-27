@@ -1,7 +1,5 @@
 package CooperativeHunting;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -36,6 +34,12 @@ public class GUI {
     private MenuItem saveMap;
     @FXML
     private MenuItem saveSimulation;
+    @FXML
+    private MenuItem demo1;
+    @FXML
+    private MenuItem demo2;
+    @FXML
+    private MenuItem demo3;
 
     // Display options
     @FXML
@@ -60,6 +64,8 @@ public class GUI {
     private TextField predatorVisionRadius;
     @FXML
     private TextField groupRadius;
+    @FXML
+    private TextField stayInGroupTendency;
     @FXML
     private ColorPicker predatorColor;
     @FXML
@@ -189,6 +195,7 @@ public class GUI {
                     Integer.parseInt(predatorAttack.getText()),
                     Float.parseFloat(groupRadius.getText()),
                     Float.parseFloat(predatorVisionRadius.getText()),
+                    Float.parseFloat(stayInGroupTendency.getText()),
                     predatorColor.getValue(),
                     groupColor.getValue()
             );
@@ -278,7 +285,7 @@ public class GUI {
             return;
         }
 
-        Dialog<Boolean> dialog = new Dialog<Boolean>();
+        Dialog<Boolean> dialog = new Dialog<>();
 
         ButtonType button = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().add(button);
@@ -302,7 +309,7 @@ public class GUI {
             return;
         }
 
-        Dialog<Boolean> dialog = new Dialog<Boolean>();
+        Dialog<Boolean> dialog = new Dialog<>();
 
         ButtonType button = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().add(button);
@@ -379,7 +386,7 @@ public class GUI {
 
         inputTextFields = new TextField[]{
                 width, height,
-                predatorNumber, predatorAttack, health, predatorSpeed, predatorVisionRadius, groupRadius,
+                predatorNumber, predatorAttack, health, predatorSpeed, predatorVisionRadius, groupRadius, stayInGroupTendency,
                 preyNumber, preyAttack, nutrition, preySpeed, preyVisionRadius, preyMinSize, preyMaxSize, newPreyPerIteration,
         };
         checkBoxes = new CheckBox[]{
@@ -390,14 +397,15 @@ public class GUI {
         };
         widgets = new Control[]{
                 width, height,
-                predatorNumber, predatorAttack, health, predatorSpeed, predatorVisionRadius, groupRadius,
+                predatorNumber, predatorAttack, health, predatorSpeed, predatorVisionRadius, groupRadius, stayInGroupTendency,
                 preyNumber, preyAttack, nutrition, preySpeed, preyVisionRadius, preyMinSize, preyMaxSize, newPreyPerIteration,
                 showGrid, predatorShowVision, showGroup, preyShowVision,
                 predatorColor, groupColor, preyColor
         };
         menuItems = new MenuItem[]{
                 loadSettings, loadMap, loadSimulation,
-                saveSettings, saveMap, saveSimulation
+                saveSettings, saveMap, saveSimulation,
+                demo1, demo2, demo3
         };
 
         // clear text in input text fields
@@ -406,12 +414,9 @@ public class GUI {
         // Accept only 0-9 and .
         for (final TextField field : inputTextFields)
             field.textProperty().addListener(
-                    new ChangeListener<String>() {
-                        @Override
-                        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                            if (newValue.matches(".*[^\\d.]+.*")) {
-                                field.setText(newValue.replaceAll("[^\\d.]", ""));
-                            }
+                    (observable, oldValue, newValue) -> {
+                        if (newValue.matches(".*[^\\d.]+.*")) {
+                            field.setText(newValue.replaceAll("[^\\d.]", ""));
                         }
                     }
             );

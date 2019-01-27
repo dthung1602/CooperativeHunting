@@ -39,9 +39,9 @@
                 </Menu>
             <Menu mnemonicParsing="false" text="Demo">
               <items>
-                        <MenuItem mnemonicParsing="false" onAction="#showDemo1" text="Demo 1" />
-                  <MenuItem mnemonicParsing="false" onAction="#showDemo2" text="Demo 2" />
-                  <MenuItem mnemonicParsing="false" onAction="#showDemo3" text="Demo 3" />
+                        <MenuItem fx:id="demo1" mnemonicParsing="false" onAction="#showDemo1" text="Demo 1" />
+                  <MenuItem fx:id="demo2" mnemonicParsing="false" onAction="#showDemo2" text="Demo 2" />
+                  <MenuItem fx:id="demo3" mnemonicParsing="false" onAction="#showDemo3" text="Demo 3" />
               </items>
             </Menu>
                 <Menu mnemonicParsing="false" text="About">
@@ -139,8 +139,9 @@
                                                       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" textAlignment="CENTER" wrappingWidth="138.046875" GridPane.rowIndex="3" />
                                                       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Group radius" textAlignment="CENTER" wrappingWidth="137.701171875" GridPane.rowIndex="4" />
                                           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Vision radius" textAlignment="CENTER" wrappingWidth="138.599609375" GridPane.rowIndex="5" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Group color" textAlignment="CENTER" wrappingWidth="139.0068359375" GridPane.rowIndex="6" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Color" textAlignment="CENTER" wrappingWidth="138.04686254241096" GridPane.rowIndex="7" />
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Stay in group" textAlignment="CENTER" wrappingWidth="138.166015625" GridPane.rowIndex="6" />
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Group color" textAlignment="CENTER" wrappingWidth="139.0068359375" GridPane.rowIndex="7" />
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Color" textAlignment="CENTER" wrappingWidth="138.04686254241096" GridPane.rowIndex="8" />
                                           <TextField fx:id="predatorNumber" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1">
                                              <GridPane.margin>
                                                 <Insets right="20.0" />
@@ -165,12 +166,17 @@
                                              <GridPane.margin>
                                                 <Insets right="20.0" />
                                              </GridPane.margin></TextField>
-                                          <ColorPicker fx:id="groupColor" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                          <TextField fx:id="stayInGroupTendency" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                             <GridPane.margin>
+                                                <Insets right="20.0" />
+                                             </GridPane.margin>
+                                          </TextField>
+                                          <ColorPicker fx:id="groupColor" GridPane.columnIndex="1" GridPane.rowIndex="7">
                                              <GridPane.margin>
                                                 <Insets right="20.0" />
                                              </GridPane.margin>
                                           </ColorPicker>
-                                          <ColorPicker fx:id="predatorColor" prefHeight="25.0" prefWidth="189.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                          <ColorPicker fx:id="predatorColor" prefHeight="25.0" prefWidth="189.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
                                              <GridPane.margin>
                                                 <Insets right="20.0" />
                                              </GridPane.margin>

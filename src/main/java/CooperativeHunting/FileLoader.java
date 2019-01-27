@@ -80,7 +80,7 @@ class FileLoader {
 
             gui.apply();
             gui.map.clear();
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
             GUI.alert("Warning", "Corrupted default value file");
         } catch (IllegalArgumentException e) {
             GUI.alert("Warning", "Corrupted color value in default value file");

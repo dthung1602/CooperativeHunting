@@ -25,7 +25,7 @@ class Prey extends Animal {
      */
     Prey(Position position) {
         super(position);
-        size = random.nextInt(minSize, maxSize);
+        size = randomSize();
         attack = (int) (size * defaultAttack);
         adjustColorAccordingToSize();
     }
@@ -175,11 +175,28 @@ class Prey extends Animal {
         return predatorsInRange;
     }
 
-    private void adjustColorAccordingToSize() {
-        // minSize     1/3        2/3      maxSize
-        //    |---------|----------|----------|
-        //       small       mid       large
+    /**
+     * Create and return a random size between minSize and maxSize
+     * The probability that the return value is minSize + x is 1 / x^3
+     *
+     * @return an int in range [minSize, maxSize]
+     */
+    private static int randomSize() {
+        int s = maxSize - minSize + 1;
+        s = random.nextInt(s * s * (s + 1) * (s + 1) / 4) + 1;
+        int i = 0;
+        while (s > i * i * (i + 1) * (i + 1) / 4)
+            i++;
+        return maxSize - i + 1;
+    }
 
+    /**
+     * Change color opacity according to size
+     * minSize     1/3        2/3      maxSize
+     *    |---------|----------|----------|
+     *       small       mid       large
+     */
+    private void adjustColorAccordingToSize() {
         float midThreshold = minSize + (maxSize - minSize) / 3.0f;
         float largeThreshold = minSize + (maxSize - minSize) / 3.0f * 2;
         if (size > largeThreshold)

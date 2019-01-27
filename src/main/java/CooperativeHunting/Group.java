@@ -83,6 +83,8 @@ class Group extends Entity {
      * Recalculate the group circle center, check for leaving members and updateMove leader
      */
     void updateMembers() {
+        // TODO this is just tmp fix
+        if (members.size() == 0) return;
         calculateCenter();
         deleteMembers();
     }
@@ -97,14 +99,17 @@ class Group extends Entity {
             x += member.x;
             y += member.y;
         }
-        x = x / members.size();
-        y = y / members.size();
+        x = Math.round((float) x / members.size());
+        y = Math.round((float) y / members.size());
     }
 
     /**
      * Remove members that moved out of the group radius
      */
     private void deleteMembers() {
+        // recalculate group attack
+        attack = 0;
+
         // remove members out of group radius
         Iterator<Predator> iterator = members.iterator();
         while (iterator.hasNext()) {
@@ -112,6 +117,8 @@ class Group extends Entity {
             if (distanceTo(member) > groupRadius) {
                 iterator.remove();
                 member.group = null;
+            } else {
+                attack += member.attack;
             }
         }
     }
