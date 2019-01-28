@@ -91,7 +91,7 @@ class Predator extends Animal {
             float distance = distanceTo(prey);
             if (distance <= visionRadius // prey in vision range
                     && distance < closestPreyDistance // prey is the closest
-                    && prey.getAttack() < groupAttack) { // prey must be weaker than group
+                    && prey.getAttack() <= groupAttack) { // prey must be weaker than group
                 closestPreyDistance = distance;
                 closestPreyDistanceX = prey.x - this.x;
                 closestPreyDistanceY = prey.y - this.y;
@@ -157,7 +157,7 @@ class Predator extends Animal {
 
                 // increase health for predators in the same group
                 float nutrition = prey.getNutrition();
-                map.avgFoodGained += nutrition;
+                map.addFoodGain(nutrition);
                 if (group == null) {
                     health += (int) nutrition;
                 } else {

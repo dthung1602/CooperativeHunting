@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Prey extends Animal {
+    private static final float NUTRITION_VARIANCE = 0.2f;
+
     private static float visionRadius;
     private static int speed;
     private static float defaultNutrition;
@@ -18,6 +20,8 @@ class Prey extends Animal {
     private static Color mediumPreyColor;
     private static Color largePreyColor;
 
+    private float nutrition;
+
     /**
      * Prey constructor
      *
@@ -26,6 +30,7 @@ class Prey extends Animal {
     Prey(Position position) {
         super(position);
         size = randomSize();
+        nutrition = getRandomNutrition();
         attack = (int) (size * defaultAttack);
         adjustColorAccordingToSize();
     }
@@ -33,6 +38,7 @@ class Prey extends Animal {
     Prey(Position position, int size) {
         super(position);
         this.size = size;
+        nutrition = getRandomNutrition();
         attack = (int) (size * defaultAttack);
         adjustColorAccordingToSize();
     }
@@ -48,7 +54,7 @@ class Prey extends Animal {
     }
 
     float getNutrition() {
-        return size * defaultNutrition;
+        return nutrition;
     }
 
     int getAttack() {
@@ -191,10 +197,19 @@ class Prey extends Animal {
     }
 
     /**
+     * Random nutrition value base on size, and default nutrition and NUTRITION_VARIANCE
+     *
+     * @return size * defaultNutrition +- NUTRITION_VARIANCE%
+     */
+    private float getRandomNutrition() {
+        return size * defaultNutrition * (1 - NUTRITION_VARIANCE + random.nextFloat() * NUTRITION_VARIANCE * 2);
+    }
+
+    /**
      * Change color opacity according to size
      * minSize     1/3        2/3      maxSize
-     *    |---------|----------|----------|
-     *       small       mid       large
+     * |---------|----------|----------|
+     * small       mid       large
      */
     private void adjustColorAccordingToSize() {
         float midThreshold = minSize + (maxSize - minSize) / 3.0f;
