@@ -159,7 +159,7 @@ class Map implements Serializable {
         removeEmptyGroups();
 
         // display output
-        controller.displayOutput(avgFoodGained, predators.size());
+        controller.displayOutput(avgFoodGained, predators.size(), preys.size());
     }
 
     /**
@@ -223,7 +223,7 @@ class Map implements Serializable {
      * @param groupColor:    groups' color for visualization
      */
     void initializePredators(int number, int speed, int health, int attack, float groupRadius, float visionRadius,
-                             float stayInGroupTendency, Color predatorColor, Color groupColor) throws IllegalArgumentException {
+                             float stayInGroupTendency, int huntingMethod, Color predatorColor, Color groupColor) throws IllegalArgumentException {
 
         // Validate arguments
         if (number > mapWidth * mapHeight)

@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
@@ -21,32 +27,32 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="675.0" prefWidth="880.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CooperativeHunting.GUI">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="675.0" prefWidth="880.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CooperativeHunting.GUI">
     <children>
         <MenuBar>
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="loadSettings" mnemonicParsing="false" onAction="#loadSettingsFromFile" text="Load settings" />
-                  <MenuItem fx:id="loadMap" mnemonicParsing="false" onAction="#loadMapFromFile" text="Load map" />
-                  <MenuItem fx:id="loadSimulation" mnemonicParsing="false" onAction="#loadSimulationFromFile" text="Load simulation" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="saveSettings" mnemonicParsing="false" onAction="#saveSettingsToFile" text="Save settings" />
-                  <MenuItem fx:id="saveMap" mnemonicParsing="false" onAction="#saveMapToFile" text="Save map" />
-                  <MenuItem fx:id="saveSimulation" mnemonicParsing="false" onAction="#saveSimulationToFile" text="Save simulation" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem fx:id="loadSettings" mnemonicParsing="false" onAction="#loadSettingsFromFile" text="Load settings" />
+                        <MenuItem fx:id="loadMap" mnemonicParsing="false" onAction="#loadMapFromFile" text="Load map" />
+                        <MenuItem fx:id="loadSimulation" mnemonicParsing="false" onAction="#loadSimulationFromFile" text="Load simulation" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem fx:id="saveSettings" mnemonicParsing="false" onAction="#saveSettingsToFile" text="Save settings" />
+                        <MenuItem fx:id="saveMap" mnemonicParsing="false" onAction="#saveMapToFile" text="Save map" />
+                        <MenuItem fx:id="saveSimulation" mnemonicParsing="false" onAction="#saveSimulationToFile" text="Save simulation" />
                     </items>
                 </Menu>
-            <Menu mnemonicParsing="false" text="Demo">
-              <items>
+                <Menu mnemonicParsing="false" text="Demo">
+                    <items>
                         <MenuItem fx:id="demo1" mnemonicParsing="false" onAction="#showDemo1" text="Demo 1" />
-                  <MenuItem fx:id="demo2" mnemonicParsing="false" onAction="#showDemo2" text="Demo 2" />
-                  <MenuItem fx:id="demo3" mnemonicParsing="false" onAction="#showDemo3" text="Demo 3" />
-              </items>
-            </Menu>
+                        <MenuItem fx:id="demo2" mnemonicParsing="false" onAction="#showDemo2" text="Demo 2" />
+                        <MenuItem fx:id="demo3" mnemonicParsing="false" onAction="#showDemo3" text="Demo 3" />
+                    </items>
+                </Menu>
                 <Menu mnemonicParsing="false" text="About">
                     <items>
-                  <MenuItem mnemonicParsing="false" onAction="#showSpecification" text="Specification" />
+                        <MenuItem mnemonicParsing="false" onAction="#showSpecification" text="Specification" />
                         <MenuItem mnemonicParsing="false" onAction="#showContributing" text="Contributing" />
                     </items>
                 </Menu>
@@ -55,9 +61,9 @@
         <HBox prefHeight="659.0" prefWidth="880.0">
             <children>
                 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="645.0" prefWidth="600.0" style="-fx-border-color: lightgrey;">
-               <children>
-                  <Canvas fx:id="mapCanvas" height="646.0" layoutX="2.0" layoutY="2.0" width="600.0" AnchorPane.leftAnchor="1.0" AnchorPane.topAnchor="1.0" />
-               </children></AnchorPane>
+                    <children>
+                        <Canvas fx:id="mapCanvas" height="646.0" layoutX="2.0" layoutY="2.0" width="600.0" AnchorPane.leftAnchor="1.0" AnchorPane.topAnchor="1.0" />
+                    </children></AnchorPane>
                 <VBox prefHeight="664.0" prefWidth="280.0">
                     <children>
                         <TabPane maxWidth="-Infinity" minHeight="-Infinity" prefHeight="386.0" prefWidth="280.0" tabClosingPolicy="UNAVAILABLE">
@@ -66,48 +72,57 @@
                                     <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="216.0" prefWidth="230.0">
                                             <children>
-                                    <GridPane layoutX="15.0" layoutY="136.0" prefHeight="236.0" prefWidth="230.0" AnchorPane.bottomAnchor="21.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                      <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="109.0" minWidth="10.0" prefWidth="88.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="185.0" minWidth="10.0" prefWidth="178.0" />
-                                      </columnConstraints>
-                                      <rowConstraints>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      </rowConstraints>
-                                       <children>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Width" textAlignment="CENTER" wrappingWidth="108.0390625" />
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Height" textAlignment="CENTER" wrappingWidth="107.625" GridPane.rowIndex="1" />
-                                                      <TextField fx:id="width" prefHeight="26.0" prefWidth="124.0" GridPane.columnIndex="1">
-                                             <GridPane.margin>
-                                                <Insets right="80.0" />
-                                             </GridPane.margin></TextField>
-                                                      <TextField fx:id="height" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                             <GridPane.margin>
-                                                <Insets right="80.0" />
-                                             </GridPane.margin></TextField>
-                                          <CheckBox fx:id="showGrid" mnemonicParsing="false" prefHeight="18.0" prefWidth="171.0" text="Show grid" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                             <GridPane.margin>
-                                                <Insets />
-                                             </GridPane.margin>
-                                          </CheckBox>
-                                          <CheckBox fx:id="preyShowVision" mnemonicParsing="false" prefHeight="18.0" prefWidth="262.0" text="Show prey vison" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                             <GridPane.margin>
-                                                <Insets />
-                                             </GridPane.margin>
-                                          </CheckBox>
-                                          <CheckBox fx:id="showGroup" mnemonicParsing="false" prefHeight="18.0" prefWidth="261.0" text="Show group" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                             <GridPane.margin>
-                                                <Insets />
-                                             </GridPane.margin>
-                                          </CheckBox>
-                                          <CheckBox fx:id="predatorShowVision" mnemonicParsing="false" text="Show predator vision" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                       </children>
-                                    </GridPane>
+                                                <GridPane layoutX="15.0" layoutY="136.0" prefHeight="236.0" prefWidth="230.0" AnchorPane.bottomAnchor="21.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                    <columnConstraints>
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="10.0" prefWidth="108.0" />
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="216.0" minWidth="10.0" prefWidth="172.0" />
+                                                    </columnConstraints>
+                                                    <rowConstraints>
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                    </rowConstraints>
+                                                    <children>
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Width" textAlignment="CENTER" wrappingWidth="108.0390625" />
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Height" textAlignment="CENTER" wrappingWidth="107.625" GridPane.rowIndex="1" />
+                                                        <TextField fx:id="width" prefHeight="26.0" prefWidth="124.0" GridPane.columnIndex="1">
+                                                            <GridPane.margin>
+                                                                <Insets left="10.0" right="20.0" />
+                                                            </GridPane.margin></TextField>
+                                                        <TextField fx:id="height" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                            <GridPane.margin>
+                                                                <Insets left="10.0" right="20.0" />
+                                                            </GridPane.margin></TextField>
+                                                        <CheckBox fx:id="showGrid" mnemonicParsing="false" prefHeight="18.0" prefWidth="123.0" text="Show grid" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                            <GridPane.margin>
+                                                                <Insets left="10.0" />
+                                                            </GridPane.margin>
+                                                        </CheckBox>
+                                                        <CheckBox fx:id="preyShowVision" mnemonicParsing="false" prefHeight="18.0" prefWidth="262.0" text="Show prey vison" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                                            <GridPane.margin>
+                                                                <Insets left="10.0" />
+                                                            </GridPane.margin>
+                                                        </CheckBox>
+                                                        <CheckBox fx:id="showGroup" mnemonicParsing="false" prefHeight="18.0" prefWidth="261.0" text="Show group" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                                            <GridPane.margin>
+                                                                <Insets left="10.0" />
+                                                            </GridPane.margin>
+                                                        </CheckBox>
+                                                        <CheckBox fx:id="predatorShowVision" mnemonicParsing="false" text="Show predator vision" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                                            <GridPane.margin>
+                                                                <Insets left="10.0" />
+                                                            </GridPane.margin></CheckBox>
+                                                        <ComboBox fx:id="huntingMethod" prefWidth="150.0" promptText="Hunting Method" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                            <GridPane.margin>
+                                                                <Insets left="10.0" right="20.0" />
+                                                            </GridPane.margin>
+                                                        </ComboBox>
+                                                    </children>
+                                                </GridPane>
                                             </children>
                                         </AnchorPane>
                                     </content>
@@ -115,196 +130,239 @@
                                 <Tab text="Predator">
                                     <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="230.0" prefWidth="230.0" style="-fx-border-color: lightgrey;">
-                                 <children>
-                                    <GridPane layoutX="8.0" layoutY="21.0" prefHeight="257.0" prefWidth="230.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                      <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="138.0" minWidth="10.0" prefWidth="138.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="154.0" minWidth="10.0" prefWidth="140.0" />
-                                      </columnConstraints>
-                                      <rowConstraints>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      </rowConstraints>
-                                       <children>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Number" textAlignment="CENTER" wrappingWidth="138.60546875" />
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Attack" textAlignment="CENTER" wrappingWidth="139.486328125" GridPane.rowIndex="1" />
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Health" textAlignment="CENTER" wrappingWidth="137.6640625" GridPane.rowIndex="2" />
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" textAlignment="CENTER" wrappingWidth="138.046875" GridPane.rowIndex="3" />
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Group radius" textAlignment="CENTER" wrappingWidth="137.701171875" GridPane.rowIndex="4" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Vision radius" textAlignment="CENTER" wrappingWidth="138.599609375" GridPane.rowIndex="5" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Stay in group" textAlignment="CENTER" wrappingWidth="138.166015625" GridPane.rowIndex="6" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Group color" textAlignment="CENTER" wrappingWidth="139.0068359375" GridPane.rowIndex="7" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Color" textAlignment="CENTER" wrappingWidth="138.04686254241096" GridPane.rowIndex="8" />
-                                          <TextField fx:id="predatorNumber" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1">
-                                             <GridPane.margin>
-                                                <Insets right="20.0" />
-                                             </GridPane.margin></TextField>
-                                          <TextField fx:id="predatorAttack" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                             <GridPane.margin>
-                                                <Insets right="20.0" />
-                                             </GridPane.margin></TextField>
-                                                      <TextField fx:id="health" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                             <GridPane.margin>
-                                                <Insets right="20.0" />
-                                             </GridPane.margin></TextField>
-                                                      <TextField fx:id="predatorSpeed" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                             <GridPane.margin>
-                                                <Insets right="20.0" />
-                                             </GridPane.margin></TextField>
-                                                      <TextField fx:id="groupRadius" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                             <GridPane.margin>
-                                                <Insets right="20.0" />
-                                             </GridPane.margin></TextField>
-                                          <TextField fx:id="predatorVisionRadius" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                                             <GridPane.margin>
-                                                <Insets right="20.0" />
-                                             </GridPane.margin></TextField>
-                                          <TextField fx:id="stayInGroupTendency" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                                             <GridPane.margin>
-                                                <Insets right="20.0" />
-                                             </GridPane.margin>
-                                          </TextField>
-                                          <ColorPicker fx:id="groupColor" GridPane.columnIndex="1" GridPane.rowIndex="7">
-                                             <GridPane.margin>
-                                                <Insets right="20.0" />
-                                             </GridPane.margin>
-                                          </ColorPicker>
-                                          <ColorPicker fx:id="predatorColor" prefHeight="25.0" prefWidth="189.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
-                                             <GridPane.margin>
-                                                <Insets right="20.0" />
-                                             </GridPane.margin>
-                                          </ColorPicker>
-                                       </children>
-                                    </GridPane>
-                                 </children>
+                                            <children>
+                                                <GridPane layoutX="8.0" layoutY="21.0" prefHeight="257.0" prefWidth="230.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                    <columnConstraints>
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="138.0" minWidth="10.0" prefWidth="138.0" />
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="154.0" minWidth="10.0" prefWidth="140.0" />
+                                                    </columnConstraints>
+                                                    <rowConstraints>
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                    </rowConstraints>
+                                                    <children>
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Number" textAlignment="CENTER" wrappingWidth="138.60546875" />
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Attack" textAlignment="CENTER" wrappingWidth="139.486328125" GridPane.rowIndex="1" />
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Health" textAlignment="CENTER" wrappingWidth="137.6640625" GridPane.rowIndex="2" />
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" textAlignment="CENTER" wrappingWidth="138.046875" GridPane.rowIndex="3" />
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Group radius" textAlignment="CENTER" wrappingWidth="137.701171875" GridPane.rowIndex="4" />
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Vision radius" textAlignment="CENTER" wrappingWidth="138.599609375" GridPane.rowIndex="5" />
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Stay in group" textAlignment="CENTER" wrappingWidth="138.166015625" GridPane.rowIndex="6" />
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Group color" textAlignment="CENTER" wrappingWidth="139.0068359375" GridPane.rowIndex="7" />
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Color" textAlignment="CENTER" wrappingWidth="138.04686254241096" GridPane.rowIndex="8" />
+                                                        <TextField fx:id="predatorNumber" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1">
+                                                            <GridPane.margin>
+                                                                <Insets right="20.0" />
+                                                            </GridPane.margin></TextField>
+                                                        <TextField fx:id="predatorAttack" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                            <GridPane.margin>
+                                                                <Insets right="20.0" />
+                                                            </GridPane.margin></TextField>
+                                                        <TextField fx:id="health" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                            <GridPane.margin>
+                                                                <Insets right="20.0" />
+                                                            </GridPane.margin></TextField>
+                                                        <TextField fx:id="predatorSpeed" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                            <GridPane.margin>
+                                                                <Insets right="20.0" />
+                                                            </GridPane.margin></TextField>
+                                                        <TextField fx:id="groupRadius" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                                            <GridPane.margin>
+                                                                <Insets right="20.0" />
+                                                            </GridPane.margin></TextField>
+                                                        <TextField fx:id="predatorVisionRadius" prefHeight="25.0" prefWidth="89.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                                            <GridPane.margin>
+                                                                <Insets right="20.0" />
+                                                            </GridPane.margin></TextField>
+                                                        <TextField fx:id="stayInGroupTendency" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                                            <GridPane.margin>
+                                                                <Insets right="20.0" />
+                                                            </GridPane.margin>
+                                                        </TextField>
+                                                        <ColorPicker fx:id="groupColor" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                                            <GridPane.margin>
+                                                                <Insets right="20.0" />
+                                                            </GridPane.margin>
+                                                        </ColorPicker>
+                                                        <ColorPicker fx:id="predatorColor" prefHeight="25.0" prefWidth="189.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                                            <GridPane.margin>
+                                                                <Insets right="20.0" />
+                                                            </GridPane.margin>
+                                                        </ColorPicker>
+                                                    </children>
+                                                </GridPane>
+                                            </children>
                                         </AnchorPane>
                                     </content>
                                 </Tab>
                                 <Tab text="Prey">
                                     <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="281.0" prefWidth="230.0">
-                                 <children>
-                                    <GridPane layoutX="15.0" layoutY="24.0" prefHeight="257.0" prefWidth="230.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                      <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="138.0" minWidth="10.0" prefWidth="138.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="158.0" minWidth="10.0" prefWidth="142.0" />
-                                      </columnConstraints>
-                                      <rowConstraints>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      </rowConstraints>
-                                       <children>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Number" textAlignment="CENTER" wrappingWidth="137.60546875" />
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Nutrition" textAlignment="CENTER" wrappingWidth="138.70703125" GridPane.rowIndex="1" />
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Attack" textAlignment="CENTER" wrappingWidth="138.486328125" GridPane.rowIndex="2" />
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" textAlignment="CENTER" wrappingWidth="140.046875" GridPane.rowIndex="3" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Min size" textAlignment="CENTER" wrappingWidth="137.982421875" GridPane.rowIndex="4" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Max size" textAlignment="CENTER" wrappingWidth="138.21484375" GridPane.rowIndex="5" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Vision radius" textAlignment="CENTER" wrappingWidth="136.599609375" GridPane.rowIndex="6" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="New prey/iteration" textAlignment="CENTER" wrappingWidth="138.0751953125" GridPane.rowIndex="7" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Color" textAlignment="CENTER" wrappingWidth="138.04686254241096" GridPane.rowIndex="8" />
-                                                      <TextField fx:id="preyNumber" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1">
-                                             <GridPane.margin>
-                                                <Insets right="20.0" />
-                                             </GridPane.margin></TextField>
-                                                      <TextField fx:id="nutrition" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                             <GridPane.margin>
-                                                <Insets right="20.0" />
-                                             </GridPane.margin></TextField>
-                                                      <TextField fx:id="preyAttack" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                             <GridPane.margin>
-                                                <Insets right="20.0" />
-                                             </GridPane.margin></TextField>
-                                                      <TextField fx:id="preySpeed" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                             <GridPane.margin>
-                                                <Insets right="20.0" />
-                                             </GridPane.margin></TextField>
-                                          <TextField fx:id="preyMinSize" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                             <GridPane.margin>
-                                                <Insets right="20.0" />
-                                             </GridPane.margin></TextField>
-                                          <TextField fx:id="preyMaxSize" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                                             <GridPane.margin>
-                                                <Insets right="20.0" />
-                                             </GridPane.margin>
-                                          </TextField>
-                                          <TextField fx:id="preyVisionRadius" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                                             <GridPane.margin>
-                                                <Insets right="20.0" />
-                                             </GridPane.margin></TextField>
-                                          <TextField fx:id="newPreyPerIteration" GridPane.columnIndex="1" GridPane.rowIndex="7">
-                                             <GridPane.margin>
-                                                <Insets right="20.0" />
-                                             </GridPane.margin>
-                                          </TextField>
-                                          <ColorPicker fx:id="preyColor" prefHeight="25.0" prefWidth="156.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
-                                             <GridPane.margin>
-                                                <Insets right="20.0" />
-                                             </GridPane.margin>
-                                          </ColorPicker>
-                                       </children>
-                                    </GridPane>
-                                 </children>
+                                            <children>
+                                                <GridPane layoutX="15.0" layoutY="24.0" prefHeight="257.0" prefWidth="230.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                    <columnConstraints>
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="138.0" minWidth="10.0" prefWidth="138.0" />
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="158.0" minWidth="10.0" prefWidth="142.0" />
+                                                    </columnConstraints>
+                                                    <rowConstraints>
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                    </rowConstraints>
+                                                    <children>
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Number" textAlignment="CENTER" wrappingWidth="137.60546875" />
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Nutrition" textAlignment="CENTER" wrappingWidth="138.70703125" GridPane.rowIndex="1" />
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Attack" textAlignment="CENTER" wrappingWidth="138.486328125" GridPane.rowIndex="2" />
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" textAlignment="CENTER" wrappingWidth="140.046875" GridPane.rowIndex="3" />
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Min size" textAlignment="CENTER" wrappingWidth="137.982421875" GridPane.rowIndex="4" />
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Max size" textAlignment="CENTER" wrappingWidth="138.21484375" GridPane.rowIndex="5" />
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Vision radius" textAlignment="CENTER" wrappingWidth="136.599609375" GridPane.rowIndex="6" />
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="New prey/iteration" textAlignment="CENTER" wrappingWidth="138.0751953125" GridPane.rowIndex="7" />
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Color" textAlignment="CENTER" wrappingWidth="138.04686254241096" GridPane.rowIndex="8" />
+                                                        <TextField fx:id="preyNumber" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1">
+                                                            <GridPane.margin>
+                                                                <Insets right="20.0" />
+                                                            </GridPane.margin></TextField>
+                                                        <TextField fx:id="nutrition" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                            <GridPane.margin>
+                                                                <Insets right="20.0" />
+                                                            </GridPane.margin></TextField>
+                                                        <TextField fx:id="preyAttack" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                            <GridPane.margin>
+                                                                <Insets right="20.0" />
+                                                            </GridPane.margin></TextField>
+                                                        <TextField fx:id="preySpeed" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                            <GridPane.margin>
+                                                                <Insets right="20.0" />
+                                                            </GridPane.margin></TextField>
+                                                        <TextField fx:id="preyMinSize" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                                            <GridPane.margin>
+                                                                <Insets right="20.0" />
+                                                            </GridPane.margin></TextField>
+                                                        <TextField fx:id="preyMaxSize" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                                            <GridPane.margin>
+                                                                <Insets right="20.0" />
+                                                            </GridPane.margin>
+                                                        </TextField>
+                                                        <TextField fx:id="preyVisionRadius" prefHeight="25.0" prefWidth="88.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                                            <GridPane.margin>
+                                                                <Insets right="20.0" />
+                                                            </GridPane.margin></TextField>
+                                                        <TextField fx:id="newPreyPerIteration" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                                            <GridPane.margin>
+                                                                <Insets right="20.0" />
+                                                            </GridPane.margin>
+                                                        </TextField>
+                                                        <ColorPicker fx:id="preyColor" prefHeight="25.0" prefWidth="156.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                                            <GridPane.margin>
+                                                                <Insets right="20.0" />
+                                                            </GridPane.margin>
+                                                        </ColorPicker>
+                                                    </children>
+                                                </GridPane>
+                                            </children>
                                         </AnchorPane>
                                     </content>
                                 </Tab>
                             </tabs>
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
+                            <VBox.margin>
+                                <Insets />
+                            </VBox.margin>
                         </TabPane>
-                        <AnchorPane prefHeight="143.0" prefWidth="317.0" style="-fx-border-color: lightgrey;">
+                        <AnchorPane prefHeight="220.0" prefWidth="280.0" style="-fx-border-color: lightgrey;">
                             <children>
-                                <Text layoutX="14.0" layoutY="115.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" wrappingWidth="57.0" />
-                                <Button fx:id="apply" layoutX="13.0" layoutY="15.0" mnemonicParsing="false" onAction="#apply" prefHeight="26.0" prefWidth="108.0" text="Apply" />
-                                <Button fx:id="clear" layoutX="148.0" layoutY="15.0" mnemonicParsing="false" onAction="#clear" prefHeight="26.0" prefWidth="108.0" text="Clear" />
-                                <Button fx:id="play" layoutX="13.0" layoutY="53.0" mnemonicParsing="false" onAction="#play" prefHeight="26.0" prefWidth="108.0" text="Play" />
-                                <Button fx:id="stop" layoutX="148.0" layoutY="53.0" mnemonicParsing="false" onAction="#stop" prefHeight="26.0" prefWidth="108.0" text="Stop" />
-                                <Slider fx:id="slider" layoutX="81.0" layoutY="103.0" max="50.0" onMouseClicked="#updateSimulationSpeed" onMouseDragged="#updateSimulationSpeed" prefHeight="38.0" prefWidth="182.0" showTickLabels="true" showTickMarks="true" />
+                                <GridPane layoutX="6.0" layoutY="-1.0" prefHeight="91.0" prefWidth="280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    </rowConstraints>
+                                    <children>
+                                        <Button fx:id="apply" mnemonicParsing="false" onAction="#apply" prefHeight="65.0" prefWidth="119.0" text="Apply">
+                                            <opaqueInsets>
+                                                <Insets />
+                                            </opaqueInsets>
+                                            <GridPane.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                            </GridPane.margin>
+                                        </Button>
+                                        <Button fx:id="stop" mnemonicParsing="false" onAction="#stop" prefHeight="26.0" prefWidth="157.0" text="Stop" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                            <GridPane.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                            </GridPane.margin>
+                                        </Button>
+                                        <Button fx:id="play" mnemonicParsing="false" onAction="#play" prefHeight="26.0" prefWidth="145.0" text="Play" GridPane.rowIndex="1">
+                                            <GridPane.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                            </GridPane.margin>
+                                        </Button>
+                                        <Button fx:id="clear" mnemonicParsing="false" onAction="#clear" prefHeight="26.0" prefWidth="147.0" text="Clear" GridPane.columnIndex="1">
+                                            <GridPane.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                            </GridPane.margin>
+                                        </Button>
+                                        <ComboBox fx:id="iterationSpeed" onAction="#updateSimulationSpeed" prefHeight="83.0" prefWidth="119.0" promptText="          Speed" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                            <GridPane.margin>
+                                                <Insets bottom="8.0" left="10.0" right="10.0" top="9.0" />
+                                            </GridPane.margin>
+                                        </ComboBox>
+                                        <Button fx:id="next" mnemonicParsing="false" onAction="#next" prefHeight="25.0" prefWidth="179.0" text="Next" GridPane.rowIndex="2">
+                                            <GridPane.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                            </GridPane.margin>
+                                        </Button>
+                                    </children>
+                                </GridPane>
                             </children>
                         </AnchorPane>
-                  <AnchorPane prefHeight="227.0" prefWidth="280.0">
-                     <children>
-                        <GridPane layoutY="64.0" prefHeight="107.0" prefWidth="280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="127.0" minWidth="10.0" prefWidth="111.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="128.0" minWidth="10.0" prefWidth="119.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                           <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Average food per iteration" textAlignment="CENTER" wrappingWidth="111.79296875" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Predator count" textAlignment="CENTER" wrappingWidth="112.119140625" GridPane.rowIndex="1" />
-                              <TextField fx:id="averageFood" GridPane.columnIndex="1">
-                                 <GridPane.margin>
-                                    <Insets />
-                                 </GridPane.margin>
-                              </TextField>
-                              <TextField fx:id="predatorCount" layoutX="110.0" layoutY="13.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                 <GridPane.margin>
-                                    <Insets />
-                                 </GridPane.margin>
-                              </TextField>
-                           </children>
-                        </GridPane>
-                     </children>
-                  </AnchorPane>
+                        <AnchorPane prefHeight="227.0" prefWidth="280.0">
+                            <children>
+                                <GridPane layoutY="64.0" prefHeight="107.0" prefWidth="280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="127.0" minWidth="10.0" prefWidth="111.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="128.0" minWidth="10.0" prefWidth="119.0" />
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    </rowConstraints>
+                                    <children>
+                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Average food per iteration" textAlignment="CENTER" wrappingWidth="111.79296875" />
+                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Predator count" textAlignment="CENTER" wrappingWidth="112.119140625" GridPane.rowIndex="1" />
+                                        <TextField fx:id="averageFood" GridPane.columnIndex="1">
+                                            <GridPane.margin>
+                                                <Insets />
+                                            </GridPane.margin>
+                                        </TextField>
+                                        <TextField fx:id="predatorCount" layoutX="110.0" layoutY="13.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                            <GridPane.margin>
+                                                <Insets />
+                                            </GridPane.margin>
+                                        </TextField>
+                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Prey count" textAlignment="CENTER" wrappingWidth="128.484375" GridPane.rowIndex="2" />
+                                        <TextField fx:id="preyCount" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    </children>
+                                </GridPane>
+                            </children>
+                        </AnchorPane>
                     </children>
                 </VBox>
             </children>

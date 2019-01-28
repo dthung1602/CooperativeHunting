@@ -67,6 +67,8 @@ class FileLoader {
             return;
         }
 
+        data = data.replaceAll("\r", "");
+
         try {
             String[] values = data.split("\n");
             int i = 0;
@@ -92,6 +94,8 @@ class FileLoader {
             GUI.alert("Error", "Corrupted map data");
             return;
         }
+
+        data = data.replaceAll("\r", "");
 
         // check map size
         String[] lines = data.split("\n");

@@ -1,14 +1,21 @@
 package CooperativeHunting;
 
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static CooperativeHunting.FileLoader.readResourceFile;
 
 public class GUI {
+    private final List<String> STR_HUNTING_METHOD_TO_INT = Arrays.asList(
+            "Distance", "Nutrition", "Distance and nutrition", "First");
+
     private Main application;
     Stage stage;
     Map map;
@@ -96,6 +103,8 @@ public class GUI {
     private TextField averageFood;
     @FXML
     private TextField predatorCount;
+    @FXML
+    private TextField preyCount;
 
     // Button
     @FXML
@@ -106,9 +115,13 @@ public class GUI {
     private Button play;
     @FXML
     private Button stop;
+    @FXML
+    private Button next;
 
     @FXML
-    private Slider slider;
+    private ComboBox<String> iterationSpeed;
+    @FXML
+    private ComboBox<String> huntingMethod;
 
     // GUI component groups
     TextField[] inputTextFields;
@@ -171,6 +184,7 @@ public class GUI {
         // reset the value of output
         averageFood.setText("");
         predatorCount.setText("");
+        preyCount.setText("");
     }
 
     /**
@@ -196,6 +210,7 @@ public class GUI {
                     Float.parseFloat(groupRadius.getText()),
                     Float.parseFloat(predatorVisionRadius.getText()),
                     Float.parseFloat(stayInGroupTendency.getText()),
+                    STR_HUNTING_METHOD_TO_INT.indexOf(huntingMethod.getValue()) + 1,
                     predatorColor.getValue(),
                     groupColor.getValue()
             );
@@ -244,12 +259,20 @@ public class GUI {
     }
 
     /**
+     * Do 1 iteration
+     */
+    @FXML
+    void next() {
+        map.update();
+        map.paint();
+    }
+
+    /**
      * The iteration speed will be changed base on the value of slider
      */
     @FXML
     void updateSimulationSpeed() {
-        slider.showTickLabelsProperty();
-        application.setSimulationSpeed(slider.getValue());
+        application.setSimulationSpeed(Float.parseFloat(iterationSpeed.getValue()));
     }
 
     /**
@@ -408,6 +431,14 @@ public class GUI {
                 demo1, demo2, demo3
         };
 
+        // Init combo boxes
+
+        iterationSpeed.setItems(FXCollections.observableArrayList(
+                "0.25", "0.5", "1", "2", "3", "4", "5", "10", "20", "30", "40", "50"));
+        huntingMethod.setItems(FXCollections.observableArrayList(
+                STR_HUNTING_METHOD_TO_INT
+        ));
+
         // clear text in input text fields
         clearTextFields();
 
@@ -427,10 +458,12 @@ public class GUI {
      *
      * @param averageFoodIteration: average food gained per iteration
      * @param predatorNumber:       number of remaining predators
+     * @param preyNumber:           number of remaining preys
      */
-    void displayOutput(float averageFoodIteration, int predatorNumber) {
+    void displayOutput(float averageFoodIteration, int predatorNumber, int preyNumber) {
         averageFood.setText(String.valueOf(averageFoodIteration));
         predatorCount.setText(String.valueOf(predatorNumber));
+        preyCount.setText(String.valueOf(preyNumber));
     }
 
     /**
