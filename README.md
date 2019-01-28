@@ -1,7 +1,7 @@
 SIMULATING AND VISUALIZING COOPERATIVE HUNTING
 ==============================================
 
-##1. INTRODUCTION
+## 1. INTRODUCTION
 
 Every living form needs some kind of nutrition, and while some obtain it through "peaceful"
 ways, e.g. photosynthesis or from plants, others have adapted to more feral techniques. One
@@ -25,7 +25,7 @@ in order to survive, and a group hunter may see the opportunity of an easy solit
 not inform the group, thus keeping everything for himself.
 
 
-##2. Project scope
+## 2. Project scope
 
 The goal of this project is to simulate and visualize the various hunting strategies as well as
 manoeuvres used by predators to corner and surround their prey. For this purpose an application
@@ -66,7 +66,7 @@ some radius (preferably greater than the group radius). Outside of this radius a
 8. Each iteration all predators lose hit points due to starvation. These can be regained
 only through killing prey.
 
-###2.1 Input
+### 2.1 Input
 
 The input parameters for the application include. but are not limited to:
 
@@ -81,9 +81,10 @@ coordinates and its size in grid tiles (small prey is easier to kill, but gives 
 prey animals at random locations every x seconds.
 
 - **Predator run speed** - how many tiles can the predator cross in a single iteration.
-Prey run speed - how many tiles can the prey cross in a single iteration.
 
-- **Predator starvation** resilience - how many iterations can a predator individual endure
+- **Prey run speed** - how many tiles can the prey cross in a single iteration.
+
+- **Predator starvation resilience** - how many iterations can a predator individual endure
 without food intake (the predator dies if he does not successfully hunt a prey during
 this period).
 
@@ -100,7 +101,7 @@ for the predator objects and for the various prey objects (no duplicates).
 be desirable when observing the program in action, whereas a higher speed can deliver
 results more quickly).
 
-###2.2 Output
+### 2.2 Output
 
 The outputs delivered by the application should include, but are not limited to:
 
@@ -109,7 +110,7 @@ that the predator population has gained.
 
 - Predator count - remaining predator individuals.
 
-##3 Possible pitfalls
+## 3 Possible pitfalls
 
 - Effective scouting - if the group always stays together it will be stronger, but will find
 less prey. Therefore, a strategy is needed to disperse the group and bring it back together

@@ -25,20 +25,16 @@ class Prey extends Animal {
      */
     Prey(Position position) {
         super(position);
-        size = random.nextInt(minSize, maxSize);
+        size = randomSize();
         attack = (int) (size * defaultAttack);
+        adjustColorAccordingToSize();
+    }
 
-        // minSize     1/3        2/3      maxSize
-        //    |---------|----------|----------|
-        //       small       mid       large
-        float midThreshold = minSize + (maxSize - minSize) / 3.0f;
-        float largeThreshold = minSize + (maxSize - minSize) / 3.0f * 2;
-        if (size > largeThreshold)
-            color = largePreyColor;
-        else if (size > midThreshold)
-            color = mediumPreyColor;
-        else
-            color = smallPreyColor;
+    Prey(Position position, int size) {
+        super(position);
+        this.size = size;
+        attack = (int) (size * defaultAttack);
+        adjustColorAccordingToSize();
     }
 
     @Override
@@ -81,6 +77,11 @@ class Prey extends Animal {
         Prey.smallPreyColor = smallPreyColor;
         Prey.mediumPreyColor = mediumPreyColor;
         Prey.largePreyColor = largePreyColor;
+    }
+
+    @Override
+    void postDeserialize() {
+        adjustColorAccordingToSize();
     }
 
     /**
@@ -172,5 +173,37 @@ class Prey extends Animal {
         }
 
         return predatorsInRange;
+    }
+
+    /**
+     * Create and return a random size between minSize and maxSize
+     * The probability that the return value is minSize + x is 1 / x^3
+     *
+     * @return an int in range [minSize, maxSize]
+     */
+    private static int randomSize() {
+        int s = maxSize - minSize + 1;
+        s = random.nextInt(s * s * (s + 1) * (s + 1) / 4) + 1;
+        int i = 0;
+        while (s > i * i * (i + 1) * (i + 1) / 4)
+            i++;
+        return maxSize - i + 1;
+    }
+
+    /**
+     * Change color opacity according to size
+     * minSize     1/3        2/3      maxSize
+     *    |---------|----------|----------|
+     *       small       mid       large
+     */
+    private void adjustColorAccordingToSize() {
+        float midThreshold = minSize + (maxSize - minSize) / 3.0f;
+        float largeThreshold = minSize + (maxSize - minSize) / 3.0f * 2;
+        if (size > largeThreshold)
+            color = largePreyColor;
+        else if (size > midThreshold)
+            color = mediumPreyColor;
+        else
+            color = smallPreyColor;
     }
 }

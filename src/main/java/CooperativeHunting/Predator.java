@@ -7,6 +7,7 @@ class Predator extends Animal {
     private static int speed;
     private static int defaultHealth;
     private static int defaultAttack;
+    private static float stayInGroupTendency;
     private static Color defaultColor;
 
     private int health;
@@ -54,12 +55,18 @@ class Predator extends Animal {
      * @param visionRadius:  predators' vision radius (tiles)
      * @param defaultColor:  predators' color for visualization
      */
-    static void set(int speed, int defaultHealth, int defaultAttack, float visionRadius, Color defaultColor) {
+    static void set(int speed, int defaultHealth, int defaultAttack, float visionRadius, float stayInGroupTendency, Color defaultColor) {
         Predator.speed = speed;
         Predator.defaultHealth = defaultHealth;
         Predator.defaultAttack = defaultAttack;
         Predator.visionRadius = visionRadius;
+        Predator.stayInGroupTendency = stayInGroupTendency;
         Predator.defaultColor = defaultColor;
+    }
+
+    @Override
+    void postDeserialize() {
+        color = defaultColor;
     }
 
     /**
@@ -97,16 +104,32 @@ class Predator extends Animal {
      */
     void updateMove() {
         // this predator belongs to a group
-        // this group has a leader
-        // but this predator is not that leader
-        // -> follow leader
-        if (group != null && group.leader != null && this != group.leader) {
-            moveInDirection(group.leader.x - x, group.leader.y - y);
+        if (group != null) {
+            // this group has a leader
+            if (group.leader != null) {
+                if (this == group.leader)
+                    // this predator is the leader -> move to prey
+                    moveInDirection(closestPreyDistanceX, closestPreyDistanceY);
+                else
+                    // not leader -> follow leader
+                    moveInDirection(group.leader.x - x, group.leader.y - y);
+
+            } else { // no leader
+                if (closestPreyDistance < Float.POSITIVE_INFINITY)
+                    // a prey is found -> move to that prey
+                    moveInDirection(closestPreyDistanceX, closestPreyDistanceY);
+                else {
+                    // no prey -> decide whether to stay in group
+                    boolean stay = random.nextFloat() < stayInGroupTendency;
+                    if (stay)
+                        moveInDirection(group.x - x, group.y - y);
+                    else
+                        moveRandomly();
+                }
+            }
 
         } else {
             // predator has no group
-            // or predator's group has no leader
-            // or predator is the leader
             // -> decide its own move
 
             if (closestPreyDistance < Float.POSITIVE_INFINITY)
@@ -134,10 +157,14 @@ class Predator extends Animal {
 
                 // increase health for predators in the same group
                 float nutrition = prey.getNutrition();
-                int healthGain = (int) (nutrition / group.members.size());
                 map.avgFoodGained += nutrition;
-                for (Predator predator : group.members)
-                    predator.health += healthGain;
+                if (group == null) {
+                    health += (int) nutrition;
+                } else {
+                    int healthGain = (int) (nutrition / group.members.size());
+                    for (Predator predator : group.members)
+                        predator.health += healthGain;
+                }
 
                 break; // TODO attack multiple preys?
             }

@@ -4,9 +4,10 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.io.Serializable;
 import java.util.*;
 
-class Map {
+class Map implements Serializable {
     private List<Prey> preys;
     private List<Group> groups;
     private List<Predator> predators;
@@ -15,9 +16,9 @@ class Map {
     private int newPreyPerIterationInt;
     private float newPreyPerIterationFloat;
 
-    private GUI controller;
-    private Canvas canvas;
-    private GraphicsContext graphics;
+    transient private GUI controller;
+    transient private Canvas canvas;
+    transient private GraphicsContext graphics;
 
     // map size
     private int mapWidth;
@@ -35,10 +36,11 @@ class Map {
 
     private static Random random = new Random();
 
-    Map() {
-        predators = new ArrayList<Predator>();
-        preys = new LinkedList<Prey>();
-        groups = new LinkedList<Group>();
+    Map(GUI gui) {
+        setController(gui);
+        predators = new ArrayList<>();
+        preys = new LinkedList<>();
+        groups = new LinkedList<>();
     }
 
     List<Prey> getPreys() {
@@ -75,10 +77,10 @@ class Map {
         this.showGrid = showGrid;
     }
 
-    void setController(GUI controller) {
-        this.controller = controller;
-        this.canvas = controller.getMapCanvas();
-        this.graphics = canvas.getGraphicsContext2D();
+    void setController(GUI gui) {
+        controller = gui;
+        canvas = controller.getMapCanvas();
+        graphics = canvas.getGraphicsContext2D();
     }
 
     /**
@@ -86,8 +88,7 @@ class Map {
      */
     void paint() {
         // clear screen
-        graphics.setFill(Color.WHITE);
-        graphics.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        clearScreen();
 
         // paint predators
         for (Predator predator : predators)
@@ -222,7 +223,7 @@ class Map {
      * @param groupColor:    groups' color for visualization
      */
     void initializePredators(int number, int speed, int health, int attack, float groupRadius, float visionRadius,
-                             Color predatorColor, Color groupColor) throws IllegalArgumentException {
+                             float stayInGroupTendency, Color predatorColor, Color groupColor) throws IllegalArgumentException {
 
         // Validate arguments
         if (number > mapWidth * mapHeight)
@@ -230,9 +231,11 @@ class Map {
         if (number < 0 || speed < 0 || health < 0 || attack < 0 || visionRadius < 0 || groupRadius < 0)
             throw new IllegalArgumentException("Predator's number, speed, health, attack, vision radius" +
                     " and group radius cannot be negative");
+        if (Math.abs(stayInGroupTendency - 0.5) > 0.5)
+            throw new IllegalArgumentException("Stay in group tendency must be a float in range [0, 1]");
 
         // set values for predator and group class
-        Predator.set(speed, health, attack, visionRadius, predatorColor);
+        Predator.set(speed, health, attack, visionRadius, stayInGroupTendency, predatorColor);
         Group.set(groupRadius, groupColor);
 
         // create predators randomly
@@ -317,5 +320,17 @@ class Map {
                 color.getBlue(),
                 newOpacity
         );
+    }
+
+    private void clearScreen() {
+        graphics.setFill(Color.WHITE);
+        graphics.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+    }
+
+    void clear() {
+        predators.clear();
+        groups.clear();
+        preys.clear();
+        clearScreen();
     }
 }

@@ -13,7 +13,7 @@ abstract class Animal extends Entity {
 
     boolean dead;
     int size;
-    Color color;
+    transient Color color;
 
     /**
      * Animal constructor
@@ -92,12 +92,12 @@ abstract class Animal extends Entity {
     void moveInDirection(float directionX, float directionY) {
         int speed = this.getSpeed();
 
-        if (directionY == 0 || Float.isInfinite(directionX)) { // move along x-axis only
+        if (directionY == 0 || Float.isInfinite(directionY)) { // move along x-axis only
             if (directionX > 0)
                 this.x += speed;
             else
                 this.x -= speed;
-        } else if (directionX == 0 || Float.isInfinite(directionY)) { // move along y-axis only
+        } else if (directionX == 0 || Float.isInfinite(directionX)) { // move along y-axis only
             if (directionY > 0)
                 this.y += speed;
             else
