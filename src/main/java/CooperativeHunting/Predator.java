@@ -12,11 +12,17 @@ class Predator extends Animal {
 
     private int health;
     Group group;
-
+    static int huntingMethod = 1;
     // hold the distance and direction to the prey for the predator
-    private int closestPreyDistanceX;
-    private int closestPreyDistanceY;
+    //private int closestPreyDistanceX;
+    //private int closestPreyDistanceY;
+    private Prey beginnerPrey;
+    private Prey closestPrey;
+    private Prey tastiestPrey;
+    private Prey closestTastiestPrey;
     float closestPreyDistance;
+    float tastiestNutrition;
+    int bestCombination;
 
     /**
      * Predator constructor
@@ -82,19 +88,37 @@ class Predator extends Animal {
         }
 
         // find closest prey
-        closestPreyDistanceX = Integer.MAX_VALUE;
-        closestPreyDistanceY = Integer.MAX_VALUE;
+        //closestPreyDistanceX = Integer.MAX_VALUE;
+        //closestPreyDistanceY = Integer.MAX_VALUE;
         closestPreyDistance = Float.POSITIVE_INFINITY;
+        tastiestNutrition = 0;
+        bestCombination = 0;
         float groupAttack = getAttack();
 
         for (Prey prey : map.getPreys()) {
             float distance = distanceTo(prey);
+            float nutrition = prey.getNutrition();
+            int beginnerCount = 0;
             if (distance <= visionRadius // prey in vision range
-                    && distance < closestPreyDistance // prey is the closest
                     && prey.getAttack() < groupAttack) { // prey must be weaker than group
-                closestPreyDistance = distance;
-                closestPreyDistanceX = prey.x - this.x;
-                closestPreyDistanceY = prey.y - this.y;
+                if (beginnerCount == 0) {
+                    beginnerPrey = prey;
+                    beginnerCount++;
+                }
+                if (distance < closestPreyDistance) {// prey is the closest
+                    closestPreyDistance = distance;
+                    closestPrey = prey;
+                    //closestPreyDistanceX = prey.x - this.x;
+                    //closestPreyDistanceY = prey.y - this.y;
+                }
+                if (tastiestNutrition < nutrition) {// prey is the most nutritious
+                    tastiestNutrition = nutrition;
+                    tastiestPrey = prey;
+                }
+                if ((Math.round(nutrition - distance)) > bestCombination) {// prey is the closest and the most nutritious
+                    closestTastiestPrey = prey;
+                    bestCombination = Math.round(nutrition - distance);
+                }
             }
         }
     }
@@ -107,17 +131,35 @@ class Predator extends Animal {
         if (group != null) {
             // this group has a leader
             if (group.leader != null) {
-                if (this == group.leader)
+                if (this == group.leader && huntingMethod == 1)
                     // this predator is the leader -> move to prey
-                    moveInDirection(closestPreyDistanceX, closestPreyDistanceY);
+                    moveInDirection(closestPrey.x - this.x, closestPrey.y - this.y);
+                else if (this == group.leader && huntingMethod == 2)
+                    // this predator is the leader -> move to prey
+                    moveInDirection(tastiestPrey.x - this.x, tastiestPrey.y - this.y);
+                else if (this == group.leader && huntingMethod == 3)
+                    // this predator is the leader -> move to prey
+                    moveInDirection(closestTastiestPrey.x - this.x, closestTastiestPrey.y - this.y);
+                else if (this == group.leader && huntingMethod == 4)
+                    // this predator is the leader -> move to prey
+                    moveInDirection(beginnerPrey.x - this.x, beginnerPrey.y - this.y);
                 else
                     // not leader -> follow leader
                     moveInDirection(group.leader.x - x, group.leader.y - y);
 
             } else { // no leader
-                if (closestPreyDistance < Float.POSITIVE_INFINITY)
+                if (huntingMethod == 1 && closestPreyDistance < Float.POSITIVE_INFINITY)
                     // a prey is found -> move to that prey
-                    moveInDirection(closestPreyDistanceX, closestPreyDistanceY);
+                    moveInDirection(closestPrey.x - this.x, closestPrey.y - this.y);
+                else if (huntingMethod == 2 && tastiestNutrition > 0)
+                    // a prey is found -> move to that prey
+                    moveInDirection(tastiestPrey.x - this.x, tastiestPrey.y - this.y);
+                else if (huntingMethod == 3 && bestCombination > 0)
+                    // a prey is found -> move to that prey
+                    moveInDirection(closestTastiestPrey.x - this.x, closestTastiestPrey.y - this.y);
+                else if (huntingMethod == 4)
+                    // a prey is found -> move to that prey
+                    moveInDirection(beginnerPrey.x - this.x, beginnerPrey.y - this.y);
                 else {
                     // no prey -> decide whether to stay in group
                     boolean stay = random.nextFloat() < stayInGroupTendency;
@@ -134,7 +176,7 @@ class Predator extends Animal {
 
             if (closestPreyDistance < Float.POSITIVE_INFINITY)
                 // a prey is found -> move to that prey
-                moveInDirection(closestPreyDistanceX, closestPreyDistanceY);
+                moveInDirection(closestPrey.x - this.x, closestPrey.y - this.y);
             else
                 // no prey -> move randomly
                 moveRandomly();
@@ -157,7 +199,7 @@ class Predator extends Animal {
 
                 // increase health for predators in the same group
                 float nutrition = prey.getNutrition();
-                map.avgFoodGained += nutrition;
+                map.addFoodGain(nutrition);
                 if (group == null) {
                     health += (int) nutrition;
                 } else {
@@ -166,7 +208,7 @@ class Predator extends Animal {
                         predator.health += healthGain;
                 }
 
-                break; // TODO attack multiple preys?
+                break;
             }
         }
     }

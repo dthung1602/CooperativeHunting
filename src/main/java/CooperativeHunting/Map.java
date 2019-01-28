@@ -8,6 +8,8 @@ import java.io.Serializable;
 import java.util.*;
 
 class Map implements Serializable {
+    private static final int AVG_FOOD_HISTORY_SIZE = 20;
+
     private List<Prey> preys;
     private List<Group> groups;
     private List<Predator> predators;
@@ -32,7 +34,8 @@ class Map implements Serializable {
     private boolean showGrid;
 
     // output
-    float avgFoodGained;
+    private List<Float> foodGainedHistory;
+    private float foodGainedThisIteration;
 
     private static Random random = new Random();
 
@@ -41,6 +44,7 @@ class Map implements Serializable {
         predators = new ArrayList<>();
         preys = new LinkedList<>();
         groups = new LinkedList<>();
+        foodGainedHistory = new LinkedList<>();
     }
 
     List<Prey> getPreys() {
@@ -81,6 +85,10 @@ class Map implements Serializable {
         controller = gui;
         canvas = controller.getMapCanvas();
         graphics = canvas.getGraphicsContext2D();
+    }
+
+    void addFoodGain(float foodGain) {
+        foodGainedThisIteration += foodGain;
     }
 
     /**
@@ -127,8 +135,7 @@ class Map implements Serializable {
      * Preys and predators move and interact
      */
     void update() {
-        // initialize output for this iteration
-        avgFoodGained = 0;
+        foodGainedThisIteration = 0;
 
         if (createPrey)
             createNewPreys();
@@ -159,7 +166,15 @@ class Map implements Serializable {
         removeEmptyGroups();
 
         // display output
-        controller.displayOutput(avgFoodGained, predators.size(), preys.size());
+        foodGainedHistory.add(foodGainedThisIteration);
+        if (foodGainedHistory.size() > AVG_FOOD_HISTORY_SIZE)
+            foodGainedHistory.remove(0);
+        float avg = 0;
+        for (float value : foodGainedHistory)
+            avg += value;
+        avg /= foodGainedHistory.size();
+
+        controller.displayOutput(avg, predators.size(), preys.size());
     }
 
     /**

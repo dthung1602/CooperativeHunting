@@ -132,12 +132,26 @@ class Group extends Entity {
         // reset leader
         leader = null;
         float minPreyDistance = Float.POSITIVE_INFINITY;
+        float maxNutrition = 0;
+        int bestCombination = 0;
 
         // select leader with the closest prey
         for (Predator member : members) {
-            if (member.closestPreyDistance < minPreyDistance) {
+            if (Predator.huntingMethod == 1 && member.closestPreyDistance < minPreyDistance) {
                 minPreyDistance = member.closestPreyDistance;
                 leader = member;
+            }
+            else if (Predator.huntingMethod == 2 && member.tastiestNutrition > maxNutrition) {
+                maxNutrition = member.tastiestNutrition;
+                leader = member;
+            }
+            else if (Predator.huntingMethod == 3 && member.bestCombination > bestCombination) {
+                bestCombination = member.bestCombination;
+                leader = member;
+            }
+            else if (Predator.huntingMethod == 4) {
+                leader = member;
+                break;
             }
         }
     }
