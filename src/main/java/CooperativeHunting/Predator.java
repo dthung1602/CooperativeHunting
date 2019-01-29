@@ -9,6 +9,7 @@ class Predator extends Animal {
     private static int defaultAttack;
     private static float stayInGroupTendency;
     private static Color defaultColor;
+    private static int reproducingRate;
     static HuntingMethod huntingMethod = HuntingMethod.DEFAULT;
 
     private int health;
@@ -36,20 +37,6 @@ class Predator extends Animal {
         group = null;
     }
 
-    @Override
-    float getVisionRadius() {
-        return visionRadius;
-    }
-
-    @Override
-    int getSpeed() {
-        return speed;
-    }
-
-    int getAttack() {
-        return (group == null) ? attack : group.attack;
-    }
-
     /**
      * Setter for Predator static fields
      *
@@ -69,12 +56,10 @@ class Predator extends Animal {
         Predator.stayInGroupTendency = stayInGroupTendency;
         Predator.huntingMethod = huntingMethod;
         Predator.defaultColor = defaultColor;
+        Predator.reproducingRate = defaultHealth + (int)Prey.defaultNutrition;
     }
 
-    @Override
-    void postDeserialize() {
-        color = defaultColor;
-    }
+/************************************************UPDATING METHODS************************************************************************************/
 
     /**
      * The predator looks for the closest prey inside the predator's vision
@@ -163,6 +148,23 @@ class Predator extends Animal {
         stayInMap();
     }
 
+/************************************************ABILITY METHODS************************************************************************************/
+
+    /**
+     * Generate new predators
+     *
+     * @return signal to generate
+     */
+    boolean reproduce(){
+        if(this.health >= reproducingRate){
+            health = defaultHealth;
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     /**
      * @return A target prey in predator vision according to its hunting method. Null is return if no preys is found.
      */
@@ -181,7 +183,7 @@ class Predator extends Animal {
     /**
      * Attacks Preys in range
      */
-    void attack() {
+    boolean attack() {
         int atk = getAttack(); // total attack of the group
 
         for (Prey prey : map.getPreys()) {
@@ -200,10 +202,10 @@ class Predator extends Animal {
                     for (Predator predator : group.members)
                         predator.health += healthGain;
                 }
-
-                break;
+                return reproduce();
             }
         }
+        return false;
     }
 
     /**
@@ -215,6 +217,8 @@ class Predator extends Animal {
         if (group != null)
             group.members.remove(this);
     }
+
+/************************************************HUNTING STRATEGY METHODS**************************************************************************/
 
     /**
      * Enumeration for predator's hunting method
@@ -258,4 +262,26 @@ class Predator extends Animal {
             }
         }
     }
+
+/************************************************GET AND ADDITIONAL METHODS*********************************************************************/
+
+    @Override
+    float getVisionRadius() {
+        return visionRadius;
+    }
+
+    @Override
+    int getSpeed() {
+        return speed;
+    }
+
+    int getAttack() {
+        return (group == null) ? attack : group.attack;
+    }
+
+    @Override
+    void postDeserialize() {
+        color = defaultColor;
+    }
+
 }

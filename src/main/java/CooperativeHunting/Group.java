@@ -29,26 +29,7 @@ class Group extends Entity {
         predator1.group = predator2.group = this;
     }
 
-    @Override
-    void postDeserialize() {
-
-    }
-
-    static Color getColor() {
-        return color;
-    }
-
-    /**
-     * Setter for Predator static fields
-     *
-     * @param groupRadius: group radius (tiles)
-     * @param color:       group circle color
-     */
-    static void set(float groupRadius, Color color) {
-        Group.groupRadius = groupRadius;
-        Group.groupTileDiameterInPixel = 2 * groupRadius * map.getTileSize();
-        Group.color = color;
-    }
+/****************************************CREATE GROUP METHODS***********************************************************************************/
 
     /**
      * Form new groups for lone predators or let them join existing groups
@@ -56,7 +37,7 @@ class Group extends Entity {
      * @param groups:    list of current groups in map
      * @param predators: list of current predators in map
      */
-    static void formNewGroups(List<Group> groups, List<Predator> predators) {
+    static void createNewGroup(List<Group> groups, List<Predator> predators) {
 
         for (int i = 0; i < predators.size() - 1; i++) { // for every pair of predator
             Predator predator = predators.get(i);
@@ -79,6 +60,8 @@ class Group extends Entity {
             }
         }
     }
+
+/****************************************ORGANIZING METHODS***********************************************************************************/
 
     /**
      * Recalculate the group circle center, check for leaving members and updateMove leader
@@ -124,6 +107,8 @@ class Group extends Entity {
         }
     }
 
+/****************************************LEADER METHODS***********************************************************************************/
+
     /**
      * Select leader for the group
      * The leader is the predator that saw a prey is closest to its prey
@@ -154,6 +139,28 @@ class Group extends Entity {
         }
     }
 
+
+
+/****************************************ADDITIONAL PAINTING METHODS***********************************************************************************/
+
+    /**
+     * Setter for Predator static fields
+     *
+     * @param groupRadius: group radius (tiles)
+     * @param color:       group circle color
+     */
+    static void set(float groupRadius, Color color) {
+        Group.groupRadius = groupRadius;
+        Group.groupTileDiameterInPixel = 2 * groupRadius * map.getTileSize();
+        Group.color = color;
+    }
+
+    static Color getColor() {
+        return color;
+    }
+
+/****************************************PAINTING METHODS***********************************************************************************/
+
     /**
      * Paint group and its predators to the map
      */
@@ -168,5 +175,10 @@ class Group extends Entity {
                 groupTileDiameterInPixel,
                 groupTileDiameterInPixel
         );
+    }
+
+    @Override
+    void postDeserialize() {
+
     }
 }

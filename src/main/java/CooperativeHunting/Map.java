@@ -10,14 +10,17 @@ import java.util.*;
 class Map implements Serializable {
     private static final int AVG_FOOD_HISTORY_SIZE = 20;
 
-    private List<Prey> preys;
-    private List<Group> groups;
     private List<Predator> predators;
+    private int predatorReproduceNumber;
+    private List<Group> groups;
+    private List<Prey> preys;
+
 
     private boolean createPrey;
     private int newPreyPerIterationInt;
     private float newPreyPerIterationFloat;
 
+    private int numberOfIteration = 0;
     transient private GUI controller;
     transient private Canvas canvas;
     transient private GraphicsContext graphics;
@@ -47,134 +50,43 @@ class Map implements Serializable {
         foodGainedHistory = new LinkedList<>();
     }
 
-    List<Prey> getPreys() {
-        return preys;
-    }
-
-    List<Predator> getPredators() {
-        return predators;
-    }
-
-    int getMapWidth() {
-        return mapWidth;
-    }
-
-    int getMapHeight() {
-        return mapHeight;
-    }
-
-    float getTileSize() {
-        return tileSize;
-    }
-
-    void set(int width, int height, boolean showGrid,
-             boolean showPredatorVision, boolean showPreyVision, boolean showGroup) {
-        mapWidth = width;
-        mapHeight = height;
-        tileSize = (float) Math.min(
-                canvas.getHeight() / mapHeight,
-                canvas.getWidth() / mapWidth
-        );
-        this.showPredatorVision = showPredatorVision;
-        this.showPreyVision = showPreyVision;
-        this.showGroup = showGroup;
-        this.showGrid = showGrid;
-    }
-
-    void setController(GUI gui) {
-        controller = gui;
-        canvas = controller.getMapCanvas();
-        graphics = canvas.getGraphicsContext2D();
-    }
-
-    void addFoodGain(float foodGain) {
-        foodGainedThisIteration += foodGain;
-    }
+/************************************************INITIALIZE METHODS************************************************************************************/
 
     /**
-     * Paint preys and predators to canvas
+     * Randomly create predators in the map
+     *
+     * @param number:        number of predators to create
+     * @param speed:         predators' speed (tiles/iteration)
+     * @param health:        predators' health
+     * @param attack:        predators' attack
+     * @param groupRadius:   predators' group radius
+     * @param visionRadius:  predators' vision radius
+     * @param predatorColor: predators' color for visualization
+     * @param groupColor:    groups' color for visualization
      */
-    void paint() {
-        // clear screen
-        clearScreen();
+    void initializePredators(int number, int speed, int health, int attack, float groupRadius, float visionRadius,
+                             float stayInGroupTendency, Predator.HuntingMethod huntingMethod, Color predatorColor, Color groupColor) throws IllegalArgumentException {
 
-        // paint predators
-        for (Predator predator : predators)
-            predator.paint(graphics, showPredatorVision);
+        // Validate arguments
+        if (number > mapWidth * mapHeight)
+            throw new IllegalArgumentException("Too many predators");
+        if (number < 0 || speed < 0 || health < 0 || attack < 0 || visionRadius < 0 || groupRadius < 0)
+            throw new IllegalArgumentException("Predator's number, speed, health, attack, vision radius" +
+                    " and group radius cannot be negative");
+        if (Math.abs(stayInGroupTendency - 0.5) > 0.5)
+            throw new IllegalArgumentException("Stay in group tendency must be a float in range [0, 1]");
 
-        // paint groups
-        if (showGroup) {
-            graphics.setStroke(Group.getColor());
-            for (Group group : groups)
-                group.paint(graphics, true);
-        }
+        // set values for predator and group class
+        predatorReproduceNumber = 2;
+        Predator.set(speed, health, attack, visionRadius, stayInGroupTendency, huntingMethod, predatorColor);
+        Group.set(groupRadius, groupColor);
 
-        // paint preys
-        for (Prey prey : preys)
-            prey.paint(graphics, showPreyVision);
-
-        // paint grid
-        if (showGrid) {
-            graphics.setStroke(Color.BLACK);
-            for (int i = 0; i <= mapWidth; i++) {
-                graphics.strokeLine(
-                        i * tileSize, 0,
-                        i * tileSize, mapHeight * tileSize
-                );
-            }
-            for (int i = 0; i <= mapHeight; i++) {
-                graphics.strokeLine(
-                        0, i * tileSize,
-                        mapWidth * tileSize, i * tileSize
-                );
-            }
-        }
-    }
-
-    /**
-     * Preys and predators move and interact
-     */
-    void update() {
-        foodGainedThisIteration = 0;
-
-        if (createPrey)
-            createNewPreys();
-
-        Group.formNewGroups(groups, predators);
-
-        for (Predator predator : predators)
-            predator.updateScout();
-
-        for (Group group : groups)
-            group.updateLeader();
-
-        for (Predator predator : predators)
-            predator.updateMove();
-
-        for (Group group : groups)
-            group.updateMembers();
-
-        for (Predator predator : predators)
-            predator.attack();
-
-        removeDeadAnimals(preys);
-
-        for (Prey prey : preys)
-            prey.update();
-
-        removeDeadAnimals(predators);
-        removeEmptyGroups();
-
-        // display output
-        foodGainedHistory.add(foodGainedThisIteration);
-        if (foodGainedHistory.size() > AVG_FOOD_HISTORY_SIZE)
-            foodGainedHistory.remove(0);
-        float avg = 0;
-        for (float value : foodGainedHistory)
-            avg += value;
-        avg /= foodGainedHistory.size();
-
-        controller.displayOutput(avg, predators.size(), preys.size());
+        // create predators randomly
+        ArrayList<Position> positions = getRandomPositions(number);
+        predators.clear();
+        groups.clear();
+        for (Position position : positions)
+            predators.add(new Predator(position));
     }
 
     /**
@@ -225,40 +137,84 @@ class Map implements Serializable {
             preys.add(new Prey(position));
     }
 
+/***********************************************UPDATING METHODS*************************************************************************************/
+
     /**
-     * Randomly create predators in the map
-     *
-     * @param number:        number of predators to create
-     * @param speed:         predators' speed (tiles/iteration)
-     * @param health:        predators' health
-     * @param attack:        predators' attack
-     * @param groupRadius:   predators' group radius
-     * @param visionRadius:  predators' vision radius
-     * @param predatorColor: predators' color for visualization
-     * @param groupColor:    groups' color for visualization
+     * Preys and predators move and interact
      */
-    void initializePredators(int number, int speed, int health, int attack, float groupRadius, float visionRadius,
-                             float stayInGroupTendency, Predator.HuntingMethod huntingMethod, Color predatorColor, Color groupColor) throws IllegalArgumentException {
+    void update() {
+        numberOfIteration++;
+        foodGainedThisIteration = 0;
 
-        // Validate arguments
-        if (number > mapWidth * mapHeight)
-            throw new IllegalArgumentException("Too many predators");
-        if (number < 0 || speed < 0 || health < 0 || attack < 0 || visionRadius < 0 || groupRadius < 0)
-            throw new IllegalArgumentException("Predator's number, speed, health, attack, vision radius" +
-                    " and group radius cannot be negative");
-        if (Math.abs(stayInGroupTendency - 0.5) > 0.5)
-            throw new IllegalArgumentException("Stay in group tendency must be a float in range [0, 1]");
+        if (createPrey)
+            createNewPreys();
 
-        // set values for predator and group class
-        Predator.set(speed, health, attack, visionRadius, stayInGroupTendency, huntingMethod, predatorColor);
-        Group.set(groupRadius, groupColor);
+        Group.createNewGroup(groups, predators);
 
-        // create predators randomly
-        ArrayList<Position> positions = getRandomPositions(number);
-        predators.clear();
-        groups.clear();
-        for (Position position : positions)
-            predators.add(new Predator(position));
+        for (Predator predator : predators)
+            predator.updateScout();
+
+        for (Group group : groups)
+            group.updateLeader();
+
+        for (Predator predator : predators)
+            predator.updateMove();
+
+        for (Group group : groups)
+            group.updateMembers();
+
+        for (Predator predator : predators)
+            if (predator.attack() && (numberOfIteration % 16 > 11)){ //If the predator health higher than or equal reproducing rate and the current iteration is giving birth season.
+                ArrayList<Position> positions = getRandomPositions(predatorReproduceNumber);
+                for (Position position : positions)
+                    predators.add(new Predator(position));
+            }
+
+        removeDeadAnimals(preys);
+
+        for (Prey prey : preys)
+            prey.update();
+
+        removeDeadAnimals(predators);
+        removeEmptyGroups();
+
+        // display output
+        foodGainedHistory.add(foodGainedThisIteration);
+        if (foodGainedHistory.size() > AVG_FOOD_HISTORY_SIZE)
+            foodGainedHistory.remove(0);
+        float avg = 0;
+        for (float value : foodGainedHistory)
+            avg += value;
+        avg /= foodGainedHistory.size();
+
+        controller.displayOutput(avg, predators.size(), preys.size());
+    }
+
+/******************************************ADDITIONAL INITIALIZATION AND UPDATING METHODS******************************************************************************************/
+
+    /**
+     * Generate a list of unused positions in the map
+     *
+     * @param number: number of positions to generate
+     * @return a list of unused positions
+     */
+    private ArrayList<Position> getRandomPositions(int number) {
+        HashSet<Position> usedPositions = new HashSet<Position>();
+        ArrayList<Position> newPositions = new ArrayList<Position>(number);
+
+        for (int i = 0; i < number; i++) {
+            Position position;
+            int x, y;
+            do {
+                x = random.nextInt(mapWidth);
+                y = random.nextInt(mapHeight);
+                position = new Position(x, y);
+            } while (usedPositions.contains(position));
+            newPositions.add(position);
+            usedPositions.add(position);
+        }
+
+        return newPositions;
     }
 
     /**
@@ -297,30 +253,7 @@ class Map implements Serializable {
         }
     }
 
-    /**
-     * Generate a list of unused positions in the map
-     *
-     * @param number: number of positions to generate
-     * @return a list of unused positions
-     */
-    private ArrayList<Position> getRandomPositions(int number) {
-        HashSet<Position> usedPositions = new HashSet<Position>();
-        ArrayList<Position> newPositions = new ArrayList<Position>(number);
-
-        for (int i = 0; i < number; i++) {
-            Position position;
-            int x, y;
-            do {
-                x = random.nextInt(mapWidth);
-                y = random.nextInt(mapHeight);
-                position = new Position(x, y);
-            } while (usedPositions.contains(position));
-            newPositions.add(position);
-            usedPositions.add(position);
-        }
-
-        return newPositions;
-    }
+/********************************************ADDITIONAL PAINTING METHODS****************************************************************************************/
 
     /**
      * Clone a color and change the clone's opacity
@@ -347,5 +280,93 @@ class Map implements Serializable {
         groups.clear();
         preys.clear();
         clearScreen();
+    }
+
+/****************************************PAINTING METHODS***********************************************************************************/
+
+    /**
+     * Paint preys and predators to canvas
+     */
+    void paint() {
+        // clear screen
+        clearScreen();
+
+        // paint predators
+        for (Predator predator : predators)
+            predator.paint(graphics, showPredatorVision);
+
+        // paint groups
+        if (showGroup) {
+            graphics.setStroke(Group.getColor());
+            for (Group group : groups)
+                group.paint(graphics, true);
+        }
+
+        // paint preys
+        for (Prey prey : preys)
+            prey.paint(graphics, showPreyVision);
+
+        // paint grid
+        if (showGrid) {
+            graphics.setStroke(Color.BLACK);
+            for (int i = 0; i <= mapWidth; i++) {
+                graphics.strokeLine(
+                        i * tileSize, 0,
+                        i * tileSize, mapHeight * tileSize
+                );
+            }
+            for (int i = 0; i <= mapHeight; i++) {
+                graphics.strokeLine(
+                        0, i * tileSize,
+                        mapWidth * tileSize, i * tileSize
+                );
+            }
+        }
+    }
+
+/**************************************SET AND GET METHODS*************************************************************************/
+
+    List<Prey> getPreys() {
+        return preys;
+    }
+
+    List<Predator> getPredators() {
+        return predators;
+    }
+
+    int getMapWidth() {
+        return mapWidth;
+    }
+
+    int getMapHeight() {
+        return mapHeight;
+    }
+
+    float getTileSize() {
+        return tileSize;
+    }
+
+    void set(int width, int height, boolean showGrid,
+             boolean showPredatorVision, boolean showPreyVision, boolean showGroup) {
+        mapWidth = width;
+        mapHeight = height;
+        tileSize = (float) Math.min(
+                canvas.getHeight() / mapHeight,
+                canvas.getWidth() / mapWidth
+        );
+        this.showPredatorVision = showPredatorVision;
+        this.showPreyVision = showPreyVision;
+        this.showGroup = showGroup;
+        this.showGrid = showGrid;
+    }
+
+    void setController(GUI gui) {
+        controller = gui;
+        canvas = controller.getMapCanvas();
+        graphics = canvas.getGraphicsContext2D();
+    }
+
+    void addFoodGain(float foodGain) {
+        foodGainedThisIteration += foodGain;
     }
 }

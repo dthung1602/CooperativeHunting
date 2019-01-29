@@ -10,7 +10,7 @@ class Prey extends Animal {
 
     private static float visionRadius;
     private static int speed;
-    private static float defaultNutrition;
+    static float defaultNutrition;
     private static float defaultAttack;
 
     private static int minSize;
