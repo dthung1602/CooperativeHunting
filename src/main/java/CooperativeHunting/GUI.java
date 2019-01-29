@@ -1,5 +1,6 @@
 package CooperativeHunting;
 
+import CooperativeHunting.Predator.HuntingMethod;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -7,15 +8,9 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static CooperativeHunting.FileLoader.readResourceFile;
 
 public class GUI {
-    private final List<String> STR_HUNTING_METHOD_TO_INT = Arrays.asList(
-            "Distance", "Nutrition", "Distance and nutrition", "First");
-
     private Main application;
     Stage stage;
     Map map;
@@ -121,7 +116,7 @@ public class GUI {
     @FXML
     private ComboBox<String> iterationSpeed;
     @FXML
-    private ComboBox<String> huntingMethod;
+    ComboBox<String> huntingMethod;
 
     // GUI component groups
     TextField[] inputTextFields;
@@ -159,6 +154,7 @@ public class GUI {
         clear.setDisable(true);
         play.setDisable(false);
         stop.setDisable(false);
+        next.setDisable(running);
 
         setSettingsDisable(true);
         saveSettings.setDisable(running);
@@ -177,6 +173,7 @@ public class GUI {
         clear.setDisable(false);
         play.setDisable(true);
         stop.setDisable(true);
+        next.setDisable(true);
 
         setSettingsDisable(false);
         application.stopSimulation();
@@ -210,7 +207,7 @@ public class GUI {
                     Float.parseFloat(groupRadius.getText()),
                     Float.parseFloat(predatorVisionRadius.getText()),
                     Float.parseFloat(stayInGroupTendency.getText()),
-                    STR_HUNTING_METHOD_TO_INT.indexOf(huntingMethod.getValue()) + 1,
+                    HuntingMethod.fromString(huntingMethod.getValue()),
                     predatorColor.getValue(),
                     groupColor.getValue()
             );
@@ -244,6 +241,7 @@ public class GUI {
         clear.setDisable(false);
         play.setDisable(false);
         stop.setDisable(true);
+        next.setDisable(false);
     }
 
     /**
@@ -320,9 +318,6 @@ public class GUI {
         dialog.showAndWait();
     }
 
-    /**
-     * Display a window contains the project specification
-     */
     @FXML
     void showSpecification(ActionEvent event) {
         String content = readResourceFile("SPECIFICATIONS.txt");
@@ -404,6 +399,7 @@ public class GUI {
     void initialize() {
         play.setDisable(true);
         stop.setDisable(true);
+        next.setDisable(true);
         averageFood.setEditable(false);
         predatorCount.setEditable(false);
 
@@ -432,12 +428,13 @@ public class GUI {
         };
 
         // Init combo boxes
-
         iterationSpeed.setItems(FXCollections.observableArrayList(
                 "0.25", "0.5", "1", "2", "3", "4", "5", "10", "20", "30", "40", "50"));
         huntingMethod.setItems(FXCollections.observableArrayList(
-                STR_HUNTING_METHOD_TO_INT
+                HuntingMethod.methodNames
         ));
+        iterationSpeed.setValue("1");
+        huntingMethod.setValue(HuntingMethod.DEFAULT.toString());
 
         // clear text in input text fields
         clearTextFields();

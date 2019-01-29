@@ -238,7 +238,7 @@ class Map implements Serializable {
      * @param groupColor:    groups' color for visualization
      */
     void initializePredators(int number, int speed, int health, int attack, float groupRadius, float visionRadius,
-                             float stayInGroupTendency, int huntingMethod, Color predatorColor, Color groupColor) throws IllegalArgumentException {
+                             float stayInGroupTendency, Predator.HuntingMethod huntingMethod, Color predatorColor, Color groupColor) throws IllegalArgumentException {
 
         // Validate arguments
         if (number > mapWidth * mapHeight)
@@ -250,7 +250,7 @@ class Map implements Serializable {
             throw new IllegalArgumentException("Stay in group tendency must be a float in range [0, 1]");
 
         // set values for predator and group class
-        Predator.set(speed, health, attack, visionRadius, stayInGroupTendency, predatorColor);
+        Predator.set(speed, health, attack, visionRadius, stayInGroupTendency, huntingMethod, predatorColor);
         Group.set(groupRadius, groupColor);
 
         // create predators randomly

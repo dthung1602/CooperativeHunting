@@ -79,7 +79,7 @@ abstract class Animal extends Entity {
     }
 
     /**
-     * The animal in the given direction
+     * Move the animal in the given direction
      * The animal move X tiles horizontally and Y tiles vertically with
      * |X| + |Y| = speed
      * X / Y  = directionX / directionY
@@ -107,6 +107,17 @@ abstract class Animal extends Entity {
             this.x += Math.round((float) speed * directionX / sum);
             this.y += Math.round((float) speed * directionY / sum);
         }
+    }
+
+    /**
+     * Move the animal to the given entity position
+     *
+     * @param entity: target to move to
+     */
+    void moveInDirection(Entity entity) {
+        float directionX = x - entity.x;
+        float directionY = y - entity.y;
+        moveInDirection(directionX, directionY);
     }
 
     /**

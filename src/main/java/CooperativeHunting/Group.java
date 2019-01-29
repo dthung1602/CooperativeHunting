@@ -1,5 +1,6 @@
 package CooperativeHunting;
 
+import CooperativeHunting.Predator.HuntingMethod;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -133,23 +134,20 @@ class Group extends Entity {
         leader = null;
         float minPreyDistance = Float.POSITIVE_INFINITY;
         float maxNutrition = 0;
-        int bestCombination = 0;
+        float bestCombination = 0;
 
-        // select leader with the closest prey
+        // select leader according to hunting method
         for (Predator member : members) {
-            if (Predator.huntingMethod == 1 && member.closestPreyDistance < minPreyDistance) {
+            if (Predator.huntingMethod == HuntingMethod.DISTANCE && member.closestPreyDistance < minPreyDistance) {
                 minPreyDistance = member.closestPreyDistance;
                 leader = member;
-            }
-            else if (Predator.huntingMethod == 2 && member.tastiestNutrition > maxNutrition) {
-                maxNutrition = member.tastiestNutrition;
+            } else if (Predator.huntingMethod == HuntingMethod.NUTRITION && member.tastiestPreyNutrition > maxNutrition) {
+                maxNutrition = member.tastiestPreyNutrition;
                 leader = member;
-            }
-            else if (Predator.huntingMethod == 3 && member.bestCombination > bestCombination) {
+            } else if (Predator.huntingMethod == HuntingMethod.DISTANCE_AND_NUTRITION && member.bestCombination > bestCombination) {
                 bestCombination = member.bestCombination;
                 leader = member;
-            }
-            else if (Predator.huntingMethod == 4) {
+            } else if (Predator.huntingMethod == HuntingMethod.ANY) {
                 leader = member;
                 break;
             }

@@ -9,20 +9,18 @@ class Predator extends Animal {
     private static int defaultAttack;
     private static float stayInGroupTendency;
     private static Color defaultColor;
+    static HuntingMethod huntingMethod = HuntingMethod.DEFAULT;
 
     private int health;
     Group group;
-    static int huntingMethod = 1;
-    // hold the distance and direction to the prey for the predator
-    //private int closestPreyDistanceX;
-    //private int closestPreyDistanceY;
-    private Prey beginnerPrey;
+
+    private Prey anyPrey;
     private Prey closestPrey;
     private Prey tastiestPrey;
     private Prey closestTastiestPrey;
     float closestPreyDistance;
-    float tastiestNutrition;
-    int bestCombination;
+    float tastiestPreyNutrition;
+    float bestCombination;
 
     /**
      * Predator constructor
@@ -59,14 +57,17 @@ class Predator extends Animal {
      * @param defaultHealth: predators' initial health point
      * @param defaultAttack: predators' attack point
      * @param visionRadius:  predators' vision radius (tiles)
+     * @param huntingMethod: predators' hunting strategy
      * @param defaultColor:  predators' color for visualization
      */
-    static void set(int speed, int defaultHealth, int defaultAttack, float visionRadius, float stayInGroupTendency, Color defaultColor) {
+    static void set(int speed, int defaultHealth, int defaultAttack, float visionRadius,
+                    float stayInGroupTendency, HuntingMethod huntingMethod, Color defaultColor) {
         Predator.speed = speed;
         Predator.defaultHealth = defaultHealth;
         Predator.defaultAttack = defaultAttack;
         Predator.visionRadius = visionRadius;
         Predator.stayInGroupTendency = stayInGroupTendency;
+        Predator.huntingMethod = huntingMethod;
         Predator.defaultColor = defaultColor;
     }
 
@@ -91,33 +92,29 @@ class Predator extends Animal {
         //closestPreyDistanceX = Integer.MAX_VALUE;
         //closestPreyDistanceY = Integer.MAX_VALUE;
         closestPreyDistance = Float.POSITIVE_INFINITY;
-        tastiestNutrition = 0;
+        tastiestPreyNutrition = 0;
         bestCombination = 0;
         float groupAttack = getAttack();
 
         for (Prey prey : map.getPreys()) {
             float distance = distanceTo(prey);
             float nutrition = prey.getNutrition();
-            int beginnerCount = 0;
+            float combination = nutrition - distance;
+
             if (distance <= visionRadius // prey in vision range
                     && prey.getAttack() < groupAttack) { // prey must be weaker than group
-                if (beginnerCount == 0) {
-                    beginnerPrey = prey;
-                    beginnerCount++;
-                }
-                if (distance < closestPreyDistance) {// prey is the closest
+                anyPrey = prey;
+                if (distance < closestPreyDistance) { // prey is the closest
                     closestPreyDistance = distance;
                     closestPrey = prey;
-                    //closestPreyDistanceX = prey.x - this.x;
-                    //closestPreyDistanceY = prey.y - this.y;
                 }
-                if (tastiestNutrition < nutrition) {// prey is the most nutritious
-                    tastiestNutrition = nutrition;
+                if (nutrition > tastiestPreyNutrition) { // prey is the most nutritious
+                    tastiestPreyNutrition = nutrition;
                     tastiestPrey = prey;
                 }
-                if ((Math.round(nutrition - distance)) > bestCombination) {// prey is the closest and the most nutritious
+                if (combination > bestCombination) { // prey is the closest and the most nutritious
                     closestTastiestPrey = prey;
-                    bestCombination = Math.round(nutrition - distance);
+                    bestCombination = combination;
                 }
             }
         }
@@ -131,40 +128,23 @@ class Predator extends Animal {
         if (group != null) {
             // this group has a leader
             if (group.leader != null) {
-                if (this == group.leader && huntingMethod == 1)
+                if (this == group.leader)
                     // this predator is the leader -> move to prey
-                    moveInDirection(closestPrey.x - this.x, closestPrey.y - this.y);
-                else if (this == group.leader && huntingMethod == 2)
-                    // this predator is the leader -> move to prey
-                    moveInDirection(tastiestPrey.x - this.x, tastiestPrey.y - this.y);
-                else if (this == group.leader && huntingMethod == 3)
-                    // this predator is the leader -> move to prey
-                    moveInDirection(closestTastiestPrey.x - this.x, closestTastiestPrey.y - this.y);
-                else if (this == group.leader && huntingMethod == 4)
-                    // this predator is the leader -> move to prey
-                    moveInDirection(beginnerPrey.x - this.x, beginnerPrey.y - this.y);
+                    moveInDirection(getTargetPrey());
                 else
                     // not leader -> follow leader
-                    moveInDirection(group.leader.x - x, group.leader.y - y);
+                    moveInDirection(group.leader);
 
             } else { // no leader
-                if (huntingMethod == 1 && closestPreyDistance < Float.POSITIVE_INFINITY)
-                    // a prey is found -> move to that prey
-                    moveInDirection(closestPrey.x - this.x, closestPrey.y - this.y);
-                else if (huntingMethod == 2 && tastiestNutrition > 0)
-                    // a prey is found -> move to that prey
-                    moveInDirection(tastiestPrey.x - this.x, tastiestPrey.y - this.y);
-                else if (huntingMethod == 3 && bestCombination > 0)
-                    // a prey is found -> move to that prey
-                    moveInDirection(closestTastiestPrey.x - this.x, closestTastiestPrey.y - this.y);
-                else if (huntingMethod == 4)
-                    // a prey is found -> move to that prey
-                    moveInDirection(beginnerPrey.x - this.x, beginnerPrey.y - this.y);
-                else {
+                Prey target = getTargetPrey();
+
+                if (target != null) {
+                    // found a Prey -> follow it
+                    moveInDirection(target);
+                } else {
                     // no prey -> decide whether to stay in group
-                    boolean stay = random.nextFloat() < stayInGroupTendency;
-                    if (stay)
-                        moveInDirection(group.x - x, group.y - y);
+                    if (random.nextFloat() < stayInGroupTendency)
+                        moveInDirection(group);
                     else
                         moveRandomly();
                 }
@@ -173,16 +153,29 @@ class Predator extends Animal {
         } else {
             // predator has no group
             // -> decide its own move
-
-            if (closestPreyDistance < Float.POSITIVE_INFINITY)
-                // a prey is found -> move to that prey
-                moveInDirection(closestPrey.x - this.x, closestPrey.y - this.y);
+            Prey target = getTargetPrey();
+            if (target != null)
+                moveInDirection(target);
             else
-                // no prey -> move randomly
                 moveRandomly();
         }
 
         stayInMap();
+    }
+
+    /**
+     * @return A target prey in predator vision according to its hunting method. Null is return if no preys is found.
+     */
+    private Prey getTargetPrey() {
+        if (huntingMethod == HuntingMethod.DISTANCE && closestPreyDistance < Float.POSITIVE_INFINITY)
+            return closestPrey;
+        if (huntingMethod == HuntingMethod.NUTRITION && tastiestPreyNutrition > 0)
+            return tastiestPrey;
+        if (huntingMethod == HuntingMethod.DISTANCE_AND_NUTRITION && bestCombination > 0)
+            return closestTastiestPrey;
+        if (huntingMethod == HuntingMethod.ANY)
+            return anyPrey;
+        return null;
     }
 
     /**
@@ -221,5 +214,48 @@ class Predator extends Animal {
         health = 0;
         if (group != null)
             group.members.remove(this);
+    }
+
+    /**
+     * Enumeration for predator's hunting method
+     */
+    enum HuntingMethod {
+        DISTANCE, NUTRITION, DISTANCE_AND_NUTRITION, ANY;
+
+        static final HuntingMethod DEFAULT = DISTANCE;
+
+        static final String[] methodNames = new String[]{
+                "DISTANCE", "NUTRITION", "DISTANCE_AND_NUTRITION", "ANY"
+        };
+
+        static HuntingMethod fromString(String string) {
+            if (string == null || string.equals(""))
+                throw new IllegalArgumentException("Can't convert null string to HuntingMethod enum");
+
+            switch (string.toUpperCase().replaceAll(" ", "_")) {
+                case "DISTANCE":
+                    return DISTANCE;
+                case "NUTRITION":
+                    return NUTRITION;
+                case "ANY":
+                    return ANY;
+                default:
+                    return DISTANCE_AND_NUTRITION;
+            }
+        }
+
+        @Override
+        public String toString() {
+            switch (this) {
+                case DISTANCE:
+                    return "DISTANCE";
+                case NUTRITION:
+                    return "NUTRITION";
+                case ANY:
+                    return "ANY";
+                default:
+                    return "DISTANCE_AND_NUTRITION";
+            }
+        }
     }
 }

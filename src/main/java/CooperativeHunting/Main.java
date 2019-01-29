@@ -1,12 +1,10 @@
 package CooperativeHunting;
 
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 public class Main extends Application {
 
@@ -19,12 +17,7 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         // prepare stage
         stage.setTitle("Cooperative Hunting");
-        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent t) {
-                System.exit(0);
-            }
-        });
+        stage.setOnCloseRequest(t -> System.exit(0));
 
         // load the GUI
         FXMLLoader loader = new FXMLLoader();

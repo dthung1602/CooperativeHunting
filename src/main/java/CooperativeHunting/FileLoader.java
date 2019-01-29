@@ -67,6 +67,7 @@ class FileLoader {
             return;
         }
 
+        // handle MS Window linebreak \r\n
         data = data.replaceAll("\r", "");
 
         try {
@@ -79,6 +80,7 @@ class FileLoader {
                 gui.checkBoxes[j].setSelected(Boolean.parseBoolean(values[i]));
             for (int j = 0; j < gui.colorPickers.length; j++, i++)
                 gui.colorPickers[j].setValue(Color.valueOf(values[i]));
+            gui.huntingMethod.setValue(values[i]);
 
             gui.apply();
             gui.map.clear();
@@ -195,6 +197,7 @@ class FileLoader {
             content.append(checkBox.isSelected() ? "true" : "false").append('\n');
         for (ColorPicker colorPicker : gui.colorPickers)
             content.append(colorPicker.getValue().toString()).append('\n');
+        content.append(gui.huntingMethod.getValue());
         return content.toString();
     }
 
