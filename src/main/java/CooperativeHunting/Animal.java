@@ -115,8 +115,8 @@ abstract class Animal extends Entity {
      * @param entity: target to move to
      */
     void moveInDirection(Entity entity) {
-        float directionX = x - entity.x;
-        float directionY = y - entity.y;
+        float directionX = entity.x - x;
+        float directionY = entity.y - y;
         moveInDirection(directionX, directionY);
     }
 

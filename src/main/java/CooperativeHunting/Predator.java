@@ -3,13 +3,19 @@ package CooperativeHunting;
 import javafx.scene.paint.Color;
 
 class Predator extends Animal {
+    static final int REPRODUCE_SEASON_LENGTH = 4; // unit: iterations  -> predator only reproduce in 4 iterations
+    static final int YEAR_LENGTH = 16;            // unit: iterations                     for every 16 iterations
+
+    private static final float KILL_RADIUS_RATIO = 0.5f;  // ratio of predator's kill radius and its vision radius
+
     private static float visionRadius;
+    private static float killRadius;
     private static int speed;
     private static int defaultHealth;
     private static int defaultAttack;
     private static float stayInGroupTendency;
+    private static int reproducingThreshold;
     private static Color defaultColor;
-    private static int reproducingRate;
     static HuntingMethod huntingMethod = HuntingMethod.DEFAULT;
 
     private int health;
@@ -53,13 +59,14 @@ class Predator extends Animal {
         Predator.defaultHealth = defaultHealth;
         Predator.defaultAttack = defaultAttack;
         Predator.visionRadius = visionRadius;
+        Predator.killRadius = visionRadius * KILL_RADIUS_RATIO;
         Predator.stayInGroupTendency = stayInGroupTendency;
         Predator.huntingMethod = huntingMethod;
         Predator.defaultColor = defaultColor;
-        Predator.reproducingRate = defaultHealth + (int)Prey.defaultNutrition;
+        Predator.reproducingThreshold = defaultHealth + (int) Prey.defaultNutrition;
     }
 
-/************************************************UPDATING METHODS************************************************************************************/
+    /*************************************    UPDATING METHODS    *****************************************************/
 
     /**
      * The predator looks for the closest prey inside the predator's vision
@@ -74,8 +81,6 @@ class Predator extends Animal {
         }
 
         // find closest prey
-        //closestPreyDistanceX = Integer.MAX_VALUE;
-        //closestPreyDistanceY = Integer.MAX_VALUE;
         closestPreyDistance = Float.POSITIVE_INFINITY;
         tastiestPreyNutrition = 0;
         bestCombination = 0;
@@ -87,7 +92,7 @@ class Predator extends Animal {
             float combination = nutrition - distance;
 
             if (distance <= visionRadius // prey in vision range
-                    && prey.getAttack() < groupAttack) { // prey must be weaker than group
+                    && prey.getAttack() <= groupAttack) { // prey must be weaker than group
                 anyPrey = prey;
                 if (distance < closestPreyDistance) { // prey is the closest
                     closestPreyDistance = distance;
@@ -148,21 +153,19 @@ class Predator extends Animal {
         stayInMap();
     }
 
-/************************************************ABILITY METHODS************************************************************************************/
+    /*************************************    ABILITY METHODS    ******************************************************/
 
     /**
-     * Generate new predators
+     * The predator reproduce if its gains enough health
      *
-     * @return signal to generate
+     * @return whether the predator reproduce
      */
-    boolean reproduce(){
-        if(this.health >= reproducingRate){
+    boolean reproduce() {
+        if (health >= reproducingThreshold) {
             health = defaultHealth;
             return true;
         }
-        else{
-            return false;
-        }
+        return false;
     }
 
     /**
@@ -183,12 +186,13 @@ class Predator extends Animal {
     /**
      * Attacks Preys in range
      */
-    boolean attack() {
+    void attack() {
         int atk = getAttack(); // total attack of the group
 
         for (Prey prey : map.getPreys()) {
-            // if prey not dead, in range and weaker
-            if (!prey.dead && distanceTo(prey) <= visionRadius && prey.getAttack() <= atk) {
+            if (!prey.dead  // prey is not dead
+                    && distanceTo(prey) <= killRadius // close enough
+                    && prey.getAttack() <= atk) { // weaker
                 // get killed
                 prey.dead = true;
 
@@ -202,10 +206,8 @@ class Predator extends Animal {
                     for (Predator predator : group.members)
                         predator.health += healthGain;
                 }
-                return reproduce();
             }
         }
-        return false;
     }
 
     /**
@@ -218,7 +220,7 @@ class Predator extends Animal {
             group.members.remove(this);
     }
 
-/************************************************HUNTING STRATEGY METHODS**************************************************************************/
+    /*************************************    HUNTING STRATEGY METHODS ENUM    ****************************************/
 
     /**
      * Enumeration for predator's hunting method
@@ -263,7 +265,7 @@ class Predator extends Animal {
         }
     }
 
-/************************************************GET AND ADDITIONAL METHODS*********************************************************************/
+    /*************************************    GET AND ADDITIONAL METHODS    *******************************************/
 
     @Override
     float getVisionRadius() {
@@ -283,5 +285,4 @@ class Predator extends Animal {
     void postDeserialize() {
         color = defaultColor;
     }
-
 }

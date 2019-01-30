@@ -29,7 +29,7 @@ class Group extends Entity {
         predator1.group = predator2.group = this;
     }
 
-/****************************************CREATE GROUP METHODS***********************************************************************************/
+    /*************************************    CREATE GROUP METHODS    *************************************************/
 
     /**
      * Form new groups for lone predators or let them join existing groups
@@ -61,7 +61,7 @@ class Group extends Entity {
         }
     }
 
-/****************************************ORGANIZING METHODS***********************************************************************************/
+    /*************************************    ORGANIZING METHODS    ***************************************************/
 
     /**
      * Recalculate the group circle center, check for leaving members and updateMove leader
@@ -107,7 +107,7 @@ class Group extends Entity {
         }
     }
 
-/****************************************LEADER METHODS***********************************************************************************/
+    /*************************************    LEADER METHODS    *******************************************************/
 
     /**
      * Select leader for the group
@@ -140,8 +140,7 @@ class Group extends Entity {
     }
 
 
-
-/****************************************ADDITIONAL PAINTING METHODS***********************************************************************************/
+    /*************************************    ADDITIONAL PAINTING METHODS    ******************************************/
 
     /**
      * Setter for Predator static fields
@@ -159,7 +158,7 @@ class Group extends Entity {
         return color;
     }
 
-/****************************************PAINTING METHODS***********************************************************************************/
+    /*************************************    PAINTING METHODS    *****************************************************/
 
     /**
      * Paint group and its predators to the map

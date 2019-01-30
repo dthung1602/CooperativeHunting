@@ -14,15 +14,25 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Scanner;
 
+@SuppressWarnings("unused")
 class FileLoader {
 
+    /*************************************    GENERIC LOAD/SAVE METHODS    ********************************************/
+
+    /**
+     * Let user open a file, read its content and call the given handler method on that string
+     *
+     * @param dialogTitle:      Open file dialog title
+     * @param handleMethodName: A FileLoader's static method name. This method takes 2 parameters: String and GUI
+     * @param gui:              gui object
+     */
     static void loadFromFile(String dialogTitle, String handleMethodName, GUI gui) {
         // open file
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(dialogTitle);
         File file = fileChooser.showOpenDialog(gui.stage);
 
-        // can create file
+        // can't create file
         if (file == null) return;
 
         // read file content
@@ -39,6 +49,13 @@ class FileLoader {
         }
     }
 
+    /**
+     * Let user choose where to save the content, then invoke the given method to get the content and save it
+     *
+     * @param dialogTitle:      Save file dialog title
+     * @param handleMethodName: A FileLoader's static method name. This method takes a GUI object and return a String
+     * @param gui:              GUI object
+     */
     static void saveToFile(String dialogTitle, String handleMethodName, GUI gui) {
         // create new file
         FileChooser fileChooser = new FileChooser();
@@ -61,7 +78,9 @@ class FileLoader {
         }
     }
 
-    static void loadSettingsFromString(String data, GUI gui) {
+    /*************************************    LOAD METHODS    *********************************************************/
+
+    private static void loadSettingsFromString(String data, GUI gui) {
         if (data == null) {
             GUI.alert("Error", "Load settings fails");
             return;
@@ -91,7 +110,7 @@ class FileLoader {
         }
     }
 
-    static void loadMapFromString(String data, GUI gui) {
+    private static void loadMapFromString(String data, GUI gui) {
         if (data == null) {
             GUI.alert("Error", "Corrupted map data");
             return;
@@ -160,7 +179,7 @@ class FileLoader {
         map.paint();
     }
 
-    static void loadSimulationFromString(String data, GUI gui) {
+    private static void loadSimulationFromString(String data, GUI gui) {
         Map map;
         String settingsString;
         try {
@@ -189,19 +208,14 @@ class FileLoader {
         map.paint();
     }
 
-    static String saveSettingsToString(GUI gui) {
-        StringBuilder content = new StringBuilder();
-        for (TextField textField : gui.inputTextFields)
-            content.append(textField.getText()).append('\n');
-        for (CheckBox checkBox : gui.checkBoxes)
-            content.append(checkBox.isSelected() ? "true" : "false").append('\n');
-        for (ColorPicker colorPicker : gui.colorPickers)
-            content.append(colorPicker.getValue().toString()).append('\n');
-        content.append(gui.huntingMethod.getValue());
-        return content.toString();
+    static void loadDemo(GUI gui, int demoNum) {
+        loadSettingsFromString(FileLoader.readResourceFile("SettingsDemo" + demoNum + ".txt"), gui);
+        loadMapFromString(FileLoader.readResourceFile("MapDemo" + demoNum + ".txt"), gui);
     }
 
-    static String saveMapToString(GUI gui) {
+    /*************************************    SAVE METHODS    *********************************************************/
+
+    private static String saveMapToString(GUI gui) {
         Map map = gui.map;
         char[][] data = new char[map.getMapHeight()][map.getMapWidth()];
 
@@ -224,7 +238,19 @@ class FileLoader {
         return builder.toString();
     }
 
-    static String saveSimulationToString(GUI gui) {
+    private static String saveSettingsToString(GUI gui) {
+        StringBuilder content = new StringBuilder();
+        for (TextField textField : gui.inputTextFields)
+            content.append(textField.getText()).append('\n');
+        for (CheckBox checkBox : gui.checkBoxes)
+            content.append(checkBox.isSelected() ? "true" : "false").append('\n');
+        for (ColorPicker colorPicker : gui.colorPickers)
+            content.append(colorPicker.getValue().toString()).append('\n');
+        content.append(gui.huntingMethod.getValue());
+        return content.toString();
+    }
+
+    private static String saveSimulationToString(GUI gui) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream stream = new ObjectOutputStream(baos);
@@ -240,8 +266,10 @@ class FileLoader {
         }
     }
 
+    /*************************************    READ/WRITE FILES METHODS    *********************************************/
+
     /**
-     * @param fileName: file to read
+     * @param fileName: name of the file to read, relative to the project's resources folder
      * @return file content string
      */
     static String readResourceFile(String fileName) {
@@ -259,16 +287,6 @@ class FileLoader {
         }
     }
 
-    private static void writeFile(File file, String content) {
-        try {
-            FileWriter writer = new FileWriter(file);
-            writer.write(content);
-            writer.close();
-        } catch (IOException e) {
-            GUI.alert("Error", "Error while saving file '" + file.getName() + "':\n" + e.getMessage());
-        }
-    }
-
     private static String readFile(InputStream stream) {
         try {
             if (stream == null)
@@ -279,6 +297,16 @@ class FileLoader {
             return content;
         } catch (IOException e) {
             return null;
+        }
+    }
+
+    private static void writeFile(File file, String content) {
+        try {
+            FileWriter writer = new FileWriter(file);
+            writer.write(content);
+            writer.close();
+        } catch (IOException e) {
+            GUI.alert("Error", "Error while saving file '" + file.getName() + "':\n" + e.getMessage());
         }
     }
 }

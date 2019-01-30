@@ -11,16 +11,16 @@ class Map implements Serializable {
     private static final int AVG_FOOD_HISTORY_SIZE = 20;
 
     private List<Predator> predators;
-    private int predatorReproduceNumber;
     private List<Group> groups;
     private List<Prey> preys;
 
-
-    private boolean createPrey;
     private int newPreyPerIterationInt;
     private float newPreyPerIterationFloat;
 
-    private int numberOfIteration = 0;
+    private int predatorReproduceNumber;
+
+    private int numberOfIteration;
+
     transient private GUI controller;
     transient private Canvas canvas;
     transient private GraphicsContext graphics;
@@ -48,9 +48,10 @@ class Map implements Serializable {
         preys = new LinkedList<>();
         groups = new LinkedList<>();
         foodGainedHistory = new LinkedList<>();
+        numberOfIteration = 0;
     }
 
-/************************************************INITIALIZE METHODS************************************************************************************/
+    /*************************************    INITIALIZE METHODS    ***************************************************/
 
     /**
      * Randomly create predators in the map
@@ -65,7 +66,9 @@ class Map implements Serializable {
      * @param groupColor:    groups' color for visualization
      */
     void initializePredators(int number, int speed, int health, int attack, float groupRadius, float visionRadius,
-                             float stayInGroupTendency, Predator.HuntingMethod huntingMethod, Color predatorColor, Color groupColor) throws IllegalArgumentException {
+                             float stayInGroupTendency, Predator.HuntingMethod huntingMethod,
+                             Color predatorColor, Color groupColor)
+            throws IllegalArgumentException {
 
         // Validate arguments
         if (number > mapWidth * mapHeight)
@@ -102,7 +105,8 @@ class Map implements Serializable {
      * @param primaryColor: preys' primary color for visualization
      */
     void initializePreys(int number, int speed, float nutrition, int attack, int minSize, int maxSize,
-                         float visionRadius, float newPreyPerIteration, Color primaryColor) throws IllegalArgumentException {
+                         float visionRadius, float newPreyPerIteration, Color primaryColor)
+            throws IllegalArgumentException {
 
         // validate arguments
         if (minSize > maxSize || minSize < 1)
@@ -118,13 +122,8 @@ class Map implements Serializable {
         Color largePreyColor = copyColor(primaryColor, 1);
 
         // set value for creating new Preys
-        if (newPreyPerIteration == 0) {
-            createPrey = false;
-        } else {
-            createPrey = true;
-            this.newPreyPerIterationInt = (int) newPreyPerIteration;
-            this.newPreyPerIterationFloat = newPreyPerIteration - (int) newPreyPerIteration;
-        }
+        newPreyPerIterationInt = (int) newPreyPerIteration;
+        newPreyPerIterationFloat = newPreyPerIteration - (int) newPreyPerIteration;
 
         // set values for prey class
         Prey.set(speed, nutrition, attack, visionRadius, minSize, maxSize,
@@ -137,7 +136,7 @@ class Map implements Serializable {
             preys.add(new Prey(position));
     }
 
-/***********************************************UPDATING METHODS*************************************************************************************/
+    /*************************************    UPDATING METHODS    *****************************************************/
 
     /**
      * Preys and predators move and interact
@@ -146,8 +145,7 @@ class Map implements Serializable {
         numberOfIteration++;
         foodGainedThisIteration = 0;
 
-        if (createPrey)
-            createNewPreys();
+        createNewPreys();
 
         Group.createNewGroup(groups, predators);
 
@@ -164,11 +162,9 @@ class Map implements Serializable {
             group.updateMembers();
 
         for (Predator predator : predators)
-            if (predator.attack() && (numberOfIteration % 16 > 11)){ //If the predator health higher than or equal reproducing rate and the current iteration is giving birth season.
-                ArrayList<Position> positions = getRandomPositions(predatorReproduceNumber);
-                for (Position position : positions)
-                    predators.add(new Predator(position));
-            }
+            predator.attack();
+
+//        createNewPredators();
 
         removeDeadAnimals(preys);
 
@@ -179,18 +175,14 @@ class Map implements Serializable {
         removeEmptyGroups();
 
         // display output
-        foodGainedHistory.add(foodGainedThisIteration);
-        if (foodGainedHistory.size() > AVG_FOOD_HISTORY_SIZE)
-            foodGainedHistory.remove(0);
-        float avg = 0;
-        for (float value : foodGainedHistory)
-            avg += value;
-        avg /= foodGainedHistory.size();
-
-        controller.displayOutput(avg, predators.size(), preys.size());
+        controller.displayOutput(
+                calculateAvgFoodGain(),
+                predators.size(),
+                preys.size()
+        );
     }
 
-/******************************************ADDITIONAL INITIALIZATION AND UPDATING METHODS******************************************************************************************/
+    /*************************************    ADDITIONAL INITIALIZATION AND UPDATING METHODS    ***********************/
 
     /**
      * Generate a list of unused positions in the map
@@ -199,8 +191,8 @@ class Map implements Serializable {
      * @return a list of unused positions
      */
     private ArrayList<Position> getRandomPositions(int number) {
-        HashSet<Position> usedPositions = new HashSet<Position>();
-        ArrayList<Position> newPositions = new ArrayList<Position>(number);
+        HashSet<Position> usedPositions = new HashSet<>();
+        ArrayList<Position> newPositions = new ArrayList<>(number);
 
         for (int i = 0; i < number; i++) {
             Position position;
@@ -225,6 +217,26 @@ class Map implements Serializable {
         ArrayList<Position> positions = getRandomPositions(newPreyPerIterationInt + one);
         for (Position position : positions)
             preys.add(new Prey(position));
+    }
+
+    /**
+     * Predators reproduce
+     */
+    private void createNewPredators() {
+        // check if this reproducing season
+        if (numberOfIteration % Predator.YEAR_LENGTH > Predator.REPRODUCE_SEASON_LENGTH)
+            return;
+
+        // count number of predators that can reproduce
+        int count = 0;
+        for (Predator predator : predators)
+            if (predator.reproduce())
+                count++;
+
+        // create new predators
+        ArrayList<Position> positions = getRandomPositions(count * predatorReproduceNumber);
+        for (Position position : positions)
+            predators.add(new Predator(position));
     }
 
     /**
@@ -253,7 +265,7 @@ class Map implements Serializable {
         }
     }
 
-/********************************************ADDITIONAL PAINTING METHODS****************************************************************************************/
+    /*************************************    ADDITIONAL PAINTING METHODS    ******************************************/
 
     /**
      * Clone a color and change the clone's opacity
@@ -280,9 +292,10 @@ class Map implements Serializable {
         groups.clear();
         preys.clear();
         clearScreen();
+        numberOfIteration = 0;
     }
 
-/****************************************PAINTING METHODS***********************************************************************************/
+    /*************************************    PAINTING METHODS    *****************************************************/
 
     /**
      * Paint preys and predators to canvas
@@ -324,7 +337,7 @@ class Map implements Serializable {
         }
     }
 
-/**************************************SET AND GET METHODS*************************************************************************/
+    /*************************************    SETTERS AND GETTERS METHODS    ******************************************/
 
     List<Prey> getPreys() {
         return preys;
@@ -366,7 +379,19 @@ class Map implements Serializable {
         graphics = canvas.getGraphicsContext2D();
     }
 
+    /*************************************    UTILITIES    ************************************************************/
+
     void addFoodGain(float foodGain) {
         foodGainedThisIteration += foodGain;
+    }
+
+    private float calculateAvgFoodGain() {
+        foodGainedHistory.add(foodGainedThisIteration);
+        if (foodGainedHistory.size() > AVG_FOOD_HISTORY_SIZE)
+            foodGainedHistory.remove(0);
+        float sum = 0;
+        for (float value : foodGainedHistory)
+            sum += value;
+        return sum / foodGainedHistory.size();
     }
 }

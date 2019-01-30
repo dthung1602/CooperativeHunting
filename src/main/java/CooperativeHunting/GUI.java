@@ -125,6 +125,82 @@ public class GUI {
     private MenuItem[] menuItems;
     private Control[] widgets;
 
+    /**
+     * Initialize the controller class. This method is automatically called after the fxml file has been loaded.
+     * Initialize empty string in all fields
+     * Create the map in the big AnchorPane
+     * Initialize conditions that only accept numbers in the fields
+     */
+    @FXML
+    void initialize() {
+        play.setDisable(true);
+        stop.setDisable(true);
+        next.setDisable(true);
+        averageFood.setEditable(false);
+        predatorCount.setEditable(false);
+
+        inputTextFields = new TextField[]{
+                width, height,
+                predatorNumber, predatorAttack, health, predatorSpeed, predatorVisionRadius, groupRadius, stayInGroupTendency,
+                preyNumber, preyAttack, nutrition, preySpeed, preyVisionRadius, preyMinSize, preyMaxSize, newPreyPerIteration,
+        };
+        checkBoxes = new CheckBox[]{
+                showGrid, predatorShowVision, showGroup, preyShowVision
+        };
+        colorPickers = new ColorPicker[]{
+                predatorColor, groupColor, preyColor
+        };
+        widgets = new Control[]{
+                width, height,
+                predatorNumber, predatorAttack, health, predatorSpeed, predatorVisionRadius, groupRadius, stayInGroupTendency,
+                preyNumber, preyAttack, nutrition, preySpeed, preyVisionRadius, preyMinSize, preyMaxSize, newPreyPerIteration,
+                showGrid, predatorShowVision, showGroup, preyShowVision,
+                predatorColor, groupColor, preyColor
+        };
+        menuItems = new MenuItem[]{
+                loadSettings, loadMap, loadSimulation,
+                saveSettings, saveMap, saveSimulation,
+                demo1, demo2, demo3
+        };
+
+        // Init combo boxes
+        iterationSpeed.setItems(FXCollections.observableArrayList(
+                "0.25", "0.5", "1", "2", "3", "4", "5", "10", "20", "30", "40", "50"));
+        huntingMethod.setItems(FXCollections.observableArrayList(
+                HuntingMethod.methodNames
+        ));
+        iterationSpeed.setValue("1");
+        huntingMethod.setValue(HuntingMethod.DEFAULT.toString());
+
+        // clear text in input text fields
+        clearTextFields();
+
+        // Accept only 0-9 and .
+        for (final TextField field : inputTextFields)
+            field.textProperty().addListener(
+                    (observable, oldValue, newValue) -> {
+                        if (newValue.matches(".*[^\\d.]+.*")) {
+                            field.setText(newValue.replaceAll("[^\\d.]", ""));
+                        }
+                    }
+            );
+    }
+
+    /**
+     * Display simulation outputs to GUI
+     *
+     * @param averageFoodIteration: average food gained per iteration
+     * @param predatorNumber:       number of remaining predators
+     * @param preyNumber:           number of remaining preys
+     */
+    void displayOutput(float averageFoodIteration, int predatorNumber, int preyNumber) {
+        averageFood.setText(String.valueOf(averageFoodIteration));
+        predatorCount.setText(String.valueOf(predatorNumber));
+        preyCount.setText(String.valueOf(preyNumber));
+    }
+
+    /*************************************    GETTERS AND SETTERS    **************************************************/
+
     Canvas getMapCanvas() {
         return mapCanvas;
     }
@@ -140,6 +216,8 @@ public class GUI {
         Entity.map = map;
         application.setMap(map);
     }
+
+    /*************************************    BUTTONS ACTIONS    ******************************************************/
 
     /**
      * Disable fields, apply and clear buttons and do the runningToggle function in the main
@@ -273,12 +351,14 @@ public class GUI {
         application.setSimulationSpeed(Float.parseFloat(iterationSpeed.getValue()));
     }
 
+    /*************************************    MENU ACTIONS    *********************************************************/
+
     /**
      * Show demo 1
      */
     @FXML
     void showDemo1(ActionEvent event) {
-        showDemo(1);
+        FileLoader.loadDemo(this, 1);
     }
 
     /**
@@ -286,7 +366,7 @@ public class GUI {
      */
     @FXML
     void showDemo2(ActionEvent event) {
-        showDemo(2);
+        FileLoader.loadDemo(this, 2);
     }
 
     /**
@@ -294,7 +374,7 @@ public class GUI {
      */
     @FXML
     void showDemo3(ActionEvent event) {
-        showDemo(3);
+        FileLoader.loadDemo(this, 3);
     }
 
     @FXML
@@ -389,79 +469,7 @@ public class GUI {
                 this);
     }
 
-    /**
-     * Initialize the controller class. This method is automatically called after the fxml file has been loaded.
-     * Initialize empty string in all fields
-     * Create the map in the big AnchorPane
-     * Initialize conditions that only accept numbers in the fields
-     */
-    @FXML
-    void initialize() {
-        play.setDisable(true);
-        stop.setDisable(true);
-        next.setDisable(true);
-        averageFood.setEditable(false);
-        predatorCount.setEditable(false);
-
-        inputTextFields = new TextField[]{
-                width, height,
-                predatorNumber, predatorAttack, health, predatorSpeed, predatorVisionRadius, groupRadius, stayInGroupTendency,
-                preyNumber, preyAttack, nutrition, preySpeed, preyVisionRadius, preyMinSize, preyMaxSize, newPreyPerIteration,
-        };
-        checkBoxes = new CheckBox[]{
-                showGrid, predatorShowVision, showGroup, preyShowVision
-        };
-        colorPickers = new ColorPicker[]{
-                predatorColor, groupColor, preyColor
-        };
-        widgets = new Control[]{
-                width, height,
-                predatorNumber, predatorAttack, health, predatorSpeed, predatorVisionRadius, groupRadius, stayInGroupTendency,
-                preyNumber, preyAttack, nutrition, preySpeed, preyVisionRadius, preyMinSize, preyMaxSize, newPreyPerIteration,
-                showGrid, predatorShowVision, showGroup, preyShowVision,
-                predatorColor, groupColor, preyColor
-        };
-        menuItems = new MenuItem[]{
-                loadSettings, loadMap, loadSimulation,
-                saveSettings, saveMap, saveSimulation,
-                demo1, demo2, demo3
-        };
-
-        // Init combo boxes
-        iterationSpeed.setItems(FXCollections.observableArrayList(
-                "0.25", "0.5", "1", "2", "3", "4", "5", "10", "20", "30", "40", "50"));
-        huntingMethod.setItems(FXCollections.observableArrayList(
-                HuntingMethod.methodNames
-        ));
-        iterationSpeed.setValue("1");
-        huntingMethod.setValue(HuntingMethod.DEFAULT.toString());
-
-        // clear text in input text fields
-        clearTextFields();
-
-        // Accept only 0-9 and .
-        for (final TextField field : inputTextFields)
-            field.textProperty().addListener(
-                    (observable, oldValue, newValue) -> {
-                        if (newValue.matches(".*[^\\d.]+.*")) {
-                            field.setText(newValue.replaceAll("[^\\d.]", ""));
-                        }
-                    }
-            );
-    }
-
-    /**
-     * Display simulation outputs to GUI
-     *
-     * @param averageFoodIteration: average food gained per iteration
-     * @param predatorNumber:       number of remaining predators
-     * @param preyNumber:           number of remaining preys
-     */
-    void displayOutput(float averageFoodIteration, int predatorNumber, int preyNumber) {
-        averageFood.setText(String.valueOf(averageFoodIteration));
-        predatorCount.setText(String.valueOf(predatorNumber));
-        preyCount.setText(String.valueOf(preyNumber));
-    }
+    /*************************************    UTILITIES    ************************************************************/
 
     /**
      * Set all input text fields in GUI to value text
@@ -496,10 +504,5 @@ public class GUI {
 
     void enablePlayButton() {
         play.setDisable(false);
-    }
-
-    private void showDemo(int i) {
-        FileLoader.loadSettingsFromString(FileLoader.readResourceFile("SettingsDemo" + i + ".txt"), this);
-        FileLoader.loadMapFromString(FileLoader.readResourceFile("MapDemo" + i + ".txt"), this);
     }
 }

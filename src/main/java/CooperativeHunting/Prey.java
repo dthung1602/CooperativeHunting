@@ -6,9 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Prey extends Animal {
-    private static final float NUTRITION_VARIANCE = 0.2f;
+    private static final float NUTRITION_VARIANCE = 0.2f; // how much prey's nutrition varies with respect to defaultNutrition
+
+    private static final float KILL_RADIUS_RATIO = 0.5f;  // ratio of prey's kill radius and its vision radius
 
     private static float visionRadius;
+    private static float killRadius;
     private static int speed;
     static float defaultNutrition;
     private static float defaultAttack;
@@ -30,7 +33,7 @@ class Prey extends Animal {
     Prey(Position position) {
         super(position);
         size = randomSize();
-        nutrition = getRandomNutrition();
+        nutrition = randomNutrition();
         attack = (int) (size * defaultAttack);
         adjustColorAccordingToSize();
     }
@@ -38,27 +41,9 @@ class Prey extends Animal {
     Prey(Position position, int size) {
         super(position);
         this.size = size;
-        nutrition = getRandomNutrition();
+        nutrition = randomNutrition();
         attack = (int) (size * defaultAttack);
         adjustColorAccordingToSize();
-    }
-
-    @Override
-    float getVisionRadius() {
-        return visionRadius;
-    }
-
-    @Override
-    int getSpeed() {
-        return speed;
-    }
-
-    float getNutrition() {
-        return nutrition;
-    }
-
-    int getAttack() {
-        return size * attack;
     }
 
     /**
@@ -78,6 +63,7 @@ class Prey extends Animal {
         Prey.defaultNutrition = defaultNutrition;
         Prey.defaultAttack = defaultAttack;
         Prey.visionRadius = visionRadius;
+        Prey.killRadius = visionRadius * KILL_RADIUS_RATIO;
         Prey.minSize = minSize;
         Prey.maxSize = maxSize;
         Prey.smallPreyColor = smallPreyColor;
@@ -85,10 +71,7 @@ class Prey extends Animal {
         Prey.largePreyColor = largePreyColor;
     }
 
-    @Override
-    void postDeserialize() {
-        adjustColorAccordingToSize();
-    }
+    /*************************************    UPDATING METHODS    *****************************************************/
 
     /**
      * Update prey's position, health, etc after each iteration
@@ -107,7 +90,8 @@ class Prey extends Animal {
 
         // predator found -> counter attack
         Predator closestPredator = predators.get(0);
-        if (attack > closestPredator.getAttack())
+        if (distanceTo(closestPredator) < killRadius
+                && attack > closestPredator.getAttack())
             closestPredator.die();
 
         // move away from predators
@@ -139,6 +123,69 @@ class Prey extends Animal {
         moveInDirection(sumX, sumY);
     }
 
+    /*************************************    INITIALIZING METHODS    *************************************************/
+
+    /**
+     * Create and return a random size between minSize and maxSize
+     * The probability that the return value is minSize + x is 1 / x^3
+     *
+     * @return an int in range [minSize, maxSize]
+     */
+    private static int randomSize() {
+        int s = maxSize - minSize + 1;
+        s = random.nextInt(s * s * (s + 1) * (s + 1) / 4) + 1;
+        int i = 0;
+        while (s > i * i * (i + 1) * (i + 1) / 4)
+            i++;
+        return maxSize - i + 1;
+    }
+
+    /**
+     * Random nutrition value base on size, and default nutrition and NUTRITION_VARIANCE
+     *
+     * @return size * defaultNutrition +- NUTRITION_VARIANCE%
+     */
+    private float randomNutrition() {
+        return size * defaultNutrition * (1 - NUTRITION_VARIANCE + random.nextFloat() * NUTRITION_VARIANCE * 2);
+    }
+
+    /**
+     * Change color opacity according to size
+     * minSize     1/3        2/3      maxSize
+     * |---------|----------|----------|
+     * small       mid       large
+     */
+    private void adjustColorAccordingToSize() {
+        float midThreshold = minSize + (maxSize - minSize) / 3.0f;
+        float largeThreshold = minSize + (maxSize - minSize) / 3.0f * 2;
+        if (size > largeThreshold)
+            color = largePreyColor;
+        else if (size > midThreshold)
+            color = mediumPreyColor;
+        else
+            color = smallPreyColor;
+    }
+
+    /*************************************    GETTERS AND UTILITIES    ************************************************/
+
+    @Override
+    float getVisionRadius() {
+        return visionRadius;
+    }
+
+    @Override
+    int getSpeed() {
+        return speed;
+    }
+
+    float getNutrition() {
+        return nutrition;
+    }
+
+    int getAttack() {
+        return size * attack;
+    }
+
     /**
      * Get a list of predators in prey's vision.
      * The closest predator is at the first position.
@@ -146,7 +193,7 @@ class Prey extends Animal {
      * @return list of predators in prey's vision
      */
     private List<Predator> getPredatorsInVision() {
-        ArrayList<Predator> predatorsInRange = new ArrayList<Predator>();
+        ArrayList<Predator> predatorsInRange = new ArrayList<>();
 
         // keep track of closest predator
         float minDistance = Float.POSITIVE_INFINITY;
@@ -181,44 +228,8 @@ class Prey extends Animal {
         return predatorsInRange;
     }
 
-    /**
-     * Create and return a random size between minSize and maxSize
-     * The probability that the return value is minSize + x is 1 / x^3
-     *
-     * @return an int in range [minSize, maxSize]
-     */
-    private static int randomSize() {
-        int s = maxSize - minSize + 1;
-        s = random.nextInt(s * s * (s + 1) * (s + 1) / 4) + 1;
-        int i = 0;
-        while (s > i * i * (i + 1) * (i + 1) / 4)
-            i++;
-        return maxSize - i + 1;
-    }
-
-    /**
-     * Random nutrition value base on size, and default nutrition and NUTRITION_VARIANCE
-     *
-     * @return size * defaultNutrition +- NUTRITION_VARIANCE%
-     */
-    private float getRandomNutrition() {
-        return size * defaultNutrition * (1 - NUTRITION_VARIANCE + random.nextFloat() * NUTRITION_VARIANCE * 2);
-    }
-
-    /**
-     * Change color opacity according to size
-     * minSize     1/3        2/3      maxSize
-     * |---------|----------|----------|
-     * small       mid       large
-     */
-    private void adjustColorAccordingToSize() {
-        float midThreshold = minSize + (maxSize - minSize) / 3.0f;
-        float largeThreshold = minSize + (maxSize - minSize) / 3.0f * 2;
-        if (size > largeThreshold)
-            color = largePreyColor;
-        else if (size > midThreshold)
-            color = mediumPreyColor;
-        else
-            color = smallPreyColor;
+    @Override
+    void postDeserialize() {
+        adjustColorAccordingToSize();
     }
 }
