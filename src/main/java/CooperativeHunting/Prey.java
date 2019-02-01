@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Prey extends Animal {
+    static final int REPRODUCE_SEASON_LENGTH = 4; // unit: iterations  -> predator only reproduce in 4 iterations
+    static final int YEAR_LENGTH = 16;            // unit: iterations                     for every 16 iterations
+
     private static final float NUTRITION_VARIANCE = 0.2f; // how much prey's nutrition varies with respect to defaultNutrition
 
     private static final float KILL_RADIUS_RATIO = 0.5f;  // ratio of prey's kill radius and its vision radius
@@ -78,6 +81,9 @@ class Prey extends Animal {
      * Handle interactions between predators and preys
      */
     void update() {
+        resolveAttack();
+        if (dead) return;
+
         // get predators in vision
         List<Predator> predators = getPredatorsInVision();
 
@@ -99,6 +105,23 @@ class Prey extends Animal {
         stayInMap();
     }
 
+    private void resolveAttack() {
+        // find the closest predator that can kill this prey
+        Predator closestPredator = null;
+        float minDistance = Float.POSITIVE_INFINITY;
+        for (Predator predator : map.getPredators()) {
+            float d = distanceTo(predator);
+            if (predator.canKill(this) && d < minDistance) {
+                closestPredator = predator;
+                minDistance = d;
+            }
+        }
+
+        // if 1 is found -> this prey is dead
+        if (closestPredator != null)
+            closestPredator.kill(this);
+    }
+
     /**
      * Prey try to avoids preys
      *
@@ -118,6 +141,10 @@ class Prey extends Animal {
             sumX += 1f / dx / d;
             sumY += 1f / dy / d;
         }
+
+        float sum = sumX + sumY;
+        sumX = sumX / sum * speed;
+        sumY = sumY / sum * speed;
 
         // move according to the sum vector
         moveInDirection(sumX, sumY);
@@ -182,7 +209,7 @@ class Prey extends Animal {
         return nutrition;
     }
 
-    int getAttack() {
+    float getAttack() {
         return size * attack;
     }
 

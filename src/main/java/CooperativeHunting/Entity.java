@@ -11,7 +11,6 @@ abstract class Entity implements Serializable {
     static Map map;
     int x;
     int y;
-    int attack;
 
     /**
      * Default constructor

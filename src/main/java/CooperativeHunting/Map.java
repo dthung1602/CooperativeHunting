@@ -7,17 +7,15 @@ import javafx.scene.paint.Color;
 import java.io.Serializable;
 import java.util.*;
 
-class Map implements Serializable {
-    private static final int AVG_FOOD_HISTORY_SIZE = 20;
+import static CooperativeHunting.Position.getRandomPositions;
 
+class Map implements Serializable {
     private List<Predator> predators;
     private List<Group> groups;
     private List<Prey> preys;
 
     private int newPreyPerIterationInt;
     private float newPreyPerIterationFloat;
-
-    private int predatorReproduceNumber;
 
     private int numberOfIteration;
 
@@ -37,7 +35,6 @@ class Map implements Serializable {
     private boolean showGrid;
 
     // output
-    private List<Float> foodGainedHistory;
     private float foodGainedThisIteration;
 
     private static Random random = new Random();
@@ -47,7 +44,6 @@ class Map implements Serializable {
         predators = new ArrayList<>();
         preys = new LinkedList<>();
         groups = new LinkedList<>();
-        foodGainedHistory = new LinkedList<>();
         numberOfIteration = 0;
     }
 
@@ -80,12 +76,11 @@ class Map implements Serializable {
             throw new IllegalArgumentException("Stay in group tendency must be a float in range [0, 1]");
 
         // set values for predator and group class
-        predatorReproduceNumber = 2;
         Predator.set(speed, health, attack, visionRadius, stayInGroupTendency, huntingMethod, predatorColor);
         Group.set(groupRadius, groupColor);
 
         // create predators randomly
-        ArrayList<Position> positions = getRandomPositions(number);
+        ArrayList<Position> positions = getRandomPositions(number, mapWidth, mapHeight);
         predators.clear();
         groups.clear();
         for (Position position : positions)
@@ -130,7 +125,7 @@ class Map implements Serializable {
                 smallPreyColor, mediumPreyColor, largePreyColor);
 
         // create preys randomly
-        ArrayList<Position> positions = getRandomPositions(number);
+        ArrayList<Position> positions = getRandomPositions(number, mapWidth, mapHeight);
         preys.clear();
         for (Position position : positions)
             preys.add(new Prey(position));
@@ -161,63 +156,24 @@ class Map implements Serializable {
         for (Group group : groups)
             group.updateMembers();
 
-        for (Predator predator : predators)
-            predator.attack();
-
-//        createNewPredators();
-
-        removeDeadAnimals(preys);
+        createNewPredators();
 
         for (Prey prey : preys)
             prey.update();
 
+        removeDeadAnimals(preys);
         removeDeadAnimals(predators);
         removeEmptyGroups();
 
         // display output
         controller.displayOutput(
-                calculateAvgFoodGain(),
+                foodGainedThisIteration / predators.size(),
                 predators.size(),
                 preys.size()
         );
     }
 
     /*************************************    ADDITIONAL INITIALIZATION AND UPDATING METHODS    ***********************/
-
-    /**
-     * Generate a list of unused positions in the map
-     *
-     * @param number: number of positions to generate
-     * @return a list of unused positions
-     */
-    private ArrayList<Position> getRandomPositions(int number) {
-        HashSet<Position> usedPositions = new HashSet<>();
-        ArrayList<Position> newPositions = new ArrayList<>(number);
-
-        for (int i = 0; i < number; i++) {
-            Position position;
-            int x, y;
-            do {
-                x = random.nextInt(mapWidth);
-                y = random.nextInt(mapHeight);
-                position = new Position(x, y);
-            } while (usedPositions.contains(position));
-            newPositions.add(position);
-            usedPositions.add(position);
-        }
-
-        return newPositions;
-    }
-
-    /**
-     * Create new preys to replace dead ones
-     */
-    private void createNewPreys() {
-        int one = (random.nextFloat() < newPreyPerIterationFloat) ? 1 : 0;
-        ArrayList<Position> positions = getRandomPositions(newPreyPerIterationInt + one);
-        for (Position position : positions)
-            preys.add(new Prey(position));
-    }
 
     /**
      * Predators reproduce
@@ -229,14 +185,29 @@ class Map implements Serializable {
 
         // count number of predators that can reproduce
         int count = 0;
-        for (Predator predator : predators)
+        for (Predator predator : predators) {
             if (predator.reproduce())
                 count++;
+        }
+        count *= Predator.PREDATOR_REPRODUCE_NUMBER;
 
         // create new predators
-        ArrayList<Position> positions = getRandomPositions(count * predatorReproduceNumber);
+        ArrayList<Position> positions = getRandomPositions(count, mapWidth, mapHeight);
         for (Position position : positions)
             predators.add(new Predator(position));
+    }
+
+    /**
+     * Create new preys to replace dead ones
+     */
+    private void createNewPreys() {
+        // check if this reproducing season
+        if (numberOfIteration % Prey.YEAR_LENGTH > Prey.REPRODUCE_SEASON_LENGTH || preys.size() == 0)
+            return;
+        int one = (random.nextFloat() < newPreyPerIterationFloat) ? 1 : 0;
+        ArrayList<Position> positions = getRandomPositions(newPreyPerIterationInt + one, mapWidth, mapHeight);
+        for (Position position : positions)
+            preys.add(new Prey(position));
     }
 
     /**
@@ -337,7 +308,7 @@ class Map implements Serializable {
         }
     }
 
-    /*************************************    SETTERS AND GETTERS METHODS    ******************************************/
+    /*************************************    SETTERS AND GETTERS     *************************************************/
 
     List<Prey> getPreys() {
         return preys;
@@ -383,15 +354,5 @@ class Map implements Serializable {
 
     void addFoodGain(float foodGain) {
         foodGainedThisIteration += foodGain;
-    }
-
-    private float calculateAvgFoodGain() {
-        foodGainedHistory.add(foodGainedThisIteration);
-        if (foodGainedHistory.size() > AVG_FOOD_HISTORY_SIZE)
-            foodGainedHistory.remove(0);
-        float sum = 0;
-        for (float value : foodGainedHistory)
-            sum += value;
-        return sum / foodGainedHistory.size();
     }
 }

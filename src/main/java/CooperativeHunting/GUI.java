@@ -120,8 +120,11 @@ public class GUI {
 
     // GUI component groups
     TextField[] inputTextFields;
+    TextField[] outputTextFields;
     CheckBox[] checkBoxes;
     ColorPicker[] colorPickers;
+    private MenuItem[] saveMenuItems;
+    private MenuItem[] loadMenuItems;
     private MenuItem[] menuItems;
     private Control[] widgets;
 
@@ -136,13 +139,14 @@ public class GUI {
         play.setDisable(true);
         stop.setDisable(true);
         next.setDisable(true);
-        averageFood.setEditable(false);
-        predatorCount.setEditable(false);
 
         inputTextFields = new TextField[]{
                 width, height,
                 predatorNumber, predatorAttack, health, predatorSpeed, predatorVisionRadius, groupRadius, stayInGroupTendency,
                 preyNumber, preyAttack, nutrition, preySpeed, preyVisionRadius, preyMinSize, preyMaxSize, newPreyPerIteration,
+        };
+        outputTextFields = new TextField[]{
+                predatorCount, preyCount, averageFood
         };
         checkBoxes = new CheckBox[]{
                 showGrid, predatorShowVision, showGroup, preyShowVision
@@ -157,10 +161,16 @@ public class GUI {
                 showGrid, predatorShowVision, showGroup, preyShowVision,
                 predatorColor, groupColor, preyColor
         };
+        saveMenuItems = new MenuItem[]{
+                loadSettings, loadMap, loadSimulation,
+        };
+        loadMenuItems = new MenuItem[]{
+                saveSettings, saveMap, saveSimulation,
+        };
         menuItems = new MenuItem[]{
                 loadSettings, loadMap, loadSimulation,
                 saveSettings, saveMap, saveSimulation,
-                demo1, demo2, demo3
+                demo1, demo2, demo3,
         };
 
         // Init combo boxes
@@ -172,8 +182,12 @@ public class GUI {
         iterationSpeed.setValue("1");
         huntingMethod.setValue(HuntingMethod.DEFAULT.toString());
 
+        // disable editing output
+        for (TextField textField: outputTextFields)
+            textField.setEditable(false);
+
         // clear text in input text fields
-        clearTextFields();
+        clearInputTextFields();
 
         // Accept only 0-9 and .
         for (final TextField field : inputTextFields)
@@ -235,9 +249,7 @@ public class GUI {
         next.setDisable(running);
 
         setSettingsDisable(true);
-        saveSettings.setDisable(running);
-        saveMap.setDisable(running);
-        saveSimulation.setDisable(running);
+        setMenuItemsDisable(running);
     }
 
     /**
@@ -255,11 +267,6 @@ public class GUI {
 
         setSettingsDisable(false);
         application.stopSimulation();
-
-        // reset the value of output
-        averageFood.setText("");
-        predatorCount.setText("");
-        preyCount.setText("");
     }
 
     /**
@@ -277,6 +284,17 @@ public class GUI {
                     preyShowVision.isSelected(),
                     showGroup.isSelected()
             );
+            map.initializePreys(
+                    Integer.parseInt(preyNumber.getText()),
+                    Integer.parseInt(preySpeed.getText()),
+                    Float.parseFloat(nutrition.getText()),
+                    Integer.parseInt(preyAttack.getText()),
+                    Integer.parseInt(preyMinSize.getText()),
+                    Integer.parseInt(preyMaxSize.getText()),
+                    Integer.parseInt(preyVisionRadius.getText()),
+                    Float.parseFloat(newPreyPerIteration.getText()),
+                    preyColor.getValue()
+            );
             map.initializePredators(
                     Integer.parseInt(predatorNumber.getText()),
                     Integer.parseInt(predatorSpeed.getText()),
@@ -288,17 +306,6 @@ public class GUI {
                     HuntingMethod.fromString(huntingMethod.getValue()),
                     predatorColor.getValue(),
                     groupColor.getValue()
-            );
-            map.initializePreys(
-                    Integer.parseInt(preyNumber.getText()),
-                    Integer.parseInt(preySpeed.getText()),
-                    Float.parseFloat(nutrition.getText()),
-                    Integer.parseInt(preyAttack.getText()),
-                    Integer.parseInt(preyMinSize.getText()),
-                    Integer.parseInt(preyMaxSize.getText()),
-                    Integer.parseInt(preyVisionRadius.getText()),
-                    Float.parseFloat(newPreyPerIteration.getText()),
-                    preyColor.getValue()
             );
 
             // paint the init position in the map
@@ -320,6 +327,9 @@ public class GUI {
         play.setDisable(false);
         stop.setDisable(true);
         next.setDisable(false);
+
+        setSaveMenuItemsDisable(false);
+        clearOutputTextFields();
     }
 
     /**
@@ -327,7 +337,8 @@ public class GUI {
      */
     @FXML
     void clear() {
-        clearTextFields();
+        clearInputTextFields();
+        clearOutputTextFields();
         for (CheckBox checkBox : checkBoxes)
             checkBox.setSelected(false);
         for (ColorPicker colorPicker : colorPickers)
@@ -341,6 +352,13 @@ public class GUI {
     void next() {
         map.update();
         map.paint();
+
+        apply.setDisable(true);
+        clear.setDisable(true);
+        play.setDisable(false);
+        stop.setDisable(false);
+        setSettingsDisable(true);
+        setMenuItemsDisable(false);
     }
 
     /**
@@ -349,6 +367,14 @@ public class GUI {
     @FXML
     void updateSimulationSpeed() {
         application.setSimulationSpeed(Float.parseFloat(iterationSpeed.getValue()));
+    }
+
+    /**
+     * The iteration speed will be changed base on the value of slider
+     */
+    @FXML
+    void changeHuntingMethod() {
+        Predator.setHuntingMethod(HuntingMethod.fromString(huntingMethod.getValue()));
     }
 
     /*************************************    MENU ACTIONS    *********************************************************/
@@ -471,22 +497,31 @@ public class GUI {
 
     /*************************************    UTILITIES    ************************************************************/
 
-    /**
-     * Set all input text fields in GUI to value text
-     */
-    private void clearTextFields() {
+    void clearOutputTextFields() {
+        for (TextField textField : outputTextFields)
+            textField.setText("");
+    }
+
+    private void clearInputTextFields() {
         for (TextField field : inputTextFields)
             field.setText("");
     }
 
-    /**
-     * Do not let user type input to all fields
-     */
     private void setSettingsDisable(boolean value) {
         for (Control widget : widgets)
             widget.setDisable(value);
         for (MenuItem item : menuItems)
             item.setDisable(value);
+    }
+
+    private void setSaveMenuItemsDisable(boolean value) {
+        for (MenuItem menuItem : saveMenuItems)
+            menuItem.setDisable(value);
+    }
+
+    private void setMenuItemsDisable(boolean value) {
+        for (MenuItem menuItem : menuItems)
+            menuItem.setDisable(value);
     }
 
     /**
@@ -504,5 +539,6 @@ public class GUI {
 
     void enablePlayButton() {
         play.setDisable(false);
+        next.setDisable(false);
     }
 }

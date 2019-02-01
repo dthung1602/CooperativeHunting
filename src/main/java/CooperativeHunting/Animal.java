@@ -13,6 +13,7 @@ abstract class Animal extends Entity {
 
     boolean dead;
     int size;
+    int attack;
     transient Color color;
 
     /**
@@ -29,6 +30,11 @@ abstract class Animal extends Entity {
      * @return The animal's vision radius
      */
     abstract float getVisionRadius();
+
+    /**
+     * @return The animal's vision radius
+     */
+    abstract float getAttack();
 
     /**
      * @return The animal's speed
@@ -94,18 +100,19 @@ abstract class Animal extends Entity {
 
         if (directionY == 0 || Float.isInfinite(directionY)) { // move along x-axis only
             if (directionX > 0)
-                this.x += speed;
+                this.x += Math.min(speed, directionX);
             else
-                this.x -= speed;
+                this.x += Math.max(-speed, directionX);
         } else if (directionX == 0 || Float.isInfinite(directionX)) { // move along y-axis only
             if (directionY > 0)
-                this.y += speed;
+                this.y += Math.min(speed, directionY);
             else
-                this.y -= speed;
+                this.y += Math.max(-speed, directionY);
         } else {
             float sum = Math.abs(directionX) + Math.abs(directionY);
-            this.x += Math.round((float) speed * directionX / sum);
-            this.y += Math.round((float) speed * directionY / sum);
+            float len = Math.min(sum, speed);
+            this.x += Math.round(len * directionX / sum);
+            this.y += Math.round(len * directionY / sum);
         }
     }
 

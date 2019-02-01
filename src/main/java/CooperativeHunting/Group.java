@@ -4,6 +4,7 @@ import CooperativeHunting.Predator.HuntingMethod;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,14 +20,13 @@ class Group extends Entity {
     /**
      * Group constructor
      *
-     * @param predator1: the initial member of the group
-     * @param predator2: the initial member of the group
+     * @param members: the initial members of the group
      */
-    private Group(Predator predator1, Predator predator2) {
-        members = new LinkedList<>();
-        members.add(predator1);
-        members.add(predator2);
-        predator1.group = predator2.group = this;
+    private Group(List<Predator> members) {
+        this.members = members;
+        for (Predator member : members)
+            member.group = this;
+        calculateCenter();
     }
 
     /*************************************    CREATE GROUP METHODS    *************************************************/
@@ -39,23 +39,31 @@ class Group extends Entity {
      */
     static void createNewGroup(List<Group> groups, List<Predator> predators) {
 
-        for (int i = 0; i < predators.size() - 1; i++) { // for every pair of predator
+        for (int i = 0; i < predators.size() - 1; i++) { // for every predator
             Predator predator = predators.get(i);
 
             if (predator.group == null) { // only touch predators that do not belong to any group
+                List<Predator> members = new LinkedList<>();
+                Predator predatorInAnotherGroup = null;
+
                 for (int j = i + 1; j < predators.size(); j++) { // for every pair of predator
                     Predator otherPredator = predators.get(j);
 
-                    if (predator.distanceTo(otherPredator) < groupRadius) { // if close enough to form new group
-                        if (otherPredator.group == null) { // other predator also has no group
-                            Group newGroup = new Group(predator, otherPredator); // -> new group contains both of them
-                            groups.add(newGroup);
-                        } else { // other predator has already in a group
-                            otherPredator.group.members.add(predator); // predator join that group
-                            predator.group = otherPredator.group;
-                        }
-                        break;
+                    if (predator.distanceTo(otherPredator) < groupRadius) {// if close enough to form new group
+                        if (otherPredator.group == null) // other predator has no group -> create a new one
+                            members.add(otherPredator);
+                        else // other predator has got a group -> join that group
+                            predatorInAnotherGroup = otherPredator;
                     }
+                }
+
+                if (!members.isEmpty()) { // try to form new group first
+                    members.add(predator);
+                    Group newGroup = new Group(members);
+                    groups.add(newGroup);
+                } else if (predatorInAnotherGroup != null) { // cant't form new group -> try to join another group
+                    predatorInAnotherGroup.group.members.add(predator);
+                    predator.group = predatorInAnotherGroup.group;
                 }
             }
         }
@@ -91,9 +99,6 @@ class Group extends Entity {
      * Remove members that moved out of the group radius
      */
     private void deleteMembers() {
-        // recalculate group attack
-        attack = 0;
-
         // remove members out of group radius
         Iterator<Predator> iterator = members.iterator();
         while (iterator.hasNext()) {
@@ -101,8 +106,6 @@ class Group extends Entity {
             if (distanceTo(member) > groupRadius) {
                 iterator.remove();
                 member.group = null;
-            } else {
-                attack += member.attack;
             }
         }
     }

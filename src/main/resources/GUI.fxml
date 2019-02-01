@@ -110,7 +110,7 @@
                                                             <GridPane.margin>
                                                                 <Insets left="10.0" />
                                                             </GridPane.margin></CheckBox>
-                                                        <ComboBox fx:id="huntingMethod" prefHeight="26.0" prefWidth="163.0" promptText="Hunting Method" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                        <ComboBox fx:id="huntingMethod" onAction="#changeHuntingMethod" prefHeight="26.0" prefWidth="163.0" promptText="Hunting Method" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                                             <GridPane.margin>
                                                                 <Insets left="10.0" right="20.0" />
                                                             </GridPane.margin>

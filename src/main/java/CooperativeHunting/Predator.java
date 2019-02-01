@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 class Predator extends Animal {
     static final int REPRODUCE_SEASON_LENGTH = 4; // unit: iterations  -> predator only reproduce in 4 iterations
     static final int YEAR_LENGTH = 16;            // unit: iterations                     for every 16 iterations
+    static final int PREDATOR_REPRODUCE_NUMBER = 1;
 
     private static final float KILL_RADIUS_RATIO = 0.5f;  // ratio of predator's kill radius and its vision radius
 
@@ -14,11 +15,11 @@ class Predator extends Animal {
     private static int defaultHealth;
     private static int defaultAttack;
     private static float stayInGroupTendency;
-    private static int reproducingThreshold;
+    private static float reproducingThreshold;
     private static Color defaultColor;
     static HuntingMethod huntingMethod = HuntingMethod.DEFAULT;
 
-    private int health;
+    private float health;
     Group group;
 
     private Prey anyPrey;
@@ -63,7 +64,7 @@ class Predator extends Animal {
         Predator.stayInGroupTendency = stayInGroupTendency;
         Predator.huntingMethod = huntingMethod;
         Predator.defaultColor = defaultColor;
-        Predator.reproducingThreshold = defaultHealth + (int) Prey.defaultNutrition;
+        Predator.reproducingThreshold = defaultHealth + Prey.defaultNutrition * 10;
     }
 
     /*************************************    UPDATING METHODS    *****************************************************/
@@ -75,15 +76,20 @@ class Predator extends Animal {
     void updateScout() {
         // update health first
         health--;
-        if (health < 1) {
+        if (health <= 0) {
             die();
             return;
         }
 
-        // find closest prey
+        // find preys
         closestPreyDistance = Float.POSITIVE_INFINITY;
-        tastiestPreyNutrition = 0;
-        bestCombination = 0;
+        tastiestPreyNutrition = Float.NEGATIVE_INFINITY;
+        bestCombination = Float.NEGATIVE_INFINITY;
+        closestPrey = null;
+        tastiestPrey = null;
+        closestTastiestPrey = null;
+        anyPrey = null;
+
         float groupAttack = getAttack();
 
         for (Prey prey : map.getPreys()) {
@@ -172,41 +178,36 @@ class Predator extends Animal {
      * @return A target prey in predator vision according to its hunting method. Null is return if no preys is found.
      */
     private Prey getTargetPrey() {
-        if (huntingMethod == HuntingMethod.DISTANCE && closestPreyDistance < Float.POSITIVE_INFINITY)
+        if (huntingMethod == HuntingMethod.DISTANCE && closestPrey != null)
             return closestPrey;
-        if (huntingMethod == HuntingMethod.NUTRITION && tastiestPreyNutrition > 0)
+        if (huntingMethod == HuntingMethod.NUTRITION && tastiestPrey != null)
             return tastiestPrey;
-        if (huntingMethod == HuntingMethod.DISTANCE_AND_NUTRITION && bestCombination > 0)
+        if (huntingMethod == HuntingMethod.DISTANCE_AND_NUTRITION && closestTastiestPrey != null)
             return closestTastiestPrey;
         if (huntingMethod == HuntingMethod.ANY)
             return anyPrey;
         return null;
     }
 
-    /**
-     * Attacks Preys in range
-     */
-    void attack() {
-        int atk = getAttack(); // total attack of the group
+    boolean canKill(Prey prey) {
+        if (distanceTo(prey) > killRadius || getAttack() < prey.getAttack())
+            return false;
+        if (group == null || group.leader == null)
+            return getTargetPrey() == prey;
+        return group.leader.getTargetPrey() == prey;
+    }
 
-        for (Prey prey : map.getPreys()) {
-            if (!prey.dead  // prey is not dead
-                    && distanceTo(prey) <= killRadius // close enough
-                    && prey.getAttack() <= atk) { // weaker
-                // get killed
-                prey.dead = true;
+    void kill(Prey prey) {
+        prey.dead = true;
+        float nutrition = prey.getNutrition();
+        map.addFoodGain(nutrition);
 
-                // increase health for predators in the same group
-                float nutrition = prey.getNutrition();
-                map.addFoodGain(nutrition);
-                if (group == null) {
-                    health += (int) nutrition;
-                } else {
-                    int healthGain = (int) (nutrition / group.members.size());
-                    for (Predator predator : group.members)
-                        predator.health += healthGain;
-                }
-            }
+        if (group == null)
+            health += nutrition;
+        else {
+            float healthGain = nutrition / group.members.size();
+            for (Predator predator : group.members)
+                predator.health += healthGain;
         }
     }
 
@@ -265,6 +266,10 @@ class Predator extends Animal {
         }
     }
 
+    static void setHuntingMethod(HuntingMethod huntingMethod) {
+        Predator.huntingMethod = huntingMethod;
+    }
+
     /*************************************    GET AND ADDITIONAL METHODS    *******************************************/
 
     @Override
@@ -277,8 +282,8 @@ class Predator extends Animal {
         return speed;
     }
 
-    int getAttack() {
-        return (group == null) ? attack : group.attack;
+    float getAttack() {
+        return (group == null) ? attack : group.members.size() * attack;
     }
 
     @Override

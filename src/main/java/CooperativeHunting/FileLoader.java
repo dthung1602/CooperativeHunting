@@ -116,6 +116,7 @@ class FileLoader {
             return;
         }
 
+        // handle MS Window linebreak \r\n
         data = data.replaceAll("\r", "");
 
         // check map size
@@ -176,18 +177,21 @@ class FileLoader {
         }
 
         gui.enablePlayButton();
+        gui.clearOutputTextFields();
         map.paint();
     }
 
     private static void loadSimulationFromString(String data, GUI gui) {
         Map map;
-        String settingsString;
         try {
             byte[] dataByte = Base64.getDecoder().decode(data);
             ByteArrayInputStream bais = new ByteArrayInputStream(dataByte);
             ObjectInputStream stream = new ObjectInputStream(bais);
             map = (Map) stream.readObject();
-            settingsString = (String) stream.readObject();
+            String settingsString = (String) stream.readObject();
+            loadSettingsFromString(settingsString, gui);
+            for (TextField textField : gui.outputTextFields)
+                textField.setText((String) stream.readObject());
             stream.close();
             bais.close();
         } catch (IOException | ClassNotFoundException e) {
@@ -195,7 +199,6 @@ class FileLoader {
             return;
         }
 
-        loadSettingsFromString(settingsString, gui);
         gui.setMap(map);
         map.setController(gui);
         gui.enablePlayButton();
@@ -256,6 +259,8 @@ class FileLoader {
             ObjectOutputStream stream = new ObjectOutputStream(baos);
             stream.writeObject(gui.map);
             stream.writeObject(saveSettingsToString(gui));
+            for (TextField textField : gui.outputTextFields)
+                stream.writeObject(textField.getText());
             String result = Base64.getEncoder().encodeToString(baos.toByteArray());
             stream.close();
             baos.close();
