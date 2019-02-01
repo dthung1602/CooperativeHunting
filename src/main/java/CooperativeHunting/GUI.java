@@ -1,7 +1,6 @@
 package CooperativeHunting;
 
 import CooperativeHunting.Predator.HuntingMethod;
-import cucumber.api.java.gl.E;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -43,6 +42,8 @@ public class GUI {
     private MenuItem demo2;
     @FXML
     private MenuItem demo3;
+    @FXML
+    private MenuItem showGraph;
 
     // Display options
     @FXML
@@ -125,7 +126,6 @@ public class GUI {
     CheckBox[] checkBoxes;
     ColorPicker[] colorPickers;
     private MenuItem[] saveMenuItems;
-    private MenuItem[] loadMenuItems;
     private MenuItem[] menuItems;
     private Control[] widgets;
 
@@ -165,9 +165,6 @@ public class GUI {
         saveMenuItems = new MenuItem[]{
                 loadSettings, loadMap, loadSimulation,
         };
-        loadMenuItems = new MenuItem[]{
-                saveSettings, saveMap, saveSimulation,
-        };
         menuItems = new MenuItem[]{
                 loadSettings, loadMap, loadSimulation,
                 saveSettings, saveMap, saveSimulation,
@@ -184,7 +181,7 @@ public class GUI {
         huntingMethod.setValue(HuntingMethod.DEFAULT.toString());
 
         // disable editing output
-        for (TextField textField: outputTextFields)
+        for (TextField textField : outputTextFields)
             textField.setEditable(false);
 
         // clear text in input text fields
@@ -254,7 +251,7 @@ public class GUI {
     }
 
     /**
-     * Enable fields, disable play buttons and do the stopSimulation function in the main
+     * Enable fields, disable display buttons and do the stopSimulation function in the main
      */
     @FXML
     void stop() {
@@ -380,13 +377,13 @@ public class GUI {
 
     /*************************************    MENU ACTIONS (Open Statistic Graph)   ***********************************/
 
-    void openGraph(){    //TODO add this method in GUI, avoid bug by only available when user clicked play button
-        try {
-            GraphDrawer.play(map.predatorPopulationPerIteration, map.preyPopulationPerIteration);
-        }
-        catch(Exception e){
-            System.out.println(e);
-        }
+    @FXML
+    void showGraph() {
+        ChartDrawer.display(
+                map.predatorPopulationPerIteration,
+                map.preyPopulationPerIteration,
+                map.avgFoodGainedPerIteration
+        );
     }
 
     /*************************************    MENU ACTIONS    *********************************************************/

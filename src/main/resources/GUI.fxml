@@ -44,6 +44,11 @@
                         <MenuItem fx:id="demo3" mnemonicParsing="false" onAction="#showDemo3" text="Demo 3" />
                     </items>
                 </Menu>
+            <Menu mnemonicParsing="false" text="Graph">
+              <items>
+                <MenuItem fx:id="showGraph" mnemonicParsing="false" onAction="#showGraph" text="Show output graph" />
+              </items>
+            </Menu>
                 <Menu mnemonicParsing="false" text="About">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#showSpecification" text="Specification" />
@@ -96,7 +101,7 @@
                                                                 <Insets left="10.0" />
                                                             </GridPane.margin>
                                                         </CheckBox>
-                                                        <CheckBox fx:id="preyShowVision" mnemonicParsing="false" prefHeight="18.0" prefWidth="262.0" text="Show prey vison" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                                        <CheckBox fx:id="preyShowVision" mnemonicParsing="false" prefHeight="18.0" prefWidth="262.0" text="Show prey vision" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                                             <GridPane.margin>
                                                                 <Insets left="10.0" />
                                                             </GridPane.margin>

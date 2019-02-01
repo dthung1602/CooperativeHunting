@@ -34,20 +34,26 @@ class Map implements Serializable {
     private boolean showGroup;
     private boolean showGrid;
 
-    //Graph output
+    // graph output
     LinkedList<Double> predatorPopulationPerIteration;
     LinkedList<Double> preyPopulationPerIteration;
+    LinkedList<Double> avgFoodGainedPerIteration;
 
-
-    //Text output
+    // text output
     private float foodGainedThisIteration;
 
     private static Random random = new Random();
 
+    /**
+     * Map constructor
+     *
+     * @param gui: GUI object
+     */
     Map(GUI gui) {
         setController(gui);
         predatorPopulationPerIteration = new LinkedList<>();
         preyPopulationPerIteration = new LinkedList<>();
+        avgFoodGainedPerIteration = new LinkedList<>();
         predators = new ArrayList<>();
         preys = new LinkedList<>();
         groups = new LinkedList<>();
@@ -143,7 +149,7 @@ class Map implements Serializable {
     /**
      * Preys and predators move and interact
      */
-    void update() {
+    synchronized void update() {
         numberOfIteration++;
         foodGainedThisIteration = 0;
 
@@ -172,13 +178,20 @@ class Map implements Serializable {
         removeDeadAnimals(predators);
         removeEmptyGroups();
 
-        //Update ratio between Predator's population and Prey's population
-        predatorPopulationPerIteration.add((double)predators.size());
-        predatorPopulationPerIteration.add((double)preys.size());
+        handleOutput();
+    }
+
+    private void handleOutput() {
+        float avg = foodGainedThisIteration / predators.size();
+
+        // update ratio between Predator's population and Prey's population
+        predatorPopulationPerIteration.add((double) predators.size());
+        preyPopulationPerIteration.add((double) preys.size());
+        avgFoodGainedPerIteration.add((double) avg);
 
         // display output
         controller.displayOutput(
-                foodGainedThisIteration / predators.size(),
+                avg,
                 predators.size(),
                 preys.size()
         );
@@ -273,6 +286,9 @@ class Map implements Serializable {
         predators.clear();
         groups.clear();
         preys.clear();
+        predatorPopulationPerIteration.clear();
+        preyPopulationPerIteration.clear();
+        avgFoodGainedPerIteration.clear();
         clearScreen();
         numberOfIteration = 0;
     }
