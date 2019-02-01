@@ -1,6 +1,7 @@
 package CooperativeHunting;
 
 import CooperativeHunting.Predator.HuntingMethod;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -236,18 +237,20 @@ public class GUI {
      */
     @FXML
     void play() {
-        boolean running = application.runningToggle();
+        Platform.runLater(() -> {
+            boolean running = application.runningToggle();
 
-        play.setText(running ? "Pause" : "Play");
+            play.setText(running ? "Pause" : "Play");
 
-        apply.setDisable(true);
-        clear.setDisable(true);
-        play.setDisable(false);
-        stop.setDisable(false);
-        next.setDisable(running);
+            apply.setDisable(true);
+            clear.setDisable(true);
+            play.setDisable(false);
+            stop.setDisable(false);
+            next.setDisable(running);
 
-        setSettingsDisable(true);
-        setMenuItemsDisable(running);
+            setSettingsDisable(true);
+            setMenuItemsDisable(running);
+        });
     }
 
     /**
@@ -255,16 +258,18 @@ public class GUI {
      */
     @FXML
     void stop() {
-        play.setText("Play");
+        Platform.runLater(() -> {
+            play.setText("Play");
 
-        apply.setDisable(false);
-        clear.setDisable(false);
-        play.setDisable(true);
-        stop.setDisable(true);
-        next.setDisable(true);
+            apply.setDisable(false);
+            clear.setDisable(false);
+            play.setDisable(true);
+            stop.setDisable(true);
+            next.setDisable(true);
 
-        setSettingsDisable(false);
-        application.stopSimulation();
+            setSettingsDisable(false);
+            application.stopSimulation();
+        });
     }
 
     /**
@@ -286,18 +291,18 @@ public class GUI {
                     Integer.parseInt(preyNumber.getText()),
                     Integer.parseInt(preySpeed.getText()),
                     Float.parseFloat(nutrition.getText()),
-                    Integer.parseInt(preyAttack.getText()),
+                    Float.parseFloat(preyAttack.getText()),
                     Integer.parseInt(preyMinSize.getText()),
                     Integer.parseInt(preyMaxSize.getText()),
-                    Integer.parseInt(preyVisionRadius.getText()),
+                    Float.parseFloat(preyVisionRadius.getText()),
                     Float.parseFloat(newPreyPerIteration.getText()),
                     preyColor.getValue()
             );
             map.initializePredators(
                     Integer.parseInt(predatorNumber.getText()),
                     Integer.parseInt(predatorSpeed.getText()),
-                    Integer.parseInt(health.getText()),
-                    Integer.parseInt(predatorAttack.getText()),
+                    Float.parseFloat(health.getText()),
+                    Float.parseFloat(predatorAttack.getText()),
                     Float.parseFloat(groupRadius.getText()),
                     Float.parseFloat(predatorVisionRadius.getText()),
                     Float.parseFloat(stayInGroupTendency.getText()),
@@ -320,14 +325,16 @@ public class GUI {
             return;
         }
 
-        apply.setDisable(false);
-        clear.setDisable(false);
-        play.setDisable(false);
-        stop.setDisable(true);
-        next.setDisable(false);
+        Platform.runLater(() -> {
+            apply.setDisable(false);
+            clear.setDisable(false);
+            play.setDisable(false);
+            stop.setDisable(true);
+            next.setDisable(false);
 
-        setSaveMenuItemsDisable(false);
-        clearOutputTextFields();
+            setSaveMenuItemsDisable(false);
+            clearOutputTextFields();
+        });
     }
 
     /**
@@ -335,12 +342,14 @@ public class GUI {
      */
     @FXML
     void clear() {
-        clearInputTextFields();
-        clearOutputTextFields();
-        for (CheckBox checkBox : checkBoxes)
-            checkBox.setSelected(false);
-        for (ColorPicker colorPicker : colorPickers)
-            colorPicker.setValue(javafx.scene.paint.Color.WHITE);
+        Platform.runLater(() -> {
+            clearInputTextFields();
+            clearOutputTextFields();
+            for (CheckBox checkBox : checkBoxes)
+                checkBox.setSelected(false);
+            for (ColorPicker colorPicker : colorPickers)
+                colorPicker.setValue(javafx.scene.paint.Color.WHITE);
+        });
     }
 
     /**
@@ -348,15 +357,17 @@ public class GUI {
      */
     @FXML
     void next() {
-        map.update();
-        map.paint();
+        Platform.runLater(() -> {
+            map.update();
+            map.paint();
 
-        apply.setDisable(true);
-        clear.setDisable(true);
-        play.setDisable(false);
-        stop.setDisable(false);
-        setSettingsDisable(true);
-        setMenuItemsDisable(false);
+            apply.setDisable(true);
+            clear.setDisable(true);
+            play.setDisable(false);
+            stop.setDisable(false);
+            setSettingsDisable(true);
+            setMenuItemsDisable(false);
+        });
     }
 
     /**
@@ -382,7 +393,8 @@ public class GUI {
         ChartDrawer.display(
                 map.predatorPopulationPerIteration,
                 map.preyPopulationPerIteration,
-                map.avgFoodGainedPerIteration
+                map.avgFoodGainedPerIteration,
+                map.outputDataLock
         );
     }
 

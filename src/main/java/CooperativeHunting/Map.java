@@ -6,6 +6,8 @@ import javafx.scene.paint.Color;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static CooperativeHunting.Position.getRandomPositions;
 
@@ -21,7 +23,6 @@ class Map implements Serializable {
 
     transient private GUI controller;
     transient private Canvas canvas;
-    transient private GraphicsContext graphics;
 
     // map size
     private int mapWidth;
@@ -38,11 +39,12 @@ class Map implements Serializable {
     LinkedList<Double> predatorPopulationPerIteration;
     LinkedList<Double> preyPopulationPerIteration;
     LinkedList<Double> avgFoodGainedPerIteration;
+    transient Lock outputDataLock;
 
     // text output
     private float foodGainedThisIteration;
 
-    private static Random random = new Random();
+    transient private static Random random = new Random();
 
     /**
      * Map constructor
@@ -54,6 +56,7 @@ class Map implements Serializable {
         predatorPopulationPerIteration = new LinkedList<>();
         preyPopulationPerIteration = new LinkedList<>();
         avgFoodGainedPerIteration = new LinkedList<>();
+        outputDataLock = new ReentrantLock();
         predators = new ArrayList<>();
         preys = new LinkedList<>();
         groups = new LinkedList<>();
@@ -74,7 +77,7 @@ class Map implements Serializable {
      * @param predatorColor: predators' color for visualization
      * @param groupColor:    groups' color for visualization
      */
-    void initializePredators(int number, int speed, int health, int attack, float groupRadius, float visionRadius,
+    void initializePredators(int number, int speed, float health, float attack, float groupRadius, float visionRadius,
                              float stayInGroupTendency, Predator.HuntingMethod huntingMethod,
                              Color predatorColor, Color groupColor)
             throws IllegalArgumentException {
@@ -112,7 +115,7 @@ class Map implements Serializable {
      * @param visionRadius: preys' vision radius
      * @param primaryColor: preys' primary color for visualization
      */
-    void initializePreys(int number, int speed, float nutrition, int attack, int minSize, int maxSize,
+    void initializePreys(int number, int speed, float nutrition, float attack, int minSize, int maxSize,
                          float visionRadius, float newPreyPerIteration, Color primaryColor)
             throws IllegalArgumentException {
 
@@ -154,7 +157,6 @@ class Map implements Serializable {
         foodGainedThisIteration = 0;
 
         createNewPreys();
-
         Group.createNewGroup(groups, predators);
 
         for (Predator predator : predators)
@@ -169,25 +171,29 @@ class Map implements Serializable {
         for (Group group : groups)
             group.updateMembers();
 
-        createNewPredators();
-
         for (Prey prey : preys)
             prey.update();
 
+        createNewPredators();
         removeDeadAnimals(preys);
         removeDeadAnimals(predators);
         removeEmptyGroups();
 
         handleOutput();
+
     }
 
     private void handleOutput() {
         float avg = foodGainedThisIteration / predators.size();
 
-        // update ratio between Predator's population and Prey's population
-        predatorPopulationPerIteration.add((double) predators.size());
-        preyPopulationPerIteration.add((double) preys.size());
-        avgFoodGainedPerIteration.add((double) avg);
+        try {
+            outputDataLock.lock();
+            predatorPopulationPerIteration.add((double) predators.size());
+            preyPopulationPerIteration.add((double) preys.size());
+            avgFoodGainedPerIteration.add((double) avg);
+        } finally {
+            outputDataLock.unlock();
+        }
 
         // display output
         controller.displayOutput(
@@ -207,18 +213,14 @@ class Map implements Serializable {
         if (numberOfIteration % Predator.YEAR_LENGTH > Predator.REPRODUCE_SEASON_LENGTH)
             return;
 
-        // count number of predators that can reproduce
-        int count = 0;
+        // add new born predators to list
+        LinkedList<Predator> newPredators = new LinkedList<>();
         for (Predator predator : predators) {
-            if (predator.reproduce())
-                count++;
+            Predator newBorn = predator.reproduce();
+            if (newBorn != null)
+                newPredators.add(newBorn);
         }
-        count *= Predator.PREDATOR_REPRODUCE_NUMBER;
-
-        // create new predators
-        ArrayList<Position> positions = getRandomPositions(count, mapWidth, mapHeight);
-        for (Position position : positions)
-            predators.add(new Predator(position));
+        predators.addAll(newPredators);
     }
 
     /**
@@ -278,19 +280,25 @@ class Map implements Serializable {
     }
 
     private void clearScreen() {
+        GraphicsContext graphics = canvas.getGraphicsContext2D();
         graphics.setFill(Color.WHITE);
         graphics.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
     void clear() {
-        predators.clear();
-        groups.clear();
-        preys.clear();
-        predatorPopulationPerIteration.clear();
-        preyPopulationPerIteration.clear();
-        avgFoodGainedPerIteration.clear();
-        clearScreen();
-        numberOfIteration = 0;
+        try {
+            outputDataLock.lock();
+            predators.clear();
+            groups.clear();
+            preys.clear();
+            predatorPopulationPerIteration.clear();
+            preyPopulationPerIteration.clear();
+            avgFoodGainedPerIteration.clear();
+            clearScreen();
+            numberOfIteration = 0;
+        } finally {
+            outputDataLock.unlock();
+        }
     }
 
     /*************************************    PAINTING METHODS    *****************************************************/
@@ -299,6 +307,8 @@ class Map implements Serializable {
      * Paint preys and predators to canvas
      */
     void paint() {
+        GraphicsContext graphics = canvas.getGraphicsContext2D();
+
         // clear screen
         clearScreen();
 
@@ -374,7 +384,6 @@ class Map implements Serializable {
     void setController(GUI gui) {
         controller = gui;
         canvas = controller.getMapCanvas();
-        graphics = canvas.getGraphicsContext2D();
     }
 
     /*************************************    UTILITIES    ************************************************************/

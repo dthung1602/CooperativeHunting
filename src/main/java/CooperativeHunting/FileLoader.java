@@ -1,5 +1,6 @@
 package CooperativeHunting;
 
+import javafx.application.Platform;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TextField;
@@ -39,14 +40,16 @@ class FileLoader {
         String content = FileLoader.readFile(file);
 
         // call method
-        try {
-            Class[] paramTypes = new Class[]{String.class, GUI.class};
-            Object[] param = new Object[]{content, gui};
-            Method method = FileLoader.class.getDeclaredMethod(handleMethodName, paramTypes);
-            method.invoke(null, param);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            GUI.alert("Error", "Error deserialize data");
-        }
+        Platform.runLater(() -> {
+            try {
+                Class[] paramTypes = new Class[]{String.class, GUI.class};
+                Object[] param = new Object[]{content, gui};
+                Method method = FileLoader.class.getDeclaredMethod(handleMethodName, paramTypes);
+                method.invoke(null, param);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                GUI.alert("Error", "Error deserialize data");
+            }
+        });
     }
 
     /**
@@ -212,8 +215,10 @@ class FileLoader {
     }
 
     static void loadDemo(GUI gui, int demoNum) {
-        loadSettingsFromString(FileLoader.readResourceFile("SettingsDemo" + demoNum + ".txt"), gui);
-        loadMapFromString(FileLoader.readResourceFile("MapDemo" + demoNum + ".txt"), gui);
+        Platform.runLater(() -> {
+            loadSettingsFromString(FileLoader.readResourceFile("SettingsDemo" + demoNum + ".txt"), gui);
+            loadMapFromString(FileLoader.readResourceFile("MapDemo" + demoNum + ".txt"), gui);
+        });
     }
 
     /*************************************    SAVE METHODS    *********************************************************/

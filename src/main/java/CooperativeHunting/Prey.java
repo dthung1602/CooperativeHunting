@@ -60,7 +60,7 @@ class Prey extends Animal {
      * @param mediumPreyColor:  medium preys' color for visualization
      * @param largePreyColor:   large preys' color for visualization
      */
-    static void set(int speed, float defaultNutrition, int defaultAttack, float visionRadius, int minSize, int maxSize,
+    static void set(int speed, float defaultNutrition, float defaultAttack, float visionRadius, int minSize, int maxSize,
                     Color smallPreyColor, Color mediumPreyColor, Color largePreyColor) {
         Prey.speed = speed;
         Prey.defaultNutrition = defaultNutrition;

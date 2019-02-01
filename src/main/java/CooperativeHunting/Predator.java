@@ -5,15 +5,15 @@ import javafx.scene.paint.Color;
 class Predator extends Animal {
     static final int REPRODUCE_SEASON_LENGTH = 4; // unit: iterations  -> predator only reproduce in 4 iterations
     static final int YEAR_LENGTH = 16;            // unit: iterations                     for every 16 iterations
-    static final int PREDATOR_REPRODUCE_NUMBER = 1;
 
     private static final float KILL_RADIUS_RATIO = 0.5f;  // ratio of predator's kill radius and its vision radius
+    private static final float BORN_RADIUS_RATIO = 1f;  // ratio of predator's new offspring distance and vision radius
 
     private static float visionRadius;
     private static float killRadius;
     private static int speed;
-    private static int defaultHealth;
-    private static int defaultAttack;
+    private static float defaultHealth;
+    private static float defaultAttack;
     private static float stayInGroupTendency;
     private static float reproducingThreshold;
     private static Color defaultColor;
@@ -54,7 +54,7 @@ class Predator extends Animal {
      * @param huntingMethod: predators' hunting strategy
      * @param defaultColor:  predators' color for visualization
      */
-    static void set(int speed, int defaultHealth, int defaultAttack, float visionRadius,
+    static void set(int speed, float defaultHealth, float defaultAttack, float visionRadius,
                     float stayInGroupTendency, HuntingMethod huntingMethod, Color defaultColor) {
         Predator.speed = speed;
         Predator.defaultHealth = defaultHealth;
@@ -164,14 +164,19 @@ class Predator extends Animal {
     /**
      * The predator reproduce if its gains enough health
      *
-     * @return whether the predator reproduce
+     * @return a new Predator near the parent or null
      */
-    boolean reproduce() {
+    Predator reproduce() {
         if (health >= reproducingThreshold) {
             health = defaultHealth;
-            return true;
+            Predator newBorn = new Predator(new Position(x, y));
+            int r = (int) (visionRadius * BORN_RADIUS_RATIO);
+            newBorn.x += random.nextInt(-r, r);
+            newBorn.y += random.nextInt(-r, r);
+            newBorn.stayInMap();
+            return newBorn;
         }
-        return false;
+        return null;
     }
 
     /**

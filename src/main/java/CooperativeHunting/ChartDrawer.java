@@ -11,6 +11,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.Queue;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
 
 class ChartDrawer extends JFrame {
     private final static int DATA_MAX_LENGTH = 100; // how many previous iterations to display
@@ -50,7 +51,7 @@ class ChartDrawer extends JFrame {
     }
 
     synchronized static void display(Queue<Double> rawPredatorPopulation, Queue<Double> rawPreyPopulation,
-                                     Queue<Double> rawAvgFoodGain) {
+                                     Queue<Double> rawAvgFoodGain, Lock lock) {
         // check for empty data
         if (rawPredatorPopulation.size() == 0) {
             GUI.alert("Warning", "There's no data to create charts");
@@ -62,7 +63,7 @@ class ChartDrawer extends JFrame {
             return;
         isDisplaying = true;
 
-        double[][] initData = generateData(rawPredatorPopulation, rawPreyPopulation, rawAvgFoodGain);
+        double[][] initData = generateData(rawPredatorPopulation, rawPreyPopulation, rawAvgFoodGain, lock);
 
         // create charts
         final XYChart populationChart = new XYChartBuilder()
@@ -71,7 +72,7 @@ class ChartDrawer extends JFrame {
                 .width(CHART_WIDTH).height(CHART_HEIGHT)
                 .build();
         final XYChart ratioChart = new XYChartBuilder()
-                .title("Ratio of population between predator and prey")
+                .title("Ratio of population between prey and predator")
                 .xAxisTitle("Iteration").yAxisTitle("Ratio")
                 .width(CHART_WIDTH).height(CHART_HEIGHT)
                 .build();
@@ -89,7 +90,7 @@ class ChartDrawer extends JFrame {
         XYSeries series2 = populationChart.addSeries("Prey's population", initData[0], initData[2], null);
         series2.setLineColor(Color.BLUE);
         series2.setMarker(SeriesMarkers.NONE);
-        XYSeries series3 = ratioChart.addSeries("Predator/Prey Ratio", initData[0], initData[3], null);
+        XYSeries series3 = ratioChart.addSeries("Prey/Predator Ratio", initData[0], initData[3], null);
         series3.setLineColor(Color.ORANGE);
         series3.setMarker(SeriesMarkers.NONE);
         XYSeries series4 = avgFoodGainChart.addSeries("Average food gained", initData[0], initData[4], null);
@@ -108,7 +109,7 @@ class ChartDrawer extends JFrame {
                 } catch (InterruptedException e) {
                     break;
                 }
-                final double[][] data = generateData(rawPredatorPopulation, rawPreyPopulation, rawAvgFoodGain);
+                final double[][] data = generateData(rawPredatorPopulation, rawPreyPopulation, rawAvgFoodGain, lock);
                 populationChart.updateXYSeries("Predator's population", data[0], data[1], null);
                 populationChart.updateXYSeries("Prey's population", data[0], data[2], null);
                 ratioChart.updateXYSeries("Predator/Prey Ratio", data[0], data[3], null);
@@ -123,35 +124,41 @@ class ChartDrawer extends JFrame {
     }
 
     private static synchronized double[][] generateData(Queue<Double> predatorQueue, Queue<Double> preyQueue,
-                                                        Queue<Double> avgQueue) {
-        // truncate data size
-        while (predatorQueue.size() > DATA_MAX_LENGTH)
-            predatorQueue.remove();
-        while (preyQueue.size() > DATA_MAX_LENGTH)
-            preyQueue.remove();
-        while (avgQueue.size() > DATA_MAX_LENGTH)
-            avgQueue.remove();
+                                                        Queue<Double> avgQueue, Lock lock) {
+        try {
+            lock.lock();
 
-        int size = predatorQueue.size();
+            // truncate data size
+            while (predatorQueue.size() > DATA_MAX_LENGTH)
+                predatorQueue.remove();
+            while (preyQueue.size() > DATA_MAX_LENGTH)
+                preyQueue.remove();
+            while (avgQueue.size() > DATA_MAX_LENGTH)
+                avgQueue.remove();
 
-        // process data
-        double[] iterationData = new double[size];
-        double[] predatorData = new double[size];
-        double[] preyData = new double[size];
-        double[] ratioData = new double[size];
-        double[] avgFoodGainedData = new double[size];
-        Iterator iteratorPredator = predatorQueue.iterator();
-        Iterator iteratorPrey = preyQueue.iterator();
-        Iterator iteratorAvgFood = avgQueue.iterator();
+            int size = predatorQueue.size();
 
-        for (int i = 0; i < size; i++) {
-            iterationData[i] = Map.numberOfIteration - predatorData.length + 1 + i;
-            predatorData[i] = (double) iteratorPredator.next();
-            preyData[i] = (double) iteratorPrey.next();
-            avgFoodGainedData[i] = (double) iteratorAvgFood.next();
-            ratioData[i] = preyData[i] / predatorData[i];
+            // process data
+            double[] iterationData = new double[size];
+            double[] predatorData = new double[size];
+            double[] preyData = new double[size];
+            double[] ratioData = new double[size];
+            double[] avgFoodGainedData = new double[size];
+            Iterator iteratorPredator = predatorQueue.iterator();
+            Iterator iteratorPrey = preyQueue.iterator();
+            Iterator iteratorAvgFood = avgQueue.iterator();
+
+            for (int i = 0; i < size; i++) {
+                iterationData[i] = Map.numberOfIteration - predatorData.length + 1 + i;
+                predatorData[i] = (double) iteratorPredator.next();
+                preyData[i] = (double) iteratorPrey.next();
+                avgFoodGainedData[i] = (double) iteratorAvgFood.next();
+                ratioData[i] = (predatorData[i] == 0) ? 0 : preyData[i] / predatorData[i];
+            }
+
+            return new double[][]{iterationData, predatorData, preyData, ratioData, avgFoodGainedData};
+        } finally {
+            lock.unlock();
         }
-
-        return new double[][]{iterationData, predatorData, preyData, ratioData, avgFoodGainedData};
     }
 }

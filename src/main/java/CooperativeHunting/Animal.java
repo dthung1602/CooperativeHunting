@@ -13,7 +13,7 @@ abstract class Animal extends Entity {
 
     boolean dead;
     int size;
-    int attack;
+    float attack;
     transient Color color;
 
     /**
@@ -130,14 +130,14 @@ abstract class Animal extends Entity {
     /**
      * Animal moves randomly
      * The animal move X tiles horizontally and Y tiles vertically with
-     * |X| + |Y| = speed
+     * |X| + |Y| <= speed
      */
     void moveRandomly() {
         int speed = getSpeed();
         int dx = random.nextInt(-speed, speed);
         int signY = (random.nextInt(2) == 0) ? 1 : -1;
         this.x += dx;
-        this.y += (speed - Math.abs(dx)) * signY;
+        this.y += random.nextInt(speed - Math.abs(dx) + 1) * signY;
     }
 }
 
