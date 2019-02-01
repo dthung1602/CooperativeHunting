@@ -380,9 +380,9 @@ public class GUI {
 
     /*************************************    MENU ACTIONS (Open Statistic Graph)   ***********************************/
 
-    void openGraph(){           //TODO add this method in GUI
+    void openGraph(){    //TODO add this method in GUI, avoid bug by only available when user clicked play button
         try {
-            GraphDrawer.play(map.ratioOuput);
+            GraphDrawer.play(map.predatorPopulationPerIteration, map.preyPopulationPerIteration);
         }
         catch(Exception e){
             System.out.println(e);

@@ -34,9 +34,11 @@ class Map implements Serializable {
     private boolean showGroup;
     private boolean showGrid;
 
-    // output
     //Graph output
-    LinkedList<Double> ratioOuput;
+    LinkedList<Double> predatorPopulationPerIteration;
+    LinkedList<Double> preyPopulationPerIteration;
+
+
     //Text output
     private float foodGainedThisIteration;
 
@@ -44,7 +46,8 @@ class Map implements Serializable {
 
     Map(GUI gui) {
         setController(gui);
-        ratioOuput = new LinkedList<>();
+        predatorPopulationPerIteration = new LinkedList<>();
+        preyPopulationPerIteration = new LinkedList<>();
         predators = new ArrayList<>();
         preys = new LinkedList<>();
         groups = new LinkedList<>();
@@ -170,7 +173,8 @@ class Map implements Serializable {
         removeEmptyGroups();
 
         //Update ratio between Predator's population and Prey's population
-        ratioOuput.add((double)predators.size()/(double)preys.size());
+        predatorPopulationPerIteration.add((double)predators.size());
+        predatorPopulationPerIteration.add((double)preys.size());
 
         // display output
         controller.displayOutput(
