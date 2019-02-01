@@ -1,6 +1,7 @@
 package CooperativeHunting;
 
 import CooperativeHunting.Predator.HuntingMethod;
+import cucumber.api.java.gl.E;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -375,6 +376,17 @@ public class GUI {
     @FXML
     void changeHuntingMethod() {
         Predator.setHuntingMethod(HuntingMethod.fromString(huntingMethod.getValue()));
+    }
+
+    /*************************************    MENU ACTIONS (Open Statistic Graph)   ***********************************/
+
+    void openGraph(){           //TODO add this method in GUI
+        try {
+            GraphDrawer.play(map.ratioOuput);
+        }
+        catch(Exception e){
+            System.out.println(e);
+        }
     }
 
     /*************************************    MENU ACTIONS    *********************************************************/

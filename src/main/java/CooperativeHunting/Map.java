@@ -17,7 +17,7 @@ class Map implements Serializable {
     private int newPreyPerIterationInt;
     private float newPreyPerIterationFloat;
 
-    private int numberOfIteration;
+    static int numberOfIteration;
 
     transient private GUI controller;
     transient private Canvas canvas;
@@ -35,12 +35,16 @@ class Map implements Serializable {
     private boolean showGrid;
 
     // output
+    //Graph output
+    LinkedList<Double> ratioOuput;
+    //Text output
     private float foodGainedThisIteration;
 
     private static Random random = new Random();
 
     Map(GUI gui) {
         setController(gui);
+        ratioOuput = new LinkedList<>();
         predators = new ArrayList<>();
         preys = new LinkedList<>();
         groups = new LinkedList<>();
@@ -164,6 +168,9 @@ class Map implements Serializable {
         removeDeadAnimals(preys);
         removeDeadAnimals(predators);
         removeEmptyGroups();
+
+        //Update ratio between Predator's population and Prey's population
+        ratioOuput.add((double)predators.size()/(double)preys.size());
 
         // display output
         controller.displayOutput(

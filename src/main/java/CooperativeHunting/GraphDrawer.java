@@ -3,19 +3,20 @@ package CooperativeHunting;
 import org.knowm.xchart.QuickChart;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
+import org.knowm.xchart.XYChartBuilder;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 
 public class GraphDrawer {
-    static LinkedList<Double> queue = new LinkedList<>();
-    public void play() throws Exception {
+    //static LinkedList<Double> queue = new LinkedList<>();
+    public static void play(LinkedList<Double> rawQueue) throws Exception {
 
-        queue.add(0.0);
-        double[][] initdata = generateData(queue);
+        //queue.add(0.0);
+        double[][] initdata = generateData(rawQueue);
 
         // Create Chart
-        final XYChart chart = QuickChart.getChart("Simple XChart Real-time Demo", "Radians", "Sine", "sine", initdata[0], initdata[1]);
+        final XYChart chart = QuickChart.getChart("Ratio of population between predator and prey", "Iteration", "Ratio", "ratio", initdata[0], initdata[1]);
 
         // Show it
         final SwingWrapper<XYChart> sw = new SwingWrapper<XYChart>(chart);
@@ -25,19 +26,16 @@ public class GraphDrawer {
 
             //phase += 2 * Math.PI * 2 / 20.0;
 
-            Thread.sleep(1000);
-            randomQueue();
-            final double[][] data = generateData(queue);
+            Thread.sleep(100);
 
-            chart.updateXYSeries("sine", data[0], data[1], null);
+            final double[][] data = generateData(rawQueue);
+
+            chart.updateXYSeries("ratio", data[0], data[1], null);
             sw.repaintChart();
         }
 
     }
-    static double count = 1;
-    private static void randomQueue(){
-        queue.add(count++);
-    }
+
     private static double[][] generateData(LinkedList<Double> queue) {
 
         while(queue.size() > 10){
@@ -47,7 +45,7 @@ public class GraphDrawer {
         double[] yData = new double[queue.size()];
         Iterator iterator = queue.iterator();
         for (int i = 0; i < xData.length; i++) {
-            double radians = count - xData.length + 1 + i;
+            double radians = Map.numberOfIteration - xData.length + 1 + i;
             xData[i] = radians;
             yData[i] = (double) iterator.next();
         }
