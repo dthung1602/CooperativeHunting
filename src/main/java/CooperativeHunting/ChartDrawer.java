@@ -8,13 +8,13 @@ import org.knowm.xchart.style.markers.SeriesMarkers;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Queue;
-import java.util.*;
-import java.util.concurrent.locks.Lock;
 
 class ChartDrawer extends JFrame {
-    private final static int DATA_MAX_LENGTH = 100; // how many previous iterations to display
+    private final static int DATA_MAX_LENGTH = 500; // how many previous iterations to display
     private final static int UPDATE_RATE = 10;      // how many times the chart update per second
 
     private final static int CHART_WIDTH = 1000;
@@ -50,10 +50,9 @@ class ChartDrawer extends JFrame {
         }
     }
 
-    synchronized static void display(Queue<Double> rawPredatorPopulation, Queue<Double> rawPreyPopulation,
-                                     Queue<Double> rawAvgFoodGain, Lock lock, Integer iterationCount) {
+    synchronized static void display(Map map) {
         // check for empty data
-        if (rawAvgFoodGain.size() == 0) {
+        if (map.avgFoodGainedPerIteration.size() == 0) {
             GUI.alert("Warning", "There's no data to create charts");
             return;
         }
@@ -63,8 +62,7 @@ class ChartDrawer extends JFrame {
             return;
         isDisplaying = true;
 
-        double[][] initData = generateData(rawPredatorPopulation, rawPreyPopulation, rawAvgFoodGain,
-                lock, iterationCount);
+        double[][] initData = generateData(map);
 
         // create charts
         final XYChart populationChart = new XYChartBuilder()
@@ -110,8 +108,8 @@ class ChartDrawer extends JFrame {
                 } catch (InterruptedException e) {
                     break;
                 }
-                final double[][] data = generateData(rawPredatorPopulation, rawPreyPopulation, rawAvgFoodGain,
-                        lock, iterationCount);
+
+                final double[][] data = generateData(map);
                 populationChart.updateXYSeries("Predator's population", data[0], data[1], null);
                 populationChart.updateXYSeries("Prey's population", data[0], data[2], null);
                 ratioChart.updateXYSeries("Prey/Predator Ratio", data[0], data[3], null);
@@ -125,20 +123,19 @@ class ChartDrawer extends JFrame {
         thread.start();
     }
 
-    private static synchronized double[][] generateData(Queue<Double> predatorQueue, Queue<Double> preyQueue,
-                                                        Queue<Double> avgQueue, Lock lock, Integer numberOfIteration) {
+    private static synchronized double[][] generateData(Map map) {
         try {
-            lock.lock();
+            map.outputChartDataLock.lock();
 
             // truncate data size
-            while (predatorQueue.size() > DATA_MAX_LENGTH)
-                predatorQueue.remove();
-            while (preyQueue.size() > DATA_MAX_LENGTH)
-                preyQueue.remove();
-            while (avgQueue.size() > DATA_MAX_LENGTH)
-                avgQueue.remove();
+            while (map.predatorPopulationPerIteration.size() > DATA_MAX_LENGTH)
+                map.predatorPopulationPerIteration.remove();
+            while (map.preyPopulationPerIteration.size() > DATA_MAX_LENGTH)
+                map.preyPopulationPerIteration.remove();
+            while (map.avgFoodGainedPerIteration.size() > DATA_MAX_LENGTH)
+                map.avgFoodGainedPerIteration.remove();
 
-            int size = predatorQueue.size();
+            int size = map.predatorPopulationPerIteration.size();
 
             // process data
             double[] iterationData = new double[size];
@@ -146,21 +143,21 @@ class ChartDrawer extends JFrame {
             double[] preyData = new double[size];
             double[] ratioData = new double[size];
             double[] avgFoodGainedData = new double[size];
-            Iterator iteratorPredator = predatorQueue.iterator();
-            Iterator iteratorPrey = preyQueue.iterator();
-            Iterator iteratorAvgFood = avgQueue.iterator();
+            Iterator iteratorPredator = map.predatorPopulationPerIteration.iterator();
+            Iterator iteratorPrey = map.preyPopulationPerIteration.iterator();
+            Iterator iteratorAvgFood = map.avgFoodGainedPerIteration.iterator();
 
             for (int i = 0; i < size; i++) {
-                iterationData[i] = numberOfIteration - predatorData.length + 1 + i;
+                iterationData[i] = map.numberOfIteration - predatorData.length + 1 + i;
                 predatorData[i] = (double) iteratorPredator.next();
                 preyData[i] = (double) iteratorPrey.next();
                 avgFoodGainedData[i] = (double) iteratorAvgFood.next();
-                ratioData[i] = (predatorData[i] == 0) ? 0 : preyData[i] / predatorData[i];
+                ratioData[i] = (predatorData[i] == 0) ? 0 : (preyData[i] / predatorData[i]);
             }
 
             return new double[][]{iterationData, predatorData, preyData, ratioData, avgFoodGainedData};
         } finally {
-            lock.unlock();
+            map.outputChartDataLock.unlock();
         }
     }
 }

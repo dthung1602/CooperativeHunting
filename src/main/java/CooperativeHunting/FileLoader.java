@@ -192,7 +192,7 @@ class FileLoader {
             ByteArrayInputStream bais = new ByteArrayInputStream(dataByte);
             ObjectInputStream stream = new ObjectInputStream(bais);
             map = (Map) stream.readObject();
-            map.outputDataLock = new ReentrantLock();
+            map.outputChartDataLock = new ReentrantLock();
             String settingsString = (String) stream.readObject();
             loadSettingsFromString(settingsString, gui);
             stream.close();

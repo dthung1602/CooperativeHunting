@@ -38,7 +38,7 @@ class Map implements Serializable {
     LinkedList<Double> predatorPopulationPerIteration;
     LinkedList<Double> preyPopulationPerIteration;
     LinkedList<Double> avgFoodGainedPerIteration;
-    transient Lock outputDataLock;
+    transient Lock outputChartDataLock;
 
     // text output
     private float foodGainedThisIteration;
@@ -55,7 +55,7 @@ class Map implements Serializable {
         predatorPopulationPerIteration = new LinkedList<>();
         preyPopulationPerIteration = new LinkedList<>();
         avgFoodGainedPerIteration = new LinkedList<>();
-        outputDataLock = new ReentrantLock();
+        outputChartDataLock = new ReentrantLock();
         predators = new ArrayList<>();
         preys = new LinkedList<>();
         groups = new LinkedList<>();
@@ -183,12 +183,23 @@ class Map implements Serializable {
         float avg = foodGainedThisIteration / predators.size();
 
         try {
-            outputDataLock.lock();
+            outputChartDataLock.lock();
             predatorPopulationPerIteration.add((double) predators.size());
             preyPopulationPerIteration.add((double) preys.size());
             avgFoodGainedPerIteration.add((double) avg);
+            if (numberOfIteration % 100 == 0) {
+                float x = 0;
+                for (double d : preyPopulationPerIteration) x += d;
+                System.out.print(x / preyPopulationPerIteration.size() + " ");
+                x = 0;
+                for (double d : predatorPopulationPerIteration) x += d;
+                System.out.print(x / preyPopulationPerIteration.size() + " ");
+                x = 0;
+                for (double d : avgFoodGainedPerIteration) x += d;
+                System.out.println(x / preyPopulationPerIteration.size());
+            }
         } finally {
-            outputDataLock.unlock();
+            outputChartDataLock.unlock();
         }
 
         return new float[]{avg, predators.size(), preys.size()};
@@ -278,7 +289,7 @@ class Map implements Serializable {
 
     void clear() {
         try {
-            outputDataLock.lock();
+            outputChartDataLock.lock();
             predators.clear();
             groups.clear();
             preys.clear();
@@ -288,7 +299,7 @@ class Map implements Serializable {
             clearScreen();
             numberOfIteration = 0;
         } finally {
-            outputDataLock.unlock();
+            outputChartDataLock.unlock();
         }
     }
 

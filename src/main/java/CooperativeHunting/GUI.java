@@ -276,6 +276,8 @@ public class GUI {
     @FXML
     void apply() {
         try {
+            map.clear();
+
             // pass values to initializing functions in Map class
             map.set(
                     Integer.parseInt(width.getText()),
@@ -388,13 +390,7 @@ public class GUI {
 
     @FXML
     void showGraph() {
-        ChartDrawer.display(
-                map.predatorPopulationPerIteration,
-                map.preyPopulationPerIteration,
-                map.avgFoodGainedPerIteration,
-                map.outputDataLock,
-                map.numberOfIteration
-        );
+        ChartDrawer.display(map);
     }
 
     /*************************************    MENU ACTIONS    *********************************************************/
