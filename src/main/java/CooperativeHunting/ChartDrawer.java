@@ -51,9 +51,9 @@ class ChartDrawer extends JFrame {
     }
 
     synchronized static void display(Queue<Double> rawPredatorPopulation, Queue<Double> rawPreyPopulation,
-                                     Queue<Double> rawAvgFoodGain, Lock lock) {
+                                     Queue<Double> rawAvgFoodGain, Lock lock, Integer iterationCount) {
         // check for empty data
-        if (rawPredatorPopulation.size() == 0) {
+        if (rawAvgFoodGain.size() == 0) {
             GUI.alert("Warning", "There's no data to create charts");
             return;
         }
@@ -63,7 +63,8 @@ class ChartDrawer extends JFrame {
             return;
         isDisplaying = true;
 
-        double[][] initData = generateData(rawPredatorPopulation, rawPreyPopulation, rawAvgFoodGain, lock);
+        double[][] initData = generateData(rawPredatorPopulation, rawPreyPopulation, rawAvgFoodGain,
+                lock, iterationCount);
 
         // create charts
         final XYChart populationChart = new XYChartBuilder()
@@ -109,10 +110,11 @@ class ChartDrawer extends JFrame {
                 } catch (InterruptedException e) {
                     break;
                 }
-                final double[][] data = generateData(rawPredatorPopulation, rawPreyPopulation, rawAvgFoodGain, lock);
+                final double[][] data = generateData(rawPredatorPopulation, rawPreyPopulation, rawAvgFoodGain,
+                        lock, iterationCount);
                 populationChart.updateXYSeries("Predator's population", data[0], data[1], null);
                 populationChart.updateXYSeries("Prey's population", data[0], data[2], null);
-                ratioChart.updateXYSeries("Predator/Prey Ratio", data[0], data[3], null);
+                ratioChart.updateXYSeries("Prey/Predator Ratio", data[0], data[3], null);
                 avgFoodGainChart.updateXYSeries("Average food gained", data[0], data[4], null);
                 chartDrawer.repaintCharts();
             }
@@ -124,7 +126,7 @@ class ChartDrawer extends JFrame {
     }
 
     private static synchronized double[][] generateData(Queue<Double> predatorQueue, Queue<Double> preyQueue,
-                                                        Queue<Double> avgQueue, Lock lock) {
+                                                        Queue<Double> avgQueue, Lock lock, Integer numberOfIteration) {
         try {
             lock.lock();
 
@@ -149,7 +151,7 @@ class ChartDrawer extends JFrame {
             Iterator iteratorAvgFood = avgQueue.iterator();
 
             for (int i = 0; i < size; i++) {
-                iterationData[i] = Map.numberOfIteration - predatorData.length + 1 + i;
+                iterationData[i] = numberOfIteration - predatorData.length + 1 + i;
                 predatorData[i] = (double) iteratorPredator.next();
                 preyData[i] = (double) iteratorPrey.next();
                 avgFoodGainedData[i] = (double) iteratorAvgFood.next();

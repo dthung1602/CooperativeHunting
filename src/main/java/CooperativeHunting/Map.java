@@ -19,9 +19,8 @@ class Map implements Serializable {
     private int newPreyPerIterationInt;
     private float newPreyPerIterationFloat;
 
-    static int numberOfIteration;
+    Integer numberOfIteration;
 
-    transient private GUI controller;
     transient private Canvas canvas;
 
     // map size
@@ -44,15 +43,15 @@ class Map implements Serializable {
     // text output
     private float foodGainedThisIteration;
 
-    transient private static Random random = new Random();
+    private static Random random = new Random();
 
     /**
      * Map constructor
      *
-     * @param gui: GUI object
+     * @param canvas: GUI's Canvas object
      */
-    Map(GUI gui) {
-        setController(gui);
+    Map(Canvas canvas) {
+        this.canvas = canvas;
         predatorPopulationPerIteration = new LinkedList<>();
         preyPopulationPerIteration = new LinkedList<>();
         avgFoodGainedPerIteration = new LinkedList<>();
@@ -178,12 +177,9 @@ class Map implements Serializable {
         removeDeadAnimals(preys);
         removeDeadAnimals(predators);
         removeEmptyGroups();
-
-        handleOutput();
-
     }
 
-    private void handleOutput() {
+    float[] getOutput() {
         float avg = foodGainedThisIteration / predators.size();
 
         try {
@@ -195,12 +191,7 @@ class Map implements Serializable {
             outputDataLock.unlock();
         }
 
-        // display output
-        controller.displayOutput(
-                avg,
-                predators.size(),
-                preys.size()
-        );
+        return new float[]{avg, predators.size(), preys.size()};
     }
 
     /*************************************    ADDITIONAL INITIALIZATION AND UPDATING METHODS    ***********************/
@@ -381,9 +372,8 @@ class Map implements Serializable {
         this.showGrid = showGrid;
     }
 
-    void setController(GUI gui) {
-        controller = gui;
-        canvas = controller.getMapCanvas();
+    void setCanvas(Canvas canvas) {
+        this.canvas = canvas;
     }
 
     /*************************************    UTILITIES    ************************************************************/

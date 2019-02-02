@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.locks.ReentrantLock;
 
 @SuppressWarnings("unused")
 class FileLoader {
@@ -191,10 +192,9 @@ class FileLoader {
             ByteArrayInputStream bais = new ByteArrayInputStream(dataByte);
             ObjectInputStream stream = new ObjectInputStream(bais);
             map = (Map) stream.readObject();
+            map.outputDataLock = new ReentrantLock();
             String settingsString = (String) stream.readObject();
             loadSettingsFromString(settingsString, gui);
-            for (TextField textField : gui.outputTextFields)
-                textField.setText((String) stream.readObject());
             stream.close();
             bais.close();
         } catch (IOException | ClassNotFoundException e) {
@@ -203,7 +203,7 @@ class FileLoader {
         }
 
         gui.setMap(map);
-        map.setController(gui);
+        map.setCanvas(gui.getMapCanvas());
         gui.enablePlayButton();
 
         for (Prey prey : map.getPreys())
@@ -264,8 +264,6 @@ class FileLoader {
             ObjectOutputStream stream = new ObjectOutputStream(baos);
             stream.writeObject(gui.map);
             stream.writeObject(saveSettingsToString(gui));
-            for (TextField textField : gui.outputTextFields)
-                stream.writeObject(textField.getText());
             String result = Base64.getEncoder().encodeToString(baos.toByteArray());
             stream.close();
             baos.close();

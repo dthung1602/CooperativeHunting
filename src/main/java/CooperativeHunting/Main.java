@@ -12,6 +12,7 @@ public class Main extends Application {
     private double simulationSpeed = 1;
 
     private Map map;
+    private GUI gui;
     private Thread mainThread;
 
     public void start(Stage stage) throws Exception {
@@ -25,9 +26,9 @@ public class Main extends Application {
         VBox layout = loader.load();
 
         // get the controller and pass Map Object to it
-        GUI gui = loader.getController();
-        Map m = new Map(gui);
-        gui.set(this, m, stage);
+        gui = loader.getController();
+        map = new Map(gui.getMapCanvas());
+        gui.set(this, map, stage);
 
         // display the GUI
         stage.setScene(new Scene(layout));
@@ -74,9 +75,11 @@ public class Main extends Application {
                         synchronized (this) {
                             this.wait();
                         }
+
                     // update and repaint
                     map.update();
                     map.paint();
+                    gui.displayOutput(map.getOutput());
 
                     // sleep
                     Thread.sleep((long) (1000.0 / simulationSpeed));

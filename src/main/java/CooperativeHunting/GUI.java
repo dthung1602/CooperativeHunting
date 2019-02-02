@@ -202,14 +202,12 @@ public class GUI {
     /**
      * Display simulation outputs to GUI
      *
-     * @param averageFoodIteration: average food gained per iteration
-     * @param predatorNumber:       number of remaining predators
-     * @param preyNumber:           number of remaining preys
+     * @param data: array of map output values
      */
-    void displayOutput(float averageFoodIteration, int predatorNumber, int preyNumber) {
-        averageFood.setText(String.valueOf(averageFoodIteration));
-        predatorCount.setText(String.valueOf(predatorNumber));
-        preyCount.setText(String.valueOf(preyNumber));
+    void displayOutput(float[] data) {
+        averageFood.setText(String.valueOf(data[0]));
+        predatorCount.setText(String.valueOf(data[1]));
+        preyCount.setText(String.valueOf(data[2]));
     }
 
     /*************************************    GETTERS AND SETTERS    **************************************************/
@@ -394,7 +392,8 @@ public class GUI {
                 map.predatorPopulationPerIteration,
                 map.preyPopulationPerIteration,
                 map.avgFoodGainedPerIteration,
-                map.outputDataLock
+                map.outputDataLock,
+                map.numberOfIteration
         );
     }
 
