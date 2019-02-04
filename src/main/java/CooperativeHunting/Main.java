@@ -3,8 +3,12 @@ package CooperativeHunting;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
+import java.io.FileInputStream;
+import java.nio.file.Paths;
 
 public class Main extends Application {
 
@@ -31,8 +35,11 @@ public class Main extends Application {
         gui.set(this, map, stage);
 
         // display the GUI
+        stage.getIcons().add(new Image(new FileInputStream(
+                Paths.get(Main.class.getResource("/icon.png").toURI()).toFile())));
         stage.setScene(new Scene(layout));
         stage.show();
+
 
         // start simulator thread
         mainThread = new Thread(new Simulator());

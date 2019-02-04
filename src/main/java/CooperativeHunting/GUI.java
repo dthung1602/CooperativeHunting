@@ -43,6 +43,8 @@ public class GUI {
     @FXML
     private MenuItem demo1;
     @FXML
+    private MenuItem cover;
+    @FXML
     private MenuItem demo2;
     @FXML
     private MenuItem demo3;
@@ -400,6 +402,11 @@ public class GUI {
     }
 
     /*************************************    MENU ACTIONS    *********************************************************/
+
+    @FXML
+    void showDemo0(ActionEvent event) {
+        FileLoader.loadDemo(this, 0);
+    }
 
     @FXML
     void showDemo1(ActionEvent event) {

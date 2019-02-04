@@ -39,6 +39,7 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Demo">
                     <items>
+                        <MenuItem fx:id="cover" mnemonicParsing="false" onAction="#showDemo0" text="Cover"/>
                         <MenuItem fx:id="demo1" mnemonicParsing="false" onAction="#showDemo1" text="Demo 1" />
                         <MenuItem fx:id="demo2" mnemonicParsing="false" onAction="#showDemo2" text="Demo 2" />
                         <MenuItem fx:id="demo3" mnemonicParsing="false" onAction="#showDemo3" text="Demo 3" />
