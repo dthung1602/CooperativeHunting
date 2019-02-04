@@ -11,6 +11,9 @@ import javafx.stage.Stage;
 
 import static CooperativeHunting.FileLoader.readResourceFile;
 
+/**
+ * Store the application event handlers
+ */
 public class GUI {
     private Main application;
     Stage stage;
@@ -123,9 +126,9 @@ public class GUI {
 
     // GUI component groups
     TextField[] inputTextFields;
-    TextField[] outputTextFields;
     CheckBox[] checkBoxes;
     ColorPicker[] colorPickers;
+    private TextField[] outputTextFields;
     private MenuItem[] saveMenuItems;
     private MenuItem[] menuItems;
     private Control[] widgets;
@@ -388,6 +391,9 @@ public class GUI {
 
     /*************************************    MENU ACTIONS (Open Statistic Graph)   ***********************************/
 
+    /**
+     * Show the graph window
+     */
     @FXML
     void showGraph() {
         ChartDrawer.display(map);
@@ -395,25 +401,16 @@ public class GUI {
 
     /*************************************    MENU ACTIONS    *********************************************************/
 
-    /**
-     * Show demo 1
-     */
     @FXML
     void showDemo1(ActionEvent event) {
         FileLoader.loadDemo(this, 1);
     }
 
-    /**
-     * Show demo 2
-     */
     @FXML
     void showDemo2(ActionEvent event) {
         FileLoader.loadDemo(this, 2);
     }
 
-    /**
-     * Show demo 3
-     */
     @FXML
     void showDemo3(ActionEvent event) {
         FileLoader.loadDemo(this, 3);

@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Handle all file input and output of the program
+ */
 @SuppressWarnings("unused")
 class FileLoader {
 
@@ -24,9 +27,9 @@ class FileLoader {
     /**
      * Let user open a file, read its content and call the given handler method on that string
      *
-     * @param dialogTitle:      Open file dialog title
-     * @param handleMethodName: A FileLoader's static method name. This method takes 2 parameters: String and GUI
-     * @param gui:              gui object
+     * @param dialogTitle      Open file dialog title
+     * @param handleMethodName A FileLoader's static method name. This method takes 2 parameters String and GUI
+     * @param gui              gui object
      */
     static void loadFromFile(String dialogTitle, String handleMethodName, GUI gui) {
         // open file
@@ -56,9 +59,9 @@ class FileLoader {
     /**
      * Let user choose where to save the content, then invoke the given method to get the content and save it
      *
-     * @param dialogTitle:      Save file dialog title
-     * @param handleMethodName: A FileLoader's static method name. This method takes a GUI object and return a String
-     * @param gui:              GUI object
+     * @param dialogTitle      Save file dialog title
+     * @param handleMethodName A FileLoader's static method name. This method takes a GUI object and return a String
+     * @param gui              GUI object
      */
     static void saveToFile(String dialogTitle, String handleMethodName, GUI gui) {
         // create new file
@@ -84,6 +87,12 @@ class FileLoader {
 
     /*************************************    LOAD METHODS    *********************************************************/
 
+    /**
+     * Read a string and set settings values in GUI accordingly
+     *
+     * @param data settings data
+     * @param gui  GUI object to load settings to
+     */
     private static void loadSettingsFromString(String data, GUI gui) {
         if (data == null) {
             GUI.alert("Error", "Load settings fails");
@@ -114,6 +123,12 @@ class FileLoader {
         }
     }
 
+    /**
+     * Read a string and set animals' positions in map accordingly
+     *
+     * @param data map data
+     * @param gui  GUI object to load map to
+     */
     private static void loadMapFromString(String data, GUI gui) {
         if (data == null) {
             GUI.alert("Error", "Corrupted map data");
@@ -185,6 +200,12 @@ class FileLoader {
         map.paint();
     }
 
+    /**
+     * Read a Base64-encoded serialization of the settings and the map then restore them
+     *
+     * @param data map + settings data
+     * @param gui  GUI object to load data to
+     */
     private static void loadSimulationFromString(String data, GUI gui) {
         Map map;
         try {
@@ -214,6 +235,12 @@ class FileLoader {
         map.paint();
     }
 
+    /**
+     * Load a demo
+     *
+     * @param gui     GUI object to load to
+     * @param demoNum demo number
+     */
     static void loadDemo(GUI gui, int demoNum) {
         Platform.runLater(() -> {
             loadSettingsFromString(FileLoader.readResourceFile("SettingsDemo" + demoNum + ".txt"), gui);
@@ -223,6 +250,19 @@ class FileLoader {
 
     /*************************************    SAVE METHODS    *********************************************************/
 
+    /**
+     * Save animals' position to a string
+     * Format:
+     * map_height map_width
+     * ......x......
+     * ...5...1....x
+     * .............
+     * with . as an empty tile
+     * x as a predator
+     * [number] as a prey size
+     *
+     * @param gui GUI object to read data from
+     */
     private static String saveMapToString(GUI gui) {
         Map map = gui.map;
         char[][] data = new char[map.getMapHeight()][map.getMapWidth()];
@@ -246,6 +286,15 @@ class FileLoader {
         return builder.toString();
     }
 
+    /**
+     * Save settings to a string
+     * Format:
+     * setting1
+     * setting2
+     * ...
+     *
+     * @param gui GUI object to read data from
+     */
     private static String saveSettingsToString(GUI gui) {
         StringBuilder content = new StringBuilder();
         for (TextField textField : gui.inputTextFields)
@@ -258,6 +307,11 @@ class FileLoader {
         return content.toString();
     }
 
+    /**
+     * Convert settings and animals' position to a string
+     *
+     * @param gui GUI object to read data from
+     */
     private static String saveSimulationToString(GUI gui) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -277,7 +331,7 @@ class FileLoader {
     /*************************************    READ/WRITE FILES METHODS    *********************************************/
 
     /**
-     * @param fileName: name of the file to read, relative to the project's resources folder
+     * @param fileName name of the file to read, relative to the project's resources folder
      * @return file content string
      */
     static String readResourceFile(String fileName) {
@@ -286,6 +340,12 @@ class FileLoader {
         return readFile(stream);
     }
 
+    /**
+     * Read the given file. Display error, if any occurs
+     *
+     * @param file file to read
+     * @return whole file content
+     */
     private static String readFile(File file) {
         try {
             InputStream stream = new FileInputStream(file);
@@ -295,6 +355,12 @@ class FileLoader {
         }
     }
 
+    /**
+     * Read the given stream. Display error, if any occurs
+     *
+     * @param stream stream to read
+     * @return whole file content
+     */
     private static String readFile(InputStream stream) {
         try {
             if (stream == null)
@@ -308,6 +374,12 @@ class FileLoader {
         }
     }
 
+    /**
+     * Write the given string to file. Display error, if any occurs
+     *
+     * @param file    file to write to
+     * @param content what to write
+     */
     private static void writeFile(File file, String content) {
         try {
             FileWriter writer = new FileWriter(file);

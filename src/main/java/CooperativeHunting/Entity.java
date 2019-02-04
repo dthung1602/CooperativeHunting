@@ -8,12 +8,23 @@ import java.io.Serializable;
  * Abstract base class for group, preys and predators
  */
 abstract class Entity implements Serializable {
+    /**
+     * The map that all entities belong to
+     */
     static Map map;
+
+    /**
+     * X coordinate of the entity (unit: tile)
+     */
     int x;
+
+    /**
+     * Y coordinate of the entity (unit: tile)
+     */
     int y;
 
     /**
-     * Default constructor
+     * Default empty constructor
      */
     Entity() {
     }
@@ -21,7 +32,7 @@ abstract class Entity implements Serializable {
     /**
      * Entity constructor
      *
-     * @param position: initial position of the entity
+     * @param position initial position of the entity
      */
     Entity(Position position) {
         x = position.x;
@@ -31,8 +42,8 @@ abstract class Entity implements Serializable {
     /**
      * Paint entity to the canvas
      *
-     * @param graphics:   canvas's graphic context
-     * @param showCircle: whether to paint the circle around the entity
+     * @param graphics   canvas's graphic context
+     * @param showCircle whether to paint the circle around the entity
      */
     abstract void paint(GraphicsContext graphics, boolean showCircle);
 
@@ -42,7 +53,7 @@ abstract class Entity implements Serializable {
     abstract void postDeserialize();
 
     /**
-     * @param entity: any entity object
+     * @param entity any entity object
      * @return distance from this entity to the given entity
      */
     float distanceTo(Entity entity) {

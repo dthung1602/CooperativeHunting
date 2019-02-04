@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 
+/**
+ * Utility class represent entity position on map
+ */
 class Position {
     private static final Random random = new MyRandom();
     int x;

@@ -47,6 +47,11 @@ public class Main extends Application {
         this.map = map;
     }
 
+    /**
+     * Change the running state of the simulation
+     *
+     * @return whether the simulation is running
+     */
     boolean runningToggle() {
         running = !running;
         if (running)
@@ -58,6 +63,11 @@ public class Main extends Application {
         running = false;
     }
 
+    /**
+     * Change simulation speed
+     *
+     * @param speed: unit: iteration/second
+     */
     void setSimulationSpeed(double speed) {
         this.simulationSpeed = speed;
     }

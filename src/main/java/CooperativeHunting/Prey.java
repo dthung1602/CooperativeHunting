@@ -5,6 +5,9 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class represent prey
+ */
 class Prey extends Animal {
     static final int REPRODUCE_SEASON_LENGTH = 4; // unit: iterations  -> predator only reproduce in 4 iterations
     static final int YEAR_LENGTH = 16;            // unit: iterations                     for every 16 iterations
@@ -31,7 +34,7 @@ class Prey extends Animal {
     /**
      * Prey constructor
      *
-     * @param position: initial position of the prey
+     * @param position initial position of the prey
      */
     Prey(Position position) {
         super(position);
@@ -41,6 +44,12 @@ class Prey extends Animal {
         adjustColorAccordingToSize();
     }
 
+    /**
+     * Create a prey at the given position with the given size
+     *
+     * @param position initial position of the prey
+     * @param size     prey's size
+     */
     Prey(Position position, int size) {
         super(position);
         this.size = size;
@@ -52,13 +61,13 @@ class Prey extends Animal {
     /**
      * Setter for Prey static fields
      *
-     * @param speed:            preys' speed (tiles/iteration)
-     * @param defaultNutrition: preys' defaultNutrition value
-     * @param defaultAttack:    preys' attack
-     * @param visionRadius:     preys' vision radius (tiles)
-     * @param smallPreyColor:   small preys' color for visualization
-     * @param mediumPreyColor:  medium preys' color for visualization
-     * @param largePreyColor:   large preys' color for visualization
+     * @param speed            preys' speed (tiles/iteration)
+     * @param defaultNutrition preys' defaultNutrition value
+     * @param defaultAttack    preys' attack
+     * @param visionRadius     preys' vision radius (tiles)
+     * @param smallPreyColor   small preys' color for visualization
+     * @param mediumPreyColor  medium preys' color for visualization
+     * @param largePreyColor   large preys' color for visualization
      */
     static void set(int speed, float defaultNutrition, float defaultAttack, float visionRadius, int minSize, int maxSize,
                     Color smallPreyColor, Color mediumPreyColor, Color largePreyColor) {
@@ -105,6 +114,9 @@ class Prey extends Animal {
         stayInMap();
     }
 
+    /**
+     * Decide whether the prey is attacked, is killed or attacks back in this iteration
+     */
     private void resolveAttack() {
         // find the closest predator that can kill this prey
         Predator closestPredator = null;

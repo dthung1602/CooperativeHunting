@@ -9,17 +9,35 @@ import java.util.Random;
  * Abstract base class for preys and predators
  */
 abstract class Animal extends Entity {
+    /**
+     * Provides random numbers for all animal
+     */
     static MyRandom random = new MyRandom();
 
+    /**
+     * Whether the animal is dead
+     */
     boolean dead;
+
+    /**
+     * Animal size. Cannot be less than 1
+     */
     int size;
+
+    /**
+     * Animal basic attack
+     */
     float attack;
+
+    /**
+     * Color of the animal on the map
+     */
     transient Color color;
 
     /**
      * Animal constructor
      *
-     * @param position: initial position of the entity
+     * @param position initial position of the entity
      */
     Animal(Position position) {
         super(position);
@@ -44,8 +62,8 @@ abstract class Animal extends Entity {
     /**
      * Paint the animal to the map
      *
-     * @param graphics:   canvas graphic context
-     * @param showVision: whether to paint the vision circle
+     * @param graphics   canvas graphic context
+     * @param showVision whether to paint the vision circle
      */
     void paint(GraphicsContext graphics, boolean showVision) {
         float tileSize = map.getTileSize();
@@ -92,8 +110,8 @@ abstract class Animal extends Entity {
      * X, directionX have the same sign
      * Y, directionY have the same sign
      *
-     * @param directionX: the horizontal direction
-     * @param directionY: the vertical direction
+     * @param directionX the horizontal direction
+     * @param directionY the vertical direction
      */
     void moveInDirection(float directionX, float directionY) {
         int speed = this.getSpeed();
@@ -119,7 +137,7 @@ abstract class Animal extends Entity {
     /**
      * Move the animal to the given entity position
      *
-     * @param entity: target to move to
+     * @param entity target to move to
      */
     void moveInDirection(Entity entity) {
         float directionX = entity.x - x;
@@ -146,8 +164,8 @@ abstract class Animal extends Entity {
  */
 class MyRandom extends Random {
     /**
-     * @param min: lower bound, inclusive
-     * @param max: upper bound, inclusive
+     * @param min lower bound, inclusive
+     * @param max upper bound, inclusive
      * @return an random integer in [min, max]
      */
     int nextInt(int min, int max) {

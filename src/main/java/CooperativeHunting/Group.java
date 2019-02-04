@@ -4,11 +4,13 @@ import CooperativeHunting.Predator.HuntingMethod;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * The class represent predator's hunting group
+ */
 class Group extends Entity {
     private static float groupRadius;
     private static float groupTileDiameterInPixel;
@@ -20,7 +22,7 @@ class Group extends Entity {
     /**
      * Group constructor
      *
-     * @param members: the initial members of the group
+     * @param members the initial members of the group
      */
     private Group(List<Predator> members) {
         this.members = members;
@@ -34,8 +36,8 @@ class Group extends Entity {
     /**
      * Form new groups for lone predators or let them join existing groups
      *
-     * @param groups:    list of current groups in map
-     * @param predators: list of current predators in map
+     * @param groups    list of current groups in map
+     * @param predators list of current predators in map
      */
     static void createNewGroup(List<Group> groups, List<Predator> predators) {
 
@@ -75,7 +77,6 @@ class Group extends Entity {
      * Recalculate the group circle center, check for leaving members and updateMove leader
      */
     void updateMembers() {
-        // TODO this is just tmp fix
         if (members.size() == 0) return;
         calculateCenter();
         deleteMembers();
@@ -148,8 +149,8 @@ class Group extends Entity {
     /**
      * Setter for Predator static fields
      *
-     * @param groupRadius: group radius (tiles)
-     * @param color:       group circle color
+     * @param groupRadius group radius (tiles)
+     * @param color       group circle color
      */
     static void set(float groupRadius, Color color) {
         Group.groupRadius = groupRadius;

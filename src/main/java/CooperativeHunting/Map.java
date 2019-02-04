@@ -264,44 +264,6 @@ class Map implements Serializable {
         }
     }
 
-    /*************************************    ADDITIONAL PAINTING METHODS    ******************************************/
-
-    /**
-     * Clone a color and change the clone's opacity
-     *
-     * @param color:      original color
-     * @param newOpacity: clone color opacity
-     */
-    private Color copyColor(Color color, double newOpacity) {
-        return new Color(
-                color.getRed(),
-                color.getGreen(),
-                color.getBlue(),
-                newOpacity
-        );
-    }
-
-    private void clearScreen() {
-        GraphicsContext graphics = canvas.getGraphicsContext2D();
-        graphics.setFill(Color.WHITE);
-        graphics.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-    }
-
-    void clear() {
-        try {
-            outputChartDataLock.lock();
-            predators.clear();
-            groups.clear();
-            preys.clear();
-            predatorPopulationPerIteration.clear();
-            preyPopulationPerIteration.clear();
-            avgFoodGainedPerIteration.clear();
-            clearScreen();
-            numberOfIteration = 0;
-        } finally {
-            outputChartDataLock.unlock();
-        }
-    }
 
     /*************************************    PAINTING METHODS    *****************************************************/
 
@@ -347,6 +309,12 @@ class Map implements Serializable {
         }
     }
 
+    private void clearScreen() {
+        GraphicsContext graphics = canvas.getGraphicsContext2D();
+        graphics.setFill(Color.WHITE);
+        graphics.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+    }
+
     /*************************************    SETTERS AND GETTERS     *************************************************/
 
     List<Prey> getPreys() {
@@ -389,7 +357,46 @@ class Map implements Serializable {
 
     /*************************************    UTILITIES    ************************************************************/
 
+    /**
+     * Increase food gained in the iteration
+     *
+     * @param foodGain: how much food gained
+     */
     void addFoodGain(float foodGain) {
         foodGainedThisIteration += foodGain;
+    }
+
+    /**
+     * Clone a color and change the clone's opacity
+     *
+     * @param color:      original color
+     * @param newOpacity: clone color opacity
+     */
+    private Color copyColor(Color color, double newOpacity) {
+        return new Color(
+                color.getRed(),
+                color.getGreen(),
+                color.getBlue(),
+                newOpacity
+        );
+    }
+
+    /**
+     * Clear map data
+     */
+    void clear() {
+        try {
+            outputChartDataLock.lock();
+            predators.clear();
+            groups.clear();
+            preys.clear();
+            predatorPopulationPerIteration.clear();
+            preyPopulationPerIteration.clear();
+            avgFoodGainedPerIteration.clear();
+            clearScreen();
+            numberOfIteration = 0;
+        } finally {
+            outputChartDataLock.unlock();
+        }
     }
 }

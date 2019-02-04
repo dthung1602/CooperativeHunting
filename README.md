@@ -12,8 +12,8 @@ the cooperative hunting, which is related to the evolution of sociability betwee
 is a phenomenon where individuals work/hunt together to capture more prey at a lower over-
 all risk/cost. Moreover, solitary hunting may even be impossible, effectively forcing predators
 to cooperate in order to survive. Lions, wolves and humans are typical examples. Cooperative
-hunting is a complex behaviour as it requires social skills and coordination within the hunt-``````
-ing party. For instance often the prey is much faster than the predators, who must employ
+hunting is a complex behaviour as it requires social skills and coordination within the hunting
+party. For instance often the prey is much faster than the predators, who must employ
 cornering and surrounding approaches to counter this advantage. In other cases the prey is
 simply too strong for the individual predator, and thus a larger group is needed to bring it
 down.

@@ -13,17 +13,45 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Handle displaying charts in GUI
+ */
 class ChartDrawer extends JFrame {
-    private final static int DATA_MAX_LENGTH = 500; // how many previous iterations to display
-    private final static int UPDATE_RATE = 10;      // how many times the chart update per second
+    /**
+     * How many previous iterations to display
+     */
+    private final static int DATA_MAX_LENGTH = 500;
 
+    /**
+     * How many times the chart update per second
+     */
+    private final static int UPDATE_RATE = 10;
+
+    /**
+     * Chart width in Pixel
+     */
     private final static int CHART_WIDTH = 1000;
+
+    /**
+     * Chart width in Pixel
+     */
     private final static int CHART_HEIGHT = 250;
 
+    /**
+     * Whether the chart window is displaying
+     */
     private static boolean isDisplaying = false;
 
+    /**
+     * Holds 3 chart panels in the window
+     */
     private List<XChartPanel<XYChart>> chartPanels;
 
+    /**
+     * ChartDrawer constructor
+     *
+     * @param charts list of charts to draw
+     */
     private ChartDrawer(List<XYChart> charts) {
         super("Graphs");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -32,6 +60,7 @@ class ChartDrawer extends JFrame {
         rootPanel.setLayout(new BoxLayout(rootPanel, BoxLayout.Y_AXIS));
         add(rootPanel);
 
+        // create chart panel for each chart
         chartPanels = new ArrayList<>();
         for (XYChart chart : charts) {
             XChartPanel<XYChart> panel = new XChartPanel<>(chart);
@@ -43,6 +72,9 @@ class ChartDrawer extends JFrame {
         pack();
     }
 
+    /**
+     * Repaint every chart panels
+     */
     private void repaintCharts() {
         for (XChartPanel<XYChart> chartPanel : chartPanels) {
             chartPanel.revalidate();
@@ -50,6 +82,11 @@ class ChartDrawer extends JFrame {
         }
     }
 
+    /**
+     * Show the Chart window. At anytime, there's only one chart window
+     *
+     * @param map Map object to get data from
+     */
     synchronized static void display(Map map) {
         // check for empty data
         if (map.avgFoodGainedPerIteration.size() == 0) {
@@ -123,6 +160,12 @@ class ChartDrawer extends JFrame {
         thread.start();
     }
 
+    /**
+     * Extract and process data from map
+     *
+     * @param map map to get data
+     * @return double array of [iteration data, predator count, prey count, prey/predator ratio, avg food gain]
+     */
     private static synchronized double[][] generateData(Map map) {
         try {
             map.outputChartDataLock.lock();

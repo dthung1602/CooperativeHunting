@@ -2,6 +2,9 @@ package CooperativeHunting;
 
 import javafx.scene.paint.Color;
 
+/**
+ * Class represent the predator
+ */
 class Predator extends Animal {
     static final int REPRODUCE_SEASON_LENGTH = 4; // unit: iterations  -> predator only reproduce in 4 iterations
     static final int YEAR_LENGTH = 16;            // unit: iterations                     for every 16 iterations
@@ -194,6 +197,12 @@ class Predator extends Animal {
         return null;
     }
 
+    /**
+     * Determine whether the predator can kill a prey
+     *
+     * @param prey: target prey
+     * @return whether this predator can kill the target prey
+     */
     boolean canKill(Prey prey) {
         if (distanceTo(prey) > killRadius || getAttack() < prey.getAttack())
             return false;
@@ -202,6 +211,11 @@ class Predator extends Animal {
         return group.leader.getTargetPrey() == prey;
     }
 
+    /**
+     * The predator kills the prey
+     *
+     * @param prey: prey to be killed
+     */
     void kill(Prey prey) {
         prey.dead = true;
         float nutrition = prey.getNutrition();
@@ -275,7 +289,7 @@ class Predator extends Animal {
         Predator.huntingMethod = huntingMethod;
     }
 
-    /*************************************    GET AND ADDITIONAL METHODS    *******************************************/
+    /*************************************    GETTERS    **************************************************************/
 
     @Override
     float getVisionRadius() {
