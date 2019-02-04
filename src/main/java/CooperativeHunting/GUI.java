@@ -60,6 +60,8 @@ public class GUI {
     private CheckBox showGroup;
     @FXML
     private CheckBox preyShowVision;
+    @FXML
+    private CheckBox useImage;
 
     // Predator
     @FXML
@@ -156,7 +158,7 @@ public class GUI {
                 predatorCount, preyCount, averageFood
         };
         checkBoxes = new CheckBox[]{
-                showGrid, predatorShowVision, showGroup, preyShowVision
+                showGrid, predatorShowVision, showGroup, preyShowVision, useImage
         };
         colorPickers = new ColorPicker[]{
                 predatorColor, groupColor, preyColor
@@ -165,7 +167,7 @@ public class GUI {
                 width, height,
                 predatorNumber, predatorAttack, health, predatorSpeed, predatorVisionRadius, groupRadius, stayInGroupTendency,
                 preyNumber, preyAttack, nutrition, preySpeed, preyVisionRadius, preyMinSize, preyMaxSize, newPreyPerIteration,
-                showGrid, predatorShowVision, showGroup, preyShowVision,
+                showGrid, predatorShowVision, showGroup, preyShowVision, useImage,
                 predatorColor, groupColor, preyColor
         };
         saveMenuItems = new MenuItem[]{
@@ -174,7 +176,7 @@ public class GUI {
         menuItems = new MenuItem[]{
                 loadSettings, loadMap, loadSimulation,
                 saveSettings, saveMap, saveSimulation,
-                demo1, demo2, demo3,
+                cover, demo1, demo2, demo3,
         };
 
         // Init combo boxes
@@ -389,6 +391,14 @@ public class GUI {
     @FXML
     void changeHuntingMethod() {
         Predator.setHuntingMethod(HuntingMethod.fromString(huntingMethod.getValue()));
+    }
+
+    /**
+     * Change drawing method between image and color
+     */
+    @FXML
+    void changeDrawingMethod() {
+        Animal.useImage = useImage.isSelected();
     }
 
     /*************************************    MENU ACTIONS (Open Statistic Graph)   ***********************************/

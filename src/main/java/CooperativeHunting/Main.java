@@ -35,11 +35,9 @@ public class Main extends Application {
         gui.set(this, map, stage);
 
         // display the GUI
-        stage.getIcons().add(new Image(new FileInputStream(
-                Paths.get(Main.class.getResource("/icon.png").toURI()).toFile())));
+        stage.getIcons().add(new Image("/icon.png"));
         stage.setScene(new Scene(layout));
         stage.show();
-
 
         // start simulator thread
         mainThread = new Thread(new Simulator());

@@ -1,5 +1,6 @@
 package CooperativeHunting;
 
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 /**
@@ -19,7 +20,10 @@ class Predator extends Animal {
     private static float defaultAttack;
     private static float stayInGroupTendency;
     private static float reproducingThreshold;
+
     private static Color defaultColor;
+    private static final Image image = new Image("/predator.jpg");
+
     static HuntingMethod huntingMethod = HuntingMethod.DEFAULT;
 
     private float health;
@@ -290,6 +294,11 @@ class Predator extends Animal {
     }
 
     /*************************************    GETTERS    **************************************************************/
+
+    @Override
+    Image getImage() {
+        return image;
+    }
 
     @Override
     float getVisionRadius() {

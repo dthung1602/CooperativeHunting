@@ -1,5 +1,6 @@
 package CooperativeHunting;
 
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ class Prey extends Animal {
     private static Color smallPreyColor;
     private static Color mediumPreyColor;
     private static Color largePreyColor;
+    private static final Image image = new Image("/prey.png");
 
     private float nutrition;
 
@@ -205,7 +207,13 @@ class Prey extends Animal {
             color = smallPreyColor;
     }
 
+
     /*************************************    GETTERS AND UTILITIES    ************************************************/
+
+    @Override
+    Image getImage() {
+        return image;
+    }
 
     @Override
     float getVisionRadius() {

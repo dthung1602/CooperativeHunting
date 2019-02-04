@@ -85,6 +85,8 @@
                                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0"
+                                                                        vgrow="SOMETIMES"/>
                                                     </rowConstraints>
                                                     <children>
                                                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Width" textAlignment="CENTER" wrappingWidth="86.0390625" />
@@ -121,6 +123,13 @@
                                                                 <Insets left="10.0" right="20.0" />
                                                             </GridPane.margin>
                                                         </ComboBox>
+                                                        <CheckBox fx:id="useImage" mnemonicParsing="false"
+                                                                  onAction="#changeDrawingMethod" text="Use images"
+                                                                  GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                                            <GridPane.margin>
+                                                                <Insets left="10.0"/>
+                                                            </GridPane.margin>
+                                                        </CheckBox>
                                                     </children>
                                                 </GridPane>
                                             </children>

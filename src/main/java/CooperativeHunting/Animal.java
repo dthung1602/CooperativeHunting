@@ -1,6 +1,7 @@
 package CooperativeHunting;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 import java.util.Random;
@@ -13,6 +14,11 @@ abstract class Animal extends Entity {
      * Provides random numbers for all animal
      */
     static MyRandom random = new MyRandom();
+
+    /**
+     * Whether to use images instead of color for visualizing
+     */
+    static boolean useImage = false;
 
     /**
      * Whether the animal is dead
@@ -33,6 +39,7 @@ abstract class Animal extends Entity {
      * Color of the animal on the map
      */
     transient Color color;
+
 
     /**
      * Animal constructor
@@ -60,6 +67,11 @@ abstract class Animal extends Entity {
     abstract int getSpeed();
 
     /**
+     * @return The animal's image for visualization
+     */
+    abstract Image getImage();
+
+    /**
      * Paint the animal to the map
      *
      * @param graphics   canvas graphic context
@@ -68,14 +80,25 @@ abstract class Animal extends Entity {
     void paint(GraphicsContext graphics, boolean showVision) {
         float tileSize = map.getTileSize();
 
-        // paint a square for the animal
-        graphics.setFill(color);
-        graphics.fillRect(
-                tileSize * x,
-                tileSize * y,
-                tileSize * size,
-                tileSize * size
-        );
+        if (useImage) {
+            // paint an image
+            graphics.drawImage(
+                    getImage(),
+                    tileSize * x,
+                    tileSize * y,
+                    tileSize * size,
+                    tileSize * size
+            );
+        } else {
+            // paint a square for the animal
+            graphics.setFill(color);
+            graphics.fillRect(
+                    tileSize * x,
+                    tileSize * y,
+                    tileSize * size,
+                    tileSize * size
+            );
+        }
 
         // paint vision circle
         if (showVision) {
