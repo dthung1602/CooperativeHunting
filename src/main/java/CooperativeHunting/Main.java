@@ -1,15 +1,25 @@
 package CooperativeHunting;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.FileInputStream;
-import java.nio.file.Paths;
-
+/**
+ * Frankfurt University of Applied Science
+ * Winter semester 2018
+ * Java OOP course
+ * Instructor: Prof. Logofatu
+ * Project:    Cooperative Hunting
+ *
+ * @author Thanh Hung Duong
+ * @author Hoang Minh Pham
+ * @author Hong Dai Phat Tran
+ * @author Anh Tuan Do
+ */
 public class Main extends Application {
 
     private boolean running = false;
@@ -93,8 +103,10 @@ public class Main extends Application {
 
                     // update and repaint
                     map.update();
-                    map.paint();
-                    gui.displayOutput(map.getOutput());
+                    Platform.runLater(() -> {
+                        map.paint();
+                        gui.displayOutput(map.getOutput());
+                    });
 
                     // sleep
                     Thread.sleep((long) (1000.0 / simulationSpeed));

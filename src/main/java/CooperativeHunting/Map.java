@@ -187,17 +187,6 @@ class Map implements Serializable {
             predatorPopulationPerIteration.add((double) predators.size());
             preyPopulationPerIteration.add((double) preys.size());
             avgFoodGainedPerIteration.add((double) avg);
-            if (numberOfIteration % 100 == 0) {
-                float x = 0;
-                for (double d : preyPopulationPerIteration) x += d;
-                System.out.print(x / preyPopulationPerIteration.size() + " ");
-                x = 0;
-                for (double d : predatorPopulationPerIteration) x += d;
-                System.out.print(x / preyPopulationPerIteration.size() + " ");
-                x = 0;
-                for (double d : avgFoodGainedPerIteration) x += d;
-                System.out.println(x / preyPopulationPerIteration.size());
-            }
         } finally {
             outputChartDataLock.unlock();
         }
@@ -270,7 +259,7 @@ class Map implements Serializable {
     /**
      * Paint preys and predators to canvas
      */
-    void paint() {
+    synchronized void paint() {
         GraphicsContext graphics = canvas.getGraphicsContext2D();
 
         // clear screen
