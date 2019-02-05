@@ -478,7 +478,7 @@ public class GUI {
         ButtonType button = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().add(button);
 
-        dialog.getDialogPane().setMinSize(350, 200);
+        dialog.getDialogPane().setMinSize(600, 350);
         dialog.setTitle("Contributing");
         dialog.setContentText(content);
 
