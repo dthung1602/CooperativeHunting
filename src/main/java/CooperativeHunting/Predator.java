@@ -22,7 +22,7 @@ class Predator extends Animal {
     private static float reproducingThreshold;
 
     private static Color defaultColor;
-    private static final Image image = new Image("/predator.jpg");
+    private static Image image = new Image("/predator.jpg");
 
     static HuntingMethod huntingMethod = HuntingMethod.DEFAULT;
 
@@ -293,7 +293,12 @@ class Predator extends Animal {
         Predator.huntingMethod = huntingMethod;
     }
 
-    /*************************************    GETTERS    **************************************************************/
+    /*************************************    GETTERS AND SETTERS   ***************************************************/
+
+    static void setImage(Image image) {
+        if (image != null)
+            Predator.image = image;
+    }
 
     @Override
     Image getImage() {

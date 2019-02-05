@@ -18,7 +18,7 @@ abstract class Animal extends Entity {
     /**
      * Whether to use images instead of color for visualizing
      */
-    static boolean useImage = false;
+    private static boolean useImage = false;
 
     /**
      * Whether the animal is dead
@@ -39,7 +39,6 @@ abstract class Animal extends Entity {
      * Color of the animal on the map
      */
     transient Color color;
-
 
     /**
      * Animal constructor
@@ -70,6 +69,11 @@ abstract class Animal extends Entity {
      * @return The animal's image for visualization
      */
     abstract Image getImage();
+
+    static boolean toggleUseImage() {
+        useImage = !useImage;
+        return useImage;
+    }
 
     /**
      * Paint the animal to the map

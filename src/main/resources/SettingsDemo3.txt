@@ -19,7 +19,6 @@ false
 true
 true
 false
-false
 0x07fc07ff
 0x990000ff
 0x1a0068ff

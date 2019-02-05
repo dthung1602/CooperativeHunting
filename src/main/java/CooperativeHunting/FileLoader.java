@@ -4,8 +4,10 @@ import javafx.application.Platform;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -329,6 +331,15 @@ class FileLoader {
     }
 
     /*************************************    READ/WRITE FILES METHODS    *********************************************/
+
+    static Image getImage(String dialogTitle, Stage stage) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(dialogTitle);
+        File file = fileChooser.showOpenDialog(stage);
+
+        if (file == null) return null;
+        return new Image(file.toURI().toString());
+    }
 
     /**
      * @param fileName name of the file to read, relative to the project's resources folder

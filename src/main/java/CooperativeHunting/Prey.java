@@ -29,7 +29,7 @@ class Prey extends Animal {
     private static Color smallPreyColor;
     private static Color mediumPreyColor;
     private static Color largePreyColor;
-    private static final Image image = new Image("/prey.png");
+    private static Image image = new Image("/prey.png");
 
     private float nutrition;
 
@@ -207,8 +207,12 @@ class Prey extends Animal {
             color = smallPreyColor;
     }
 
-
     /*************************************    GETTERS AND UTILITIES    ************************************************/
+
+    static void setImage(Image image) {
+        if (image != null)
+            Prey.image = image;
+    }
 
     @Override
     Image getImage() {

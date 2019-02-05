@@ -87,16 +87,20 @@ class ChartDrawer extends JFrame {
      *
      * @param map Map object to get data from
      */
-    synchronized static void display(Map map) {
+    synchronized static boolean display(Map map) {
+        // turn off graph window
+        if (isDisplaying) {
+            isDisplaying = false;
+            return false;
+        }
+
         // check for empty data
         if (map.avgFoodGainedPerIteration.size() == 0) {
             GUI.alert("Warning", "There's no data to create charts");
-            return;
+            isDisplaying = false;
+            return false;
         }
 
-        // only one chart window can exist
-        if (isDisplaying)
-            return;
         isDisplaying = true;
 
         double[][] initData = generateData(map);
@@ -139,7 +143,7 @@ class ChartDrawer extends JFrame {
             chartDrawer.setVisible(true);
 
             // update
-            while (chartDrawer.isVisible()) {
+            while (isDisplaying) {
                 try {
                     Thread.sleep(1000 / UPDATE_RATE);
                 } catch (InterruptedException e) {
@@ -154,10 +158,12 @@ class ChartDrawer extends JFrame {
                 chartDrawer.repaintCharts();
             }
 
+            chartDrawer.dispose();
             isDisplaying = false;
         });
 
         thread.start();
+        return true;
     }
 
     /**

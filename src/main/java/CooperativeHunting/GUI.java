@@ -41,15 +41,23 @@ public class GUI {
     @FXML
     private MenuItem saveSimulation;
     @FXML
-    private MenuItem demo1;
-    @FXML
     private MenuItem cover;
+    @FXML
+    private MenuItem demo1;
     @FXML
     private MenuItem demo2;
     @FXML
     private MenuItem demo3;
     @FXML
-    private MenuItem showGraph;
+    private CheckMenuItem useColor;
+    @FXML
+    private CheckMenuItem useImage;
+    @FXML
+    private MenuItem selectPredatorImageMenu;
+    @FXML
+    private MenuItem selectPreyImageMenu;
+    @FXML
+    private CheckMenuItem showGraph;
 
     // Display options
     @FXML
@@ -60,8 +68,6 @@ public class GUI {
     private CheckBox showGroup;
     @FXML
     private CheckBox preyShowVision;
-    @FXML
-    private CheckBox useImage;
 
     // Predator
     @FXML
@@ -158,7 +164,7 @@ public class GUI {
                 predatorCount, preyCount, averageFood
         };
         checkBoxes = new CheckBox[]{
-                showGrid, predatorShowVision, showGroup, preyShowVision, useImage
+                showGrid, predatorShowVision, showGroup, preyShowVision
         };
         colorPickers = new ColorPicker[]{
                 predatorColor, groupColor, preyColor
@@ -167,7 +173,7 @@ public class GUI {
                 width, height,
                 predatorNumber, predatorAttack, health, predatorSpeed, predatorVisionRadius, groupRadius, stayInGroupTendency,
                 preyNumber, preyAttack, nutrition, preySpeed, preyVisionRadius, preyMinSize, preyMaxSize, newPreyPerIteration,
-                showGrid, predatorShowVision, showGroup, preyShowVision, useImage,
+                showGrid, predatorShowVision, showGroup, preyShowVision,
                 predatorColor, groupColor, preyColor
         };
         saveMenuItems = new MenuItem[]{
@@ -187,6 +193,11 @@ public class GUI {
         ));
         iterationSpeed.setValue("1");
         huntingMethod.setValue(HuntingMethod.DEFAULT.toString());
+
+        useImage.setSelected(false);
+        selectPredatorImageMenu.setDisable(true);
+        selectPreyImageMenu.setDisable(true);
+        useColor.setSelected(true);
 
         // disable editing output
         for (TextField textField : outputTextFields)
@@ -367,6 +378,7 @@ public class GUI {
         Platform.runLater(() -> {
             map.update();
             map.paint();
+            displayOutput(map.getOutput());
 
             apply.setDisable(true);
             clear.setDisable(true);
@@ -393,25 +405,44 @@ public class GUI {
         Predator.setHuntingMethod(HuntingMethod.fromString(huntingMethod.getValue()));
     }
 
-    /**
-     * Change drawing method between image and color
-     */
-    @FXML
-    void changeDrawingMethod() {
-        Animal.useImage = useImage.isSelected();
-    }
 
-    /*************************************    MENU ACTIONS (Open Statistic Graph)   ***********************************/
+    /*************************************    MENU ACTIONS    *********************************************************/
 
     /**
      * Show the graph window
      */
     @FXML
-    void showGraph() {
-        ChartDrawer.display(map);
+    void toggleShowGraph() {
+        showGraph.setSelected(ChartDrawer.display(map));
     }
 
-    /*************************************    MENU ACTIONS    *********************************************************/
+    @FXML
+    void loadPredatorImage(ActionEvent event) {
+        Predator.setImage(FileLoader.getImage("Select predator image", stage));
+        Platform.runLater(() -> {
+            map.paint();
+        });
+    }
+
+    @FXML
+    void loadPreyImage(ActionEvent event) {
+        Prey.setImage(FileLoader.getImage("Select prey image", stage));
+        Platform.runLater(() -> {
+            map.paint();
+        });
+    }
+
+    @FXML
+    void toggleUseImage(ActionEvent event) {
+        boolean b = Animal.toggleUseImage();
+        useImage.setSelected(b);
+        selectPredatorImageMenu.setDisable(!b);
+        selectPreyImageMenu.setDisable(!b);
+        useColor.setSelected(!b);
+        Platform.runLater(() -> {
+            map.paint();
+        });
+    }
 
     @FXML
     void showDemo0(ActionEvent event) {

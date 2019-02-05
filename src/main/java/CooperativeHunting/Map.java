@@ -265,6 +265,10 @@ class Map implements Serializable {
         // clear screen
         clearScreen();
 
+        // paint preys
+        for (Prey prey : preys)
+            prey.paint(graphics, showPreyVision);
+
         // paint predators
         for (Predator predator : predators)
             predator.paint(graphics, showPredatorVision);
@@ -275,10 +279,6 @@ class Map implements Serializable {
             for (Group group : groups)
                 group.paint(graphics, true);
         }
-
-        // paint preys
-        for (Prey prey : preys)
-            prey.paint(graphics, showPreyVision);
 
         // paint grid
         if (showGrid) {
